@@ -1,5 +1,3 @@
-require 'thor'
-
 module VimGolf
   class Error
   end

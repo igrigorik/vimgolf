@@ -1,3 +1,2 @@
-module Vimgolf
-  # Your code goes here...
-end
+require 'thor'
+require 'vimgolf/cli'

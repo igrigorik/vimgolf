@@ -13,7 +13,9 @@ Gem::Specification.new do |s|
   s.description = s.summary
 
   s.rubyforge_project = "vimgolf"
-  s.add_dependency = "thor"
+  s.add_dependency "thor"
+
+  s.add_development_dependency "rspec"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

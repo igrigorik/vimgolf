@@ -1,0 +1,3 @@
+module Vimgolf
+  # Your code goes here...
+end

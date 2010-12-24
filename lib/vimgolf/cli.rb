@@ -2,7 +2,29 @@ module VimGolf
   class Error
   end
 
+  class UI
+    # stub debug outside of the CLI
+    def debug(*); end
+  end
+
+  class << self
+    attr_accessor :ui
+
+    def ui
+      @ui ||= UI.new
+    end
+  end
+
   class CLI < Thor
+    include Thor::Actions
+
+
+    def self.start(*)
+      Thor::Base.shell = VimGolf::CLI::UI
+      VimGolf.ui = VimGolf::CLI::UI.new
+      super
+    end
+
 
     desc "setup", "configure VIM Golf credentials"
     method_options :force => :boolean, :alias => :string

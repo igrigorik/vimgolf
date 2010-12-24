@@ -3,7 +3,6 @@ module VimGolf
   end
 
   class UI
-    # stub debug outside of the CLI
     def debug(*); end
   end
 
@@ -18,27 +17,40 @@ module VimGolf
   class CLI < Thor
     include Thor::Actions
 
-
     def self.start(*)
       Thor::Base.shell = VimGolf::CLI::UI
       VimGolf.ui = VimGolf::CLI::UI.new
       super
     end
 
+    desc "setup", "configure your VIM Golf credentials"
+    long_desc <<-DESC
+    To participate in the challenge please go to vimgolf.com and register an
+    account. Once signed in, you will get your API token, which you need to
+    setup the command client.
 
-    desc "setup", "configure VIM Golf credentials"
-    method_options :force => :boolean, :alias => :string
+    If you have the token, simply run the setup and paste in your token.
+    DESC
+
     def setup
-      puts "setup"
-      if options.force?
-      end
+      token = VimGolf.ui.ask "Please specify your VIM Golf API token (register on vimgolf.com to get it):"
 
+      if token =~ /[\w\d]{1,32}/
+        # TODO
+        VimGolf.ui.info "Saved. Happy golfing!"
+      else
+        VimGolf.ui.error "Invalid token, please double check your token on vimgolf.com"
+      end
     end
 
-    desc "launch", "launch VIM session"
-    def launch
-      puts "Launching VimGolf"
-      id = 'test'
+    desc "put [ID]", "launch VIM session"
+    long_desc <<-DESC
+    Launch a VimGolf session for the specified challenge ID. To find a currently
+    active challenge ID, please visit vimgolf.com!
+    DESC
+
+    def put(id = nil)
+      VimGolf.ui.info "Launching VimGolf session for challenge: #{id}"
 
       # - Z - start in restricted mode - no system commands
       # - n - no swap file, memory only editing
@@ -47,25 +59,37 @@ module VimGolf
       system("vim -Z -n --noplugin +0 -W #{challenge_log(id)} #{challenge(id)}")
 
       if $?.exitstatus.zero?
-        puts "Session recorded, processing"
-
         score = File.size(challenge_log(id))
-        puts "Score: #{score}"
+        VimGolf.ui.info "Session recorded, your score: #{score}"
 
-        puts ""
+        if VimGolf.ui.yes? "Upload result to VimGolf? (yes / no)"
+          VimGolf.ui.info "Uploading to VimGolf..."
+          # TODO
+
+          VimGolf.ui.info "Uploaded, thanks for golfing!"
+
+        else
+          VimGolf.ui.warn "Skipping upload. Thanks for playing. Give it another shot!"
+        end
+
       else
-        puts "Uh oh, VIM did not exit properly"
+        error = <<-MSG
+        Uh oh, VIM did not exit properly. If the problem persists, please
+        report the error on github.com/igrigorik/vimgolf
+        MSG
+
+        VimGolf.ui.error error
       end
     end
 
     private
 
-    def challenge(name)
-      "tmp/#{name}"
-    end
+      def challenge(name)
+        "tmp/#{name}"
+      end
 
-    def challenge_log(name)
-      challenge(name) + ".log"
-    end
+      def challenge_log(name)
+        challenge(name) + ".log"
+      end
   end
 end

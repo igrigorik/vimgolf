@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Ilya Grigorik"]
   s.email       = ["ilya@igvita.com"]
   s.homepage    = "http://github.com/igrigorik/vimgolf"
-  s.summary     = %q{TODO: CLI client for vimgolf.com}
+  s.summary     = "CLI client for vimgolf.com"
   s.description = s.summary
 
   s.rubyforge_project = "vimgolf"

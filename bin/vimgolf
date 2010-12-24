@@ -5,4 +5,14 @@ $LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
 
 require 'vimgolf/cli'
 
-VimGolf::CLI.start
+begin
+  VimGolf::CLI.start
+rescue VimGolf::Error => e
+  VimGolf.ui.print_exception(e)
+  exit(1)
+rescue Interrupt => e
+  puts
+  VimGolf.ui.print_exception(e)
+  VimGolf.ui.say("Quitting...")
+  exit(1)
+end

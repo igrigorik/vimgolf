@@ -36,7 +36,10 @@ module VimGolf
       token = VimGolf.ui.ask "Please specify your VIM Golf API token (register on vimgolf.com to get it):"
 
       if token =~ /[\w\d]{1,32}/
-        # TODO
+        FileUtils.mkdir_p Config.path
+        FileUtils.mkdir_p Config.path + "/put"
+        Config.save({:key => token})
+
         VimGolf.ui.info "Saved. Happy golfing!"
       else
         VimGolf.ui.error "Invalid token, please double check your token on vimgolf.com"
@@ -83,7 +86,6 @@ module VimGolf
     end
 
     private
-
       def challenge(name)
         "tmp/#{name}"
       end

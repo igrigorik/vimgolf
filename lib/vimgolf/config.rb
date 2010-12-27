@@ -5,6 +5,10 @@ module VimGolf
         "#{ENV['HOME']}/.vimgolf"
       end
 
+      def put_path
+        path + "/put"
+      end
+
       def save(conf)
         File.open(path + '/config.yaml', 'w') do |f|
           YAML.dump(conf, f)

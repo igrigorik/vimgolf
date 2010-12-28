@@ -38,7 +38,7 @@ module VimGolf
     def setup
       token = VimGolf.ui.ask "Please specify your VimGolf API token (register on vimgolf.com to get it):"
 
-      if token =~ /[\w\d]{1,32}/
+      if token =~ /[\w\d]{32}/
         FileUtils.mkdir_p Config.path
         FileUtils.mkdir_p Config.put_path
         Config.save({:key => token})

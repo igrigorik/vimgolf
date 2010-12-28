@@ -1,6 +1,6 @@
 module VimGolf
 
-  GOLFHOST = ENV['GOLFHOST'] || "http://www.vimgolf.com"
+  GOLFHOST = ENV['GOLFHOST'] || "http://vimgolf.com"
 
   class Error
   end
@@ -127,6 +127,7 @@ module VimGolf
 
         rescue Exception => e
           VimGolf.ui.error "Uh oh, couldn't download or parse challenge, please verify your challenge id and client version."
+          nil
         end
       end
 

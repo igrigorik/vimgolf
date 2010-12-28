@@ -58,16 +58,16 @@ module VimGolf
     def put(id = nil)
       VimGolf.ui.warn "Launching VimGolf session for challenge: #{id}"
 
-      if download(id) == :ok
+      type = download(id)
 
-        # - Z - start in restricted mode - no system commands
+      if !type.nil? && !type.empty?
         # - n - no swap file, memory only editing
         # - --noplugin - don't load any plugins, lets be fair!
         # - +0 - always start on line 0
-        system("vim -Z -n --noplugin +0 -W #{log(id)} #{input(id)}")
+        system("vim -n --noplugin +0 -W #{log(id)} #{input(id, type)}")
 
         if $?.exitstatus.zero?
-          diff = `diff --strip-trailing-cr #{input(id)} #{output(id)}`
+          diff = `diff --strip-trailing-cr #{input(id, type)} #{output(id)}`
 
           if diff.size > 0
             VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output:"
@@ -120,10 +120,11 @@ module VimGolf
             raise
           end
 
-          File.open(Config.put_path + "/#{id}.input", "w") {|f| f.puts data['in']}
-          File.open(Config.put_path + "/#{id}.output", "w") {|f| f.puts data['out']}
+          File.open(Config.put_path + "/#{id}.#{data['in']['type']}", "w") {|f| f.puts data['in']['data']}
+          File.open(Config.put_path + "/#{id}.output", "w") {|f| f.puts data['out']['data']}
 
-          :ok
+          data['in']['type']
+
         rescue Exception => e
           VimGolf.ui.error "Uh oh, couldn't download or parse challenge, please verify your challenge id and client version."
         end
@@ -148,7 +149,7 @@ module VimGolf
         end
       end
 
-      def input(id);  challenge(id) + ".input"; end
+      def input(id, type);  challenge(id) + ".#{type}"; end
       def output(id); challenge(id) + ".output"; end
       def log(id);    challenge(id) + ".log"; end
 

@@ -10,14 +10,14 @@ module VimGolf
       end
 
       def save(conf)
-        File.open(path + '/config.yaml', 'w') do |f|
-          YAML.dump(conf, f)
+        File.open(path + '/config.json', 'w') do |f|
+          f.puts JSON.generate(conf)
         end
       end
 
       def load
-        File.open(path + '/config.yaml', 'r') do |f|
-          YAML.load(f)
+        File.open(path + '/config.json', 'r') do |f|
+          JSON.parse(f.read)
         end
       end
     end

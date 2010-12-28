@@ -1,4 +1,7 @@
 module VimGolf
+
+  GOLFHOST = ENV['GOLFHOST'] || "http://www.vimgolf.com"
+
   class Error
   end
 
@@ -57,27 +60,36 @@ module VimGolf
 
       if download(id) == :ok
 
-        # TODO:
-        # 1. query vimgolf site for stated ID - download challenge + final
-        # 2. ...
-        # 3. diff the files, if same, then score
-        # 4. upload to vimgolf.com
-
         # - Z - start in restricted mode - no system commands
         # - n - no swap file, memory only editing
         # - --noplugin - don't load any plugins, lets be fair!
         # - +0 - always start on line 0
-        system("vim -Z -n --noplugin +0 -W #{challenge_log(id)} #{challenge(id)}")
+        system("vim -Z -n --noplugin +0 -W #{log(id)} #{input(id)}")
 
         if $?.exitstatus.zero?
-          score = File.size(challenge_log(id))
-          VimGolf.ui.info "Session recorded, your score: #{score}"
+          diff = `diff --strip-trailing-cr #{input(id)} #{output(id)}`
+
+          if diff.size > 0
+            VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output:"
+            VimGolf.ui.warn "#"*50
+            puts diff
+            VimGolf.ui.warn "#"*50
+            VimGolf.ui.warn "Please try again!"
+            return
+          end
+
+          score = File.size(log(id))
+          VimGolf.ui.info "Success! Your output matches. Your score: #{score}"
 
           if VimGolf.ui.yes? "Upload result to VimGolf? (yes / no)"
             VimGolf.ui.info "Uploading to VimGolf..."
-            # TODO
 
-            VimGolf.ui.info "Uploaded, thanks for golfing!"
+            if upload(id) == :ok
+              VimGolf.ui.info "Uploaded entry, thanks for golfing!"
+              VimGolf.ui.info "View the leader board: http://vimgolf.com/challenges/#{id}"
+            else
+              VimGolf.ui.error "Uh oh, upload to VimGolf failed."
+            end
 
           else
             VimGolf.ui.warn "Skipping upload. Thanks for playing. Give it another shot!"
@@ -97,7 +109,7 @@ module VimGolf
     private
       def download(id)
         begin
-          url = URI.parse("http://localhost:3000/challenges/#{id}.json")
+          url = URI.parse("#{GOLFHOST}/challenges/#{id}.json")
           req = Net::HTTP::Get.new(url.path)
           res = Net::HTTP.start(url.host, url.port) {|http| http.request(req)}
           data = JSON.parse(res.body)
@@ -111,12 +123,31 @@ module VimGolf
         end
       end
 
-      def challenge(name)
-        Config.put_path + "/#{name}.input"
+      def upload(id)
+        begin
+          url = URI.parse("#{GOLFHOST}/entry.json")
+          http = Net::HTTP.new(url.host, url.port)
+          res = http.start do |conn|
+            key = Config.load['key']
+            data = "challenge_id=#{id}&entry=#{IO.read(log(id))}&apikey=#{key}"
+            head = {'Accept' => 'application/json'}
+
+            conn.post(url.path, data, head)
+          end
+
+          JSON.parse(res.body)['status'].to_sym
+
+        rescue Exception => e
+          VimGolf.ui.error "Uh oh, entry upload has failed, please check your key."
+        end
       end
 
-      def challenge_log(name)
-        challenge(name) + ".log"
+      def input(id);  challenge(id) + ".input"; end
+      def output(id); challenge(id) + ".output"; end
+      def log(id);    challenge(id) + ".log"; end
+
+      def challenge(id)
+        Config.put_path + "/#{id}"
       end
   end
 end

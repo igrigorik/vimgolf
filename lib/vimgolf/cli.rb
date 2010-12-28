@@ -1,6 +1,7 @@
 module VimGolf
 
-  GOLFHOST = ENV['GOLFHOST'] || "http://vimgolf.com"
+  GOLFHOST =  ENV['GOLFHOST'] || "http://vimgolf.com"
+  GOLFDEBUG = ENV['GOLFDEBUG'].to_sym rescue false
 
   class Error
   end
@@ -58,9 +59,9 @@ module VimGolf
     def put(id = nil)
       VimGolf.ui.warn "Launching VimGolf session for challenge: #{id}"
 
-      type = download(id)
+      begin
+        type = download(id)
 
-      if !type.nil? && !type.empty?
         # - n - no swap file, memory only editing
         # - --noplugin - don't load any plugins, lets be fair!
         # - +0 - always start on line 0
@@ -84,12 +85,10 @@ module VimGolf
           if VimGolf.ui.yes? "Upload result to VimGolf? (yes / no)"
             VimGolf.ui.warn "Uploading to VimGolf..."
 
-            if upload(id) == :ok
-              VimGolf.ui.info "Uploaded entry, thanks for golfing!"
-              VimGolf.ui.info "View the leaderboard: #{GOLFHOST}/challenges/#{id}"
-            else
-              VimGolf.ui.error "Uh oh, upload to VimGolf failed, please check your key."
-            end
+            upload(id)
+
+            VimGolf.ui.info "Uploaded entry, thanks for golfing!"
+            VimGolf.ui.info "View the leaderboard: #{GOLFHOST}/challenges/#{id}"
 
           else
             VimGolf.ui.warn "Skipping upload. Thanks for playing. Give it another shot!"
@@ -103,10 +102,14 @@ module VimGolf
 
           VimGolf.ui.error error
         end
+
+      rescue Exception => e
+        VimGolf.ui.error "Uh oh, something wen't wrong! Error: #{e}"
+        Vimgolf.ui.error "If the error persists, please report it to github.com/igrigorik/vimgolf"
       end
     end
 
-    private
+    no_tasks do
       def download(id)
         begin
           url = URI.parse("#{GOLFHOST}/challenges/#{id}.json")
@@ -126,8 +129,8 @@ module VimGolf
           data['in']['type']
 
         rescue Exception => e
-          VimGolf.ui.error "Uh oh, couldn't download or parse challenge, please verify your challenge id and client version."
-          nil
+          log(e)
+          raise "Uh oh, couldn't download or parse challenge, please verify your challenge id & client version."
         end
       end
 
@@ -146,16 +149,23 @@ module VimGolf
           JSON.parse(res.body)['status'].to_sym
 
         rescue Exception => e
-          VimGolf.ui.error "Uh oh, entry upload has failed, please check your key."
+          log(e)
+          raise "Uh oh, entry upload has failed, please check your key."
         end
       end
+    end
 
+    private
       def input(id, type);  challenge(id) + ".#{type}"; end
       def output(id); challenge(id) + ".output"; end
       def log(id);    challenge(id) + ".log"; end
 
       def challenge(id)
         Config.put_path + "/#{id}"
+      end
+
+      def log(msg)
+        p [caller.first, msg] if GOLFDEBUG
       end
   end
 end

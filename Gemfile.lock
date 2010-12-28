@@ -1,13 +1,15 @@
 PATH
   remote: .
   specs:
-    vimgolf (0.0.1)
+    vimgolf (0.1.0)
+      json
       thor
 
 GEM
   remote: http://rubygems.org/
   specs:
     diff-lcs (1.1.2)
+    json (1.4.6)
     rspec (2.3.0)
       rspec-core (~> 2.3.0)
       rspec-expectations (~> 2.3.0)
@@ -22,6 +24,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  json
   rspec
   thor
   vimgolf!

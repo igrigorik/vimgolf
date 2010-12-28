@@ -56,7 +56,7 @@ module VimGolf
     DESC
 
     def put(id = nil)
-      VimGolf.ui.info "Launching VimGolf session for challenge: #{id}"
+      VimGolf.ui.warn "Launching VimGolf session for challenge: #{id}"
 
       if download(id) == :ok
 
@@ -82,13 +82,13 @@ module VimGolf
           VimGolf.ui.info "Success! Your output matches. Your score: #{score}"
 
           if VimGolf.ui.yes? "Upload result to VimGolf? (yes / no)"
-            VimGolf.ui.info "Uploading to VimGolf..."
+            VimGolf.ui.warn "Uploading to VimGolf..."
 
             if upload(id) == :ok
               VimGolf.ui.info "Uploaded entry, thanks for golfing!"
-              VimGolf.ui.info "View the leader board: http://vimgolf.com/challenges/#{id}"
+              VimGolf.ui.info "View the leaderboard: #{GOLFHOST}/challenges/#{id}"
             else
-              VimGolf.ui.error "Uh oh, upload to VimGolf failed."
+              VimGolf.ui.error "Uh oh, upload to VimGolf failed, please check your key."
             end
 
           else
@@ -114,12 +114,18 @@ module VimGolf
           res = Net::HTTP.start(url.host, url.port) {|http| http.request(req)}
           data = JSON.parse(res.body)
 
+          if data['client'] != Vimgolf::VERSION
+            VimGolf.ui.error "Client version mismatch. Installed: #{Vimgolf::VERSION}, Required: #{data['client']}."
+            VimGolf.ui.error "\t gem install vimgolf"
+            raise
+          end
+
           File.open(Config.put_path + "/#{id}.input", "w") {|f| f.puts data['in']}
           File.open(Config.put_path + "/#{id}.output", "w") {|f| f.puts data['out']}
 
           :ok
         rescue Exception => e
-          VimGolf.ui.error "Uh oh, couldn't download or parse challenge, please verify your challenge id."
+          VimGolf.ui.error "Uh oh, couldn't download or parse challenge, please verify your challenge id and client version."
         end
       end
 

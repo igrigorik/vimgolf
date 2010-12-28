@@ -64,8 +64,10 @@ module VimGolf
 
         # - n - no swap file, memory only editing
         # - --noplugin - don't load any plugins, lets be fair!
+        # -u NONE and -U none - don't load .vimrc or .gvimrc
+        # -i NONE - don't load .viminfo (for saved macros and the like)
         # - +0 - always start on line 0
-        system("vim -n --noplugin -u NONE -U NONE +0 -W #{log(id)} #{input(id, type)}")
+        system("vim -n --noplugin -u NONE -U NONE -i NONE +0 -W #{log(id)} #{input(id, type)}")
 
         if $?.exitstatus.zero?
           diff = `diff --strip-trailing-cr #{input(id, type)} #{output(id)}`

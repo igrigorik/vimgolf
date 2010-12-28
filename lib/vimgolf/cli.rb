@@ -67,7 +67,7 @@ module VimGolf
         # -u NONE and -U none - don't load .vimrc or .gvimrc
         # -i NONE - don't load .viminfo (for saved macros and the like)
         # - +0 - always start on line 0
-        system("vim -n --noplugin -u NONE -U NONE -i NONE +0 -W #{log(id)} #{input(id, type)}")
+        system("vim -n --noplugin -i NONE +0 -W #{log(id)} #{input(id, type)}")
 
         if $?.exitstatus.zero?
           diff = `diff --strip-trailing-cr #{input(id, type)} #{output(id)}`
@@ -131,7 +131,7 @@ module VimGolf
           data['in']['type']
 
         rescue Exception => e
-          log(e)
+          debug(e)
           raise "Uh oh, couldn't download or parse challenge, please verify your challenge id & client version."
         end
       end
@@ -151,7 +151,7 @@ module VimGolf
           JSON.parse(res.body)['status'].to_sym
 
         rescue Exception => e
-          log(e)
+          debug(e)
           raise "Uh oh, entry upload has failed, please check your key."
         end
       end
@@ -166,7 +166,7 @@ module VimGolf
         Config.put_path + "/#{id}"
       end
 
-      def log(msg)
+      def debug(msg)
         p [caller.first, msg] if GOLFDEBUG
       end
   end

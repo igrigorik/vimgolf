@@ -107,7 +107,7 @@ module VimGolf
 
       rescue Exception => e
         VimGolf.ui.error "Uh oh, something wen't wrong! Error: #{e}"
-        Vimgolf.ui.error "If the error persists, please report it to github.com/igrigorik/vimgolf"
+        VimGolf.ui.error "If the error persists, please report it to github.com/igrigorik/vimgolf"
       end
     end
 

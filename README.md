@@ -1,4 +1,4 @@
-# VimGolf.com Client
+# [VimGolf.com](http://www.vimgolf.com) Client
 
 Real Vim ninjas count every keystroke - do you? Head on over to vimgolf.com, pick a challenge, and show us what you've got! The rules are simple:
 

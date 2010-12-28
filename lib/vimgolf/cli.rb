@@ -87,10 +87,12 @@ module VimGolf
           if VimGolf.ui.yes? "Upload result to VimGolf? (yes / no)"
             VimGolf.ui.warn "Uploading to VimGolf..."
 
-            upload(id)
-
-            VimGolf.ui.info "Uploaded entry, thanks for golfing!"
-            VimGolf.ui.info "View the leaderboard: #{GOLFHOST}/challenges/#{id}"
+            if upload(id) == :ok
+              VimGolf.ui.info "Uploaded entry, thanks for golfing!"
+              VimGolf.ui.info "View the leaderboard: #{GOLFHOST}/challenges/#{id}"
+            else
+              VimGolf.ui.error "Uh oh, upload filed. You're not cheating are you? :-)"
+            end
 
           else
             VimGolf.ui.warn "Skipping upload. Thanks for playing. Give it another shot!"

@@ -124,7 +124,7 @@ module VimGolf
           if data['client'] != Vimgolf::VERSION
             VimGolf.ui.error "Client version mismatch. Installed: #{Vimgolf::VERSION}, Required: #{data['client']}."
             VimGolf.ui.error "\t gem install vimgolf"
-            raise
+            raise "Bad Version"
           end
 
           File.open(Config.put_path + "/#{id}.#{data['in']['type']}", "w") {|f| f.puts data['in']['data']}
@@ -142,14 +142,12 @@ module VimGolf
         begin
           url = URI.parse("#{GOLFHOST}/entry.json")
           http = Net::HTTP.new(url.host, url.port)
-          res = http.start do |conn|
-            key = Config.load['key']
-            data = "challenge_id=#{id}&entry=#{IO.read(log(id))}&apikey=#{key}"
-            head = {'Accept' => 'application/json'}
 
-            conn.post(url.path, data, head)
-          end
+          request = Net::HTTP::Post.new(url.request_uri)
+          request.set_form_data({"challenge_id" => id, "apikey" => Config.load['key'], "entry" => IO.read(log(id))})
+          request["Accept"] = "application/json"
 
+          res = http.request(request)
           JSON.parse(res.body)['status'].to_sym
 
         rescue Exception => e

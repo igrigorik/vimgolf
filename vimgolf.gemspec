@@ -23,4 +23,13 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
+
+   s.post_install_message = %{
+------------------------------------------------------------------------------
+Thank you for installing vimgolf-#{Vimgolf::VERSION}. As of 0.1.3, we are shipping a custom
+vimgolf .vimrc file for each challenge to help level the playing field.
+
+For more information, rules & updates: http://vimgolf.com/about
+------------------------------------------------------------------------------
+}
 end

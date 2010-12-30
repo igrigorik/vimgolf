@@ -69,6 +69,13 @@ module VimGolf
         # - +0 - always start on line 0
         system("vim -n --noplugin -i NONE +0 -W #{log(id)} #{input(id, type)}")
 
+        # remove heading \x80\xFD5
+        # see: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=608242
+        result = File.read(log(id))
+        if result.start_with? "\x80\xFD5"
+          File.open(log(id), 'w') {|f| f.print result.sub(/\A\x80\xFD5/, '')}
+        end
+
         if $?.exitstatus.zero?
           diff = `diff --strip-trailing-cr #{input(id, type)} #{output(id)}`
 

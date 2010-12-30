@@ -2,6 +2,7 @@ module VimGolf
 
   GOLFHOST =  ENV['GOLFHOST'] || "http://vimgolf.com"
   GOLFDEBUG = ENV['GOLFDEBUG'].to_sym rescue false
+  DIFF = ENV['DIFF'] || 'diff --strip-trailing-cr'
 
   class Error
   end
@@ -72,7 +73,7 @@ module VimGolf
         system(vimcmd)
 
         if $?.exitstatus.zero?
-          diff = `diff --strip-trailing-cr #{input(id, type)} #{output(id)}`
+          diff = `#{DIFF} #{input(id, type)} #{output(id)}`
 
           if diff.size > 0
             VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output:"

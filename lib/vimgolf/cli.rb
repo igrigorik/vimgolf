@@ -63,11 +63,13 @@ module VimGolf
         type = download(id)
 
         # - n - no swap file, memory only editing
-        # - --noplugin - don't load any plugins, lets be fair!
-        # -u NONE and -U none - don't load .vimrc or .gvimrc
-        # -i NONE - don't load .viminfo (for saved macros and the like)
         # - +0 - always start on line 0
-        system("vim -n --noplugin -i NONE +0 -W #{log(id)} #{input(id, type)}")
+        # - --noplugin - don't load any plugins, lets be fair!
+        # -i NONE - don't load .viminfo (for saved macros and the like)
+        # - u - load vimgolf .vimrc to level the playing field
+        vimcmd = "vim -n --noplugin -i NONE +0 -u #{vimrc(id)} -W #{log(id)} #{input(id, type)}"
+        debug(vimcmd)
+        system(vimcmd)
 
         if $?.exitstatus.zero?
           diff = `diff --strip-trailing-cr #{input(id, type)} #{output(id)}`
@@ -129,6 +131,7 @@ module VimGolf
 
           File.open(Config.put_path + "/#{id}.#{data['in']['type']}", "w") {|f| f.puts data['in']['data']}
           File.open(Config.put_path + "/#{id}.output", "w") {|f| f.puts data['out']['data']}
+          File.open(Config.put_path + "/#{id}.golfrc", "w") {|f| f.puts data['vimrc']}
 
           data['in']['type']
 
@@ -160,7 +163,8 @@ module VimGolf
     private
       def input(id, type);  challenge(id) + ".#{type}"; end
       def output(id); challenge(id) + ".output"; end
-      def log(id);    challenge(id) + ".log"; end
+      def log(id);    challenge(id) + ".log";    end
+      def vimrc(id);  challenge(id) + ".golfrc"; end
 
       def challenge(id)
         Config.put_path + "/#{id}"

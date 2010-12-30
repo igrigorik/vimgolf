@@ -93,7 +93,7 @@ module VimGolf
               VimGolf.ui.info "Uploaded entry, thanks for golfing!"
               VimGolf.ui.info "View the leaderboard: #{GOLFHOST}/challenges/#{id}"
             else
-              VimGolf.ui.error "Uh oh, upload filed. You're not cheating are you? :-)"
+              VimGolf.ui.error "Uh oh, upload failed. You're not cheating are you? :-)"
             end
 
           else

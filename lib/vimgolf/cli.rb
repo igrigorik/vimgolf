@@ -1,8 +1,9 @@
 module VimGolf
 
-  GOLFHOST =  ENV['GOLFHOST'] || "http://vimgolf.com"
+  GOLFHOST  = ENV['GOLFHOST'] || "http://vimgolf.com"
   GOLFDEBUG = ENV['GOLFDEBUG'].to_sym rescue false
-  DIFF = ENV['DIFF'] || 'diff --strip-trailing-cr'
+  DIFF      = ENV['DIFF'] || 'diff --strip-trailing-cr'
+  PROXY     = ENV['http_proxy'] || ''
 
   class Error
   end
@@ -121,7 +122,11 @@ module VimGolf
         begin
           url = URI.parse("#{GOLFHOST}/challenges/#{id}.json")
           req = Net::HTTP::Get.new(url.path)
-          res = Net::HTTP.start(url.host, url.port) {|http| http.request(req)}
+
+          proxy_url, proxy_user, proxy_pass = get_proxy
+          proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
+          res = proxy.start(url.host, url.port) { |http| http.request(req) }
+
           data = JSON.parse(res.body)
 
           if data['client'] != Vimgolf::VERSION
@@ -145,15 +150,18 @@ module VimGolf
       def upload(id)
         begin
           url = URI.parse("#{GOLFHOST}/entry.json")
-          http = Net::HTTP.new(url.host, url.port)
 
-          request = Net::HTTP::Post.new(url.request_uri)
-          request.set_form_data({"challenge_id" => id, "apikey" => Config.load['key'], "entry" => IO.read(log(id))})
-          request["Accept"] = "application/json"
+          proxy_url, proxy_user, proxy_pass = get_proxy
+          proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
 
-          res = http.request(request)
-          JSON.parse(res.body)['status'].to_sym
+          proxy.start(url.host, url.port) do |http|
+            request = Net::HTTP::Post.new(url.request_uri)
+            request.set_form_data({"challenge_id" => id, "apikey" => Config.load['key'], "entry" => IO.read(log(id))})
+            request["Accept"] = "application/json"
 
+            res = http.request(request)
+            JSON.parse(res.body)['status'].to_sym
+          end
         rescue Exception => e
           debug(e)
           raise "Uh oh, entry upload has failed, please check your key."
@@ -169,6 +177,20 @@ module VimGolf
 
       def challenge(id)
         Config.put_path + "/#{id}"
+      end
+
+      def get_proxy
+        begin
+          proxy_url = URI.parse(PROXY)
+        rescue Exception => e
+          VimGolf.ui.error "Invalid proxy uri in http_proxy environment variable - will try to run with out proxy"
+          proxy_url = URI.parse("");
+        end
+
+        proxy_url.port ||= 80
+        proxy_user, proxy_pass = proxy_url.userinfo.split(/:/) if proxy_url.userinfo
+
+        return proxy_url, proxy_user, proxy_pass
       end
 
       def debug(msg)

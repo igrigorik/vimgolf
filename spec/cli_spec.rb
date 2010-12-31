@@ -30,7 +30,7 @@ describe VimGolf do
     end
 
     it "should return type of challenge on success" do
-      c.download('4d1a21e88ae121365c00000e').should == "rb"
+      c.download('4d1a1c36567bac34a9000002').should == "rb"
     end
 
     it "should raise error on invalid upload id" do

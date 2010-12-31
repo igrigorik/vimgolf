@@ -85,7 +85,7 @@ module VimGolf
             return
           end
 
-          score = File.size(log(id))
+          score = Keylog.score(IO.read(log(id)))
           VimGolf.ui.info "Success! Your output matches. Your score: #{score}"
 
           if VimGolf.ui.yes? "Upload result to VimGolf? (yes / no)"

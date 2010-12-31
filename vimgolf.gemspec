@@ -26,8 +26,10 @@ Gem::Specification.new do |s|
 
    s.post_install_message = %{
 ------------------------------------------------------------------------------
-Thank you for installing vimgolf-#{Vimgolf::VERSION}. As of 0.1.3, we are shipping a custom
-vimgolf .vimrc file for each challenge to help level the playing field.
+Thank you for installing vimgolf-#{Vimgolf::VERSION}. 
+
+0.1.3: custom vimgolf .vimrc file to help level the playing field
+0.2.0: proxy support, custom diffs + proper vimscript parser/scoring
 
 For more information, rules & updates: http://vimgolf.com/about
 ------------------------------------------------------------------------------

@@ -2,7 +2,7 @@ module VimGolf
 
   GOLFHOST  = ENV['GOLFHOST'] || "http://vimgolf.com"
   GOLFDEBUG = ENV['GOLFDEBUG'].to_sym rescue false
-  DIFF      = ENV['DIFF'] || 'diff --strip-trailing-cr'
+  DIFF      = ENV['DIFF'] || 'diff'
   PROXY     = ENV['http_proxy'] || ''
 
   class Error

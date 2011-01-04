@@ -2,7 +2,8 @@ module VimGolf
 
   GOLFHOST  = ENV['GOLFHOST'] || "http://vimgolf.com"
   GOLFDEBUG = ENV['GOLFDEBUG'].to_sym rescue false
-  DIFF      = ENV['DIFF'] || 'diff'
+  GOLFDIFF  = ENV['GOFLDIFF'] || 'diff'
+  GOLFVIM   = ENV['GOLFVIM'] || 'vim'
   PROXY     = ENV['http_proxy'] || ''
 
   class Error
@@ -69,12 +70,12 @@ module VimGolf
         # - --noplugin - don't load any plugins, lets be fair!
         # -i NONE - don't load .viminfo (for saved macros and the like)
         # - u - load vimgolf .vimrc to level the playing field
-        vimcmd = "vim -n --noplugin -i NONE +0 -u #{vimrc(id)} -W #{log(id)} #{input(id, type)}"
+        vimcmd = "#{GOLFVIM} -n --noplugin -i NONE +0 -u #{vimrc(id)} -W #{log(id)} #{input(id, type)}"
         debug(vimcmd)
         system(vimcmd)
 
         if $?.exitstatus.zero?
-          diff = `#{DIFF} #{input(id, type)} #{output(id)}`
+          diff = `#{GOLFDIFF} #{input(id, type)} #{output(id)}`
 
           if diff.size > 0
             VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output:"

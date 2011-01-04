@@ -33,23 +33,23 @@ module VimGolf
     desc "setup", "configure your VimGolf credentials"
     long_desc <<-DESC
     To participate in the challenge please go to vimgolf.com and register an
-    account. Once signed in, you will get your API token, which you need to
+    account. Once signed in, you will get your API key, which you need to
     setup the command client.
 
-      If you have the token, simply run the setup and paste in your token.
+      If you have the key, simply run the setup and paste in your key.
       DESC
 
     def setup
-      token = VimGolf.ui.ask "Please specify your VimGolf API token (register on vimgolf.com to get it):"
+      key = VimGolf.ui.ask "Please specify your VimGolf API key (register on vimgolf.com to get it):"
 
-      if token =~ /[\w\d]{32}/
+      if key =~ /[\w\d]{32}/
         FileUtils.mkdir_p Config.path
         FileUtils.mkdir_p Config.put_path
-        Config.save({'key' => token})
+        Config.save({'key' => key})
 
         VimGolf.ui.info "Saved. Happy golfing!"
       else
-        VimGolf.ui.error "Invalid token, please double check your token on vimgolf.com"
+        VimGolf.ui.error "Invalid key, please double check your key on vimgolf.com"
       end
     end
 

@@ -76,17 +76,17 @@ module VimGolf
 
         if $?.exitstatus.zero?
           diff = `#{GOLFDIFF} \"#{input(id, type)}\" \"#{output(id)}\"`
+          score = Keylog.score(IO.read(log(id)))
 
           if diff.size > 0
             VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output:"
             VimGolf.ui.warn "#"*50
             puts diff
             VimGolf.ui.warn "#"*50
-            VimGolf.ui.warn "Please try again!"
+            VimGolf.ui.warn "Please try again! Your score for this (failed) attempt was: #{score}"
             return
           end
 
-          score = Keylog.score(IO.read(log(id)))
           VimGolf.ui.info "Success! Your output matches. Your score: #{score}"
 
           if VimGolf.ui.yes? "Upload result to VimGolf? (yes / no)"

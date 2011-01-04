@@ -44,7 +44,7 @@ module VimGolf
       if token =~ /[\w\d]{32}/
         FileUtils.mkdir_p Config.path
         FileUtils.mkdir_p Config.put_path
-        Config.save({:key => token})
+        Config.save({'key' => token})
 
         VimGolf.ui.info "Saved. Happy golfing!"
       else
@@ -120,16 +120,19 @@ module VimGolf
     no_tasks do
       def download(id)
         begin
-          url = URI.parse("#{GOLFHOST}/challenges/#{id}.json")
+          url = URI.parse("#{GOLFHOST}/challenges/#{id}.yaml")
           req = Net::HTTP::Get.new(url.path)
 
           proxy_url, proxy_user, proxy_pass = get_proxy
           proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
           res = proxy.start(url.host, url.port) { |http| http.request(req) }
 
-          data = JSON.parse(res.body)
+          data = YAML.load(res.body)
 
-          if data['client'] != Vimgolf::VERSION
+          if !data.is_a? Hash
+            raise
+
+          elsif data['client'] != Vimgolf::VERSION
             VimGolf.ui.error "Client version mismatch. Installed: #{Vimgolf::VERSION}, Required: #{data['client']}."
             VimGolf.ui.error "\t gem install vimgolf"
             raise "Bad Version"
@@ -149,7 +152,7 @@ module VimGolf
 
       def upload(id)
         begin
-          url = URI.parse("#{GOLFHOST}/entry.json")
+          url = URI.parse("#{GOLFHOST}/entry.yaml")
 
           proxy_url, proxy_user, proxy_pass = get_proxy
           proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
@@ -157,10 +160,14 @@ module VimGolf
           proxy.start(url.host, url.port) do |http|
             request = Net::HTTP::Post.new(url.request_uri)
             request.set_form_data({"challenge_id" => id, "apikey" => Config.load['key'], "entry" => IO.read(log(id))})
-            request["Accept"] = "application/json"
+            request["Accept"] = "text/yaml"
 
             res = http.request(request)
-            JSON.parse(res.body)['status'].to_sym
+            res = YAML.load(res.body)
+
+            raise if !res.is_a? Hash
+            res['status'].to_sym
+
           end
         rescue Exception => e
           debug(e)

@@ -30,6 +30,9 @@ Thank you for installing vimgolf-#{Vimgolf::VERSION}.
 
 0.1.3: custom vimgolf .vimrc file to help level the playing field
 0.2.0: proxy support, custom diffs + proper vimscript parser/scoring
+0.3.0: improve windows support, switch to YAML to remove c-ext dependency
+
+*NOTE*: please re-run "vimgolf setup" prior to playing!
 
 For more information, rules & updates: http://vimgolf.com/about
 ------------------------------------------------------------------------------

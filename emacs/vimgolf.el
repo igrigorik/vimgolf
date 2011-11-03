@@ -6,6 +6,7 @@
 ;; Maintainer: Tim Visher <tim.visher@gmail.com>
 ;; Created: 2011-11-02
 ;; Version: 0.1
+;; Package-Version: 6a616502
 ;; Keywords: games vimgolf vim
 
 ;; This file is not part of GNU Emacs
@@ -38,6 +39,25 @@
 ;; [CC BY-NC-SA 3.0](http://creativecommons.org/licenses/by-nc-sa/3.0/)
 
 ;;; Code:
+
+(let* ((challenge-id "4ea9bc988b36f70001000008")
+       (vimgolf-yaml-buffer (url-retrieve-synchronously (concat "http://vimgolf.com/challenges/" challenge-id ".yaml"))))
+  (save-current-buffer
+    (set-buffer vimgolf-yaml-buffer)
+    (goto-char (point-min))
+    (search-forward "data: |+\n" nil t)
+    (let ((vimgolf-start-buffer (get-buffer-create "*vimgolf-start*"))
+          (vimgolf-work-buffer (get-buffer-create "*vimgolf-work*"))
+          (vimgolf-end-buffer (get-buffer-create "*vimgolf-end*")))
+      (progn
+        (append-to-buffer vimgolf-start-buffer (point) (point-max))
+        (append-to-buffer vimgolf-work-buffer (point) (point-max))
+        (save-current-buffer
+          (set-buffer vimgolf-start-buffer)
+          (goto-char (point-min))
+          (search-forward "\n    \n  type: input" nil t)
+          (delete-region (match-beginning 0) (point-max)))))
+    (set-window-buffer (selected-window) (current-buffer))))
 
 ;; Use dribble file to allow for running from within emacs
 ;; Main interface should be `M-x vimgolf Challenge ID: <Enter ID> RET <Do Your Editing> C-c C-v C-c`

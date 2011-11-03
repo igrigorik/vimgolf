@@ -55,9 +55,29 @@
         (save-current-buffer
           (set-buffer vimgolf-start-buffer)
           (goto-char (point-min))
-          (search-forward "\n    \n  type: input" nil t)
-          (delete-region (match-beginning 0) (point-max)))))
-    (set-window-buffer (selected-window) (current-buffer))))
+          (search-forward "    \n  type: input" nil t)
+          (delete-region (match-beginning 0) (point-max))
+          (decrease-left-margin (point-min) (point-max) 4)
+          (goto-char (point-min)))
+        (save-current-buffer
+          (set-buffer vimgolf-work-buffer)
+          (goto-char (point-min))
+          (search-forward "    \n  type: input" nil t)
+          (delete-region (match-beginning 0) (point-max))
+          (decrease-left-margin (point-min) (point-max) 4)
+          (goto-char (point-min)))
+        (search-forward "data: |+\n" nil t)
+        (append-to-buffer vimgolf-end-buffer (point) (point-max))
+        (save-current-buffer
+          (set-buffer vimgolf-end-buffer)
+          (goto-char (point-min))
+          (search-forward "    \n  type: output")
+          (delete-region (match-beginning 0) (point-max))
+          (decrease-left-margin (point-min) (point-max) 4)
+          (goto-char (point-min)))
+        (delete-other-windows)
+        (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
+        (set-window-buffer (selected-window) vimgolf-work-buffer)))))
 
 ;; Use dribble file to allow for running from within emacs
 ;; Main interface should be `M-x vimgolf Challenge ID: <Enter ID> RET <Do Your Editing> C-c C-v C-c`

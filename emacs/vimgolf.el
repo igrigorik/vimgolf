@@ -57,29 +57,36 @@
 
 (defvar vimgolf-challenge nil)
 
+(defvar vimgolf-prior-window-configuration nil)
+
 (defun vimgolf-submit ()
-  ""
+  "Stop the challenge and attempt to submit the solution to VimGolf."
   (interactive))
 
 (defun vimgolf-revert ()
-  ""
+  "Revert the work buffer to it's original state and reset keystrokes."
   (interactive))
 
 (defun vimgolf-diff ()
-  ""
+  "Pause the competition and view differences between the buffers."
   (interactive))
 
 (defun vimgolf-continue ()
-  ""
+  "Restore work and end buffers and begin recording keystrokes again."
   (interactive))
 
 (defun vimgolf-pause ()
-  ""
+  "Stop recording keystrokes."
   (interactive))
 
 (defun vimgolf-quit ()
-  ""
-  (interactive))
+  "Cancel the competition."
+  (interactive)
+  (progn
+    (if (get-buffer "*vimgolf-start*") (kill-buffer "*vimgolf-start*"))
+    (if (get-buffer "*vimgolf-work*") (kill-buffer "*vimgolf-work*"))
+    (if (get-buffer "*vimgolf-end*") (kill-buffer "*vimgolf-end*"))
+    (set-window-configuration vimgolf-prior-window-configuration)))
 
 (defvar vimgolf-mode-map
   (let ((map (make-sparse-keymap)))
@@ -113,43 +120,52 @@
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
   (interactive "sChallenge ID: ")
-  (let* ((vimgolf-yaml-buffer (url-retrieve-synchronously (concat "http://vimgolf.com/challenges/" challenge-id ".yaml"))))
-    (save-current-buffer
-      (set-buffer vimgolf-yaml-buffer)
-      (goto-char (point-min))
-      (search-forward "data: |+\n" nil t)
-      (let ((vimgolf-start-buffer (get-buffer-create "*vimgolf-start*"))
-            (vimgolf-work-buffer (get-buffer-create "*vimgolf-work*"))
-            (vimgolf-end-buffer (get-buffer-create "*vimgolf-end*")))
-        (progn
-          (append-to-buffer vimgolf-start-buffer (point) (point-max))
-          (append-to-buffer vimgolf-work-buffer (point) (point-max))
-          (save-current-buffer
-            (set-buffer vimgolf-start-buffer)
-            (goto-char (point-min))
-            (search-forward "    \n  type: input" nil t)
-            (delete-region (match-beginning 0) (point-max))
-            (decrease-left-margin (point-min) (point-max) 4)
-            (goto-char (point-min)))
-          (save-current-buffer
-            (set-buffer vimgolf-work-buffer)
-            (goto-char (point-min))
-            (search-forward "    \n  type: input" nil t)
-            (delete-region (match-beginning 0) (point-max))
-            (decrease-left-margin (point-min) (point-max) 4)
-            (goto-char (point-min)))
-          (search-forward "data: |+\n" nil t)
-          (append-to-buffer vimgolf-end-buffer (point) (point-max))
-          (save-current-buffer
-            (set-buffer vimgolf-end-buffer)
-            (goto-char (point-min))
-            (search-forward "    \n  type: output")
-            (delete-region (match-beginning 0) (point-max))
-            (decrease-left-margin (point-min) (point-max) 4)
-            (goto-char (point-min)))
-          (delete-other-windows)
-          (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
-          (set-window-buffer (selected-window) vimgolf-work-buffer))))))
+  (progn
+    (setq vimgolf-prior-window-configuration (current-window-configuration)
+          vimgolf-challenge challenge-id)
+    (let* ((vimgolf-yaml-buffer (url-retrieve-synchronously (concat "http://vimgolf.com/challenges/" challenge-id ".yaml"))))
+      (save-current-buffer
+        (set-buffer vimgolf-yaml-buffer)
+        (goto-char (point-min))
+        (search-forward "data: |+\n" nil t)
+        (if (get-buffer "*vimgolf-start*") (kill-buffer "*vimgolf-start*"))
+        (if (get-buffer "*vimgolf-work*") (kill-buffer "*vimgolf-work*"))
+        (if (get-buffer "*vimgolf-end*") (kill-buffer "*vimgolf-end*"))
+        (let ((vimgolf-start-buffer (get-buffer-create "*vimgolf-start*"))
+              (vimgolf-work-buffer (get-buffer-create "*vimgolf-work*"))
+              (vimgolf-end-buffer (get-buffer-create "*vimgolf-end*")))
+          (progn
+            (append-to-buffer vimgolf-start-buffer (point) (point-max))
+            (append-to-buffer vimgolf-work-buffer (point) (point-max))
+            (save-current-buffer
+              (set-buffer vimgolf-start-buffer)
+              (goto-char (point-min))
+              (search-forward "    \n  type: input" nil t)
+              (delete-region (match-beginning 0) (point-max))
+              (decrease-left-margin (point-min) (point-max) 4)
+              (goto-char (point-min))
+              (vimgolf-mode t))
+            (save-current-buffer
+              (set-buffer vimgolf-work-buffer)
+              (goto-char (point-min))
+              (search-forward "    \n  type: input" nil t)
+              (delete-region (match-beginning 0) (point-max))
+              (decrease-left-margin (point-min) (point-max) 4)
+              (goto-char (point-min))
+              (vimgolf-mode t))
+            (search-forward "data: |+\n" nil t)
+            (append-to-buffer vimgolf-end-buffer (point) (point-max))
+            (save-current-buffer
+              (set-buffer vimgolf-end-buffer)
+              (goto-char (point-min))
+              (search-forward "    \n  type: output")
+              (delete-region (match-beginning 0) (point-max))
+              (decrease-left-margin (point-min) (point-max) 4)
+              (goto-char (point-min))
+              (vimgolf-mode t))
+            (delete-other-windows)
+            (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
+            (set-window-buffer (selected-window) vimgolf-work-buffer)))))))
 
 
 

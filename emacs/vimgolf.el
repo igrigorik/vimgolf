@@ -40,44 +40,117 @@
 
 ;;; Code:
 
-(let* ((challenge-id "4ea9bc988b36f70001000008")
-       (vimgolf-yaml-buffer (url-retrieve-synchronously (concat "http://vimgolf.com/challenges/" challenge-id ".yaml"))))
-  (save-current-buffer
-    (set-buffer vimgolf-yaml-buffer)
-    (goto-char (point-min))
-    (search-forward "data: |+\n" nil t)
-    (let ((vimgolf-start-buffer (get-buffer-create "*vimgolf-start*"))
-          (vimgolf-work-buffer (get-buffer-create "*vimgolf-work*"))
-          (vimgolf-end-buffer (get-buffer-create "*vimgolf-end*")))
-      (progn
-        (append-to-buffer vimgolf-start-buffer (point) (point-max))
-        (append-to-buffer vimgolf-work-buffer (point) (point-max))
-        (save-current-buffer
-          (set-buffer vimgolf-start-buffer)
-          (goto-char (point-min))
-          (search-forward "    \n  type: input" nil t)
-          (delete-region (match-beginning 0) (point-max))
-          (decrease-left-margin (point-min) (point-max) 4)
-          (goto-char (point-min)))
-        (save-current-buffer
-          (set-buffer vimgolf-work-buffer)
-          (goto-char (point-min))
-          (search-forward "    \n  type: input" nil t)
-          (delete-region (match-beginning 0) (point-max))
-          (decrease-left-margin (point-min) (point-max) 4)
-          (goto-char (point-min)))
-        (search-forward "data: |+\n" nil t)
-        (append-to-buffer vimgolf-end-buffer (point) (point-max))
-        (save-current-buffer
-          (set-buffer vimgolf-end-buffer)
-          (goto-char (point-min))
-          (search-forward "    \n  type: output")
-          (delete-region (match-beginning 0) (point-max))
-          (decrease-left-margin (point-min) (point-max) 4)
-          (goto-char (point-min)))
-        (delete-other-windows)
-        (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
-        (set-window-buffer (selected-window) vimgolf-work-buffer)))))
+(defgroup vimgolf nil
+  "Compete on VimGolf with the One True Editor."
+  :prefix "vimgolf-"
+  :group 'applications)
+
+(defcustom vimgolf-key nil
+  "Your VimGolf API Key. Must be set in order to submit your solution."
+  :type 'string
+  :group 'vimgolf)
+
+(defcustom vimgolf-mode-hook '((lambda () (whitespace-mode t)))
+  "A list of functions to call upon the initialization of vimgolf-mode."
+  :type 'hook
+  :group 'vimgolf)
+
+(defvar vimgolf-challenge nil)
+
+(defun vimgolf-submit ()
+  ""
+  (interactive))
+
+(defun vimgolf-revert ()
+  ""
+  (interactive))
+
+(defun vimgolf-diff ()
+  ""
+  (interactive))
+
+(defun vimgolf-continue ()
+  ""
+  (interactive))
+
+(defun vimgolf-pause ()
+  ""
+  (interactive))
+
+(defun vimgolf-quit ()
+  ""
+  (interactive))
+
+(defvar vimgolf-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-v C-c") 'vimgolf-submit)
+    (define-key map (kbd "C-c C- r") 'vimgolf-revert)
+    (define-key map (kbd "C-c C-v d") 'vimgolf-diff)
+    (define-key map (kbd "C-c C-v c") 'vimgolf-continue)
+    (define-key map (kbd "C-c C-v p") 'vimgolf-pause)
+    (define-key map (kbd "C-c C-v q") 'vimgolf-quit)
+    map))
+
+(define-minor-mode vimgolf-mode
+  "Toggle VimGolf mode.
+     With no argument, this command toggles the mode. Non-null
+     prefix argument turns on the mode. Null prefix argument
+     turns off the mode.
+
+     When VimGolf mode is enabled, several key bindings are
+     defined with `C-c C-v` prefixes to help in playing VimGolf.
+
+\\{vimgolf-mode-map}"
+  ;; The initial value.
+  nil
+  ;; The indicator for the mode line.
+  " VimGolf"
+  ;; The minor mode bindings.
+  :keymap vimgolf-mode-map
+  :group 'vimgolf)
+
+(defun vimgolf (challenge-id)
+  "Open a VimGolf Challenge"
+  (interactive "sChallenge ID: ")
+  (let* ((vimgolf-yaml-buffer (url-retrieve-synchronously (concat "http://vimgolf.com/challenges/" challenge-id ".yaml"))))
+    (save-current-buffer
+      (set-buffer vimgolf-yaml-buffer)
+      (goto-char (point-min))
+      (search-forward "data: |+\n" nil t)
+      (let ((vimgolf-start-buffer (get-buffer-create "*vimgolf-start*"))
+            (vimgolf-work-buffer (get-buffer-create "*vimgolf-work*"))
+            (vimgolf-end-buffer (get-buffer-create "*vimgolf-end*")))
+        (progn
+          (append-to-buffer vimgolf-start-buffer (point) (point-max))
+          (append-to-buffer vimgolf-work-buffer (point) (point-max))
+          (save-current-buffer
+            (set-buffer vimgolf-start-buffer)
+            (goto-char (point-min))
+            (search-forward "    \n  type: input" nil t)
+            (delete-region (match-beginning 0) (point-max))
+            (decrease-left-margin (point-min) (point-max) 4)
+            (goto-char (point-min)))
+          (save-current-buffer
+            (set-buffer vimgolf-work-buffer)
+            (goto-char (point-min))
+            (search-forward "    \n  type: input" nil t)
+            (delete-region (match-beginning 0) (point-max))
+            (decrease-left-margin (point-min) (point-max) 4)
+            (goto-char (point-min)))
+          (search-forward "data: |+\n" nil t)
+          (append-to-buffer vimgolf-end-buffer (point) (point-max))
+          (save-current-buffer
+            (set-buffer vimgolf-end-buffer)
+            (goto-char (point-min))
+            (search-forward "    \n  type: output")
+            (delete-region (match-beginning 0) (point-max))
+            (decrease-left-margin (point-min) (point-max) 4)
+            (goto-char (point-min)))
+          (delete-other-windows)
+          (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
+          (set-window-buffer (selected-window) vimgolf-work-buffer))))))
+
+
 
 ;; Use dribble file to allow for running from within emacs
 ;; Main interface should be `M-x vimgolf Challenge ID: <Enter ID> RET <Do Your Editing> C-c C-v C-c`

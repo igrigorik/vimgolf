@@ -109,6 +109,7 @@
   :keymap vimgolf-mode-map
   :group 'vimgolf)
 
+;;;###autoload
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
   (interactive "sChallenge ID: ")

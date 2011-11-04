@@ -128,7 +128,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   "Stop the challenge and attempt to submit the solution to VimGolf."
   (interactive)
   (vimgolf-open-dribble-file nil)
-  (if (vimgolf-solution-correct-p) (message "%s" "Hurray!") (vimgolf-revert)))
+  (if (vimgolf-solution-correct-p) (message "%s" "Hurray!") (progn (message "%s" "Wrong!") (vimgolf-diff))))
 
 (defun clear-dribble-file ()
   (vimgolf-open-dribble-file nil)

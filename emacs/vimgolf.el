@@ -124,11 +124,18 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-open-dribble-file (file)
   (if file (open-dribble-file file) (vimgolf-close-and-capture-dribble)))
 
+(defun vimgolf-wrong-solution ()
+  (message "%s" "Wrong!")
+  (vimgolf-diff))
+
+(defun vimgolf-right-solution ()
+   (message "%s" "Hurray!"))
+
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."
   (interactive)
   (vimgolf-open-dribble-file nil)
-  (if (vimgolf-solution-correct-p) (message "%s" "Hurray!") (progn (message "%s" "Wrong!") (vimgolf-diff))))
+  (if (vimgolf-solution-correct-p) (vimgolf-right-solution) (vimgolf-wrong-solution)))
 
 (defun clear-dribble-file ()
   (vimgolf-open-dribble-file nil)
@@ -240,15 +247,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
         (vimgolf-open-dribble-file vimgolf-dribble-file-path)
         (setq vimgolf-working-window-configuration (current-window-configuration))))))
 
-;; Load up two buffers. One with the solution, one with the start.
-;; Open a dribble file
-;; Make your edits
-;; Press C-c C-v C-c
-;; Close dribble file
 
-;; Diff files
-
-;; If different
 ;;   Echo fail!
 ;;   Pop open ediff
 ;; else

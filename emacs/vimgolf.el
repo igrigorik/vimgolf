@@ -128,17 +128,31 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (message "%s" "Wrong!")
   (vimgolf-diff))
 
+;; (with-temp-buffer
+;;   (insert "abcdefg")
+;;   (goto-char (point-min))
+;;   (while (not (= (char-after) ?b))
+;;     (forward-char))
+;;   (point))
+
+(defun vimgolf-parse-meta-keychord (meta-keychord-string)
+  (message "%s" meta-keychord-string)
+  (concat "M-" (byte-to-string (string-to-number (substring meta-keychord-string -2) 16)) " "))
+
 (defun vimgolf-parse-dribble-file (file)
   (save-current-buffer
-    (let ((temp-buffer (find-file-noselect vimgolf-dribble-file-path)))
+    (let ((temp-buffer (find-file-noselect file)))
       (set-buffer temp-buffer)
-      (count-matches ".")
+      (goto-char (point-min))
+      (while (re-search-forward "0x80000[a-z0-9]\\{2\\}" nil t)
+        (replace-match (vimgolf-parse-meta-keychord (match-string 0))))
+      (save-buffer)
       (kill-buffer temp-buffer))))
 
 (defun vimgolf-right-solution ()
-   (message "%s" "Hurray!")
-   (let ((parsed-keystrokes (vimgolf-parse-dribble-file vimgolf-keystrokes-file-path)))
-     (message "%s" "You should really write that parser at some point.")))
+  (message "%s" "Hurray!")
+  (let ((parsed-keystrokes (vimgolf-parse-dribble-file vimgolf-keystrokes-file-path)))
+    (message "%s" "You should really write that parser at some point.")))
 
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."
@@ -255,18 +269,5 @@ with `C-c C-v` prefixes to help in playing VimGolf.
         (set-window-buffer (selected-window) vimgolf-work-buffer)
         (vimgolf-open-dribble-file vimgolf-dribble-file-path)
         (setq vimgolf-working-window-configuration (current-window-configuration))))))
-
-
-;;   Echo fail!
-;;   Pop open ediff
-;; else
-;;   Chomp off the last 3 keychords
-;;   Parse dribble file
-;;   Count keystrokes
-;;   Echo You solved <Challenge> in <Strokes> keystrokes!
-;;   Submit? (yes or no predicate):
-
-;;   Echo w00t!
-;;   
 
 ;;; vimgolf.el ends here

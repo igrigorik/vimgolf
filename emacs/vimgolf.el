@@ -55,39 +55,6 @@
   :type 'hook
   :group 'vimgolf)
 
-(defvar vimgolf-challenge nil)
-
-(defvar vimgolf-prior-window-configuration nil)
-
-(defun vimgolf-submit ()
-  "Stop the challenge and attempt to submit the solution to VimGolf."
-  (interactive))
-
-(defun vimgolf-revert ()
-  "Revert the work buffer to it's original state and reset keystrokes."
-  (interactive))
-
-(defun vimgolf-diff ()
-  "Pause the competition and view differences between the buffers."
-  (interactive))
-
-(defun vimgolf-continue ()
-  "Restore work and end buffers and begin recording keystrokes again."
-  (interactive))
-
-(defun vimgolf-pause ()
-  "Stop recording keystrokes."
-  (interactive))
-
-(defun vimgolf-quit ()
-  "Cancel the competition."
-  (interactive)
-  (progn
-    (if (get-buffer "*vimgolf-start*") (kill-buffer "*vimgolf-start*"))
-    (if (get-buffer "*vimgolf-work*") (kill-buffer "*vimgolf-work*"))
-    (if (get-buffer "*vimgolf-end*") (kill-buffer "*vimgolf-end*"))
-    (set-window-configuration vimgolf-prior-window-configuration)))
-
 (defvar vimgolf-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-v C-c") 'vimgolf-submit)
@@ -100,12 +67,13 @@
 
 (define-minor-mode vimgolf-mode
   "Toggle VimGolf mode.
-     With no argument, this command toggles the mode. Non-null
-     prefix argument turns on the mode. Null prefix argument
-     turns off the mode.
 
-     When VimGolf mode is enabled, several key bindings are
-     defined with `C-c C-v` prefixes to help in playing VimGolf.
+With no argument, this command toggles the mode. Non-null prefix
+argument turns on the mode. Null prefix argument turns off the
+mode.
+
+When VimGolf mode is enabled, several key bindings are defined
+with `C-c C-v` prefixes to help in playing VimGolf.
 
 \\{vimgolf-mode-map}"
   ;; The initial value.
@@ -116,66 +84,150 @@
   :keymap vimgolf-mode-map
   :group 'vimgolf)
 
+(defvar vimgolf-challenge nil)
+
+(defvar vimgolf-prior-window-configuration nil)
+
+(defvar vimgolf-working-window-configuration nil)
+
+(defvar vimgolf-dribble-file-path (expand-file-name "vimgolf-dribble" temporary-file-directory))
+
+(defvar vimgolf-keystrokes-file-path (expand-file-name "vimgolf-keystrokes" temporary-file-directory))
+
+(defvar vimgolf-work-buffer-name "*vimgolf-work*")
+(defvar vimgolf-start-buffer-name "*vimgolf-start*")
+(defvar vimgolf-end-buffer-name "*vimgolf-end*")
+
+(defun point-min-in-buffer (buffer)
+  (save-current-buffer
+    (set-buffer buffer)
+    (point-min)))
+
+(defun point-max-in-buffer (buffer)
+  (save-current-buffer
+    (set-buffer buffer)
+    (point-max)))
+
+(defun vimgolf-solution-correct-p ()
+  (eq 0 (compare-buffer-substrings
+         (get-buffer vimgolf-work-buffer-name) (point-min-in-buffer vimgolf-work-buffer-name) (point-max-in-buffer vimgolf-work-buffer-name)
+         (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name))))
+
+(defun vimgolf-close-and-capture-dribble ()
+  (open-dribble-file nil)
+  (with-temp-file vimgolf-dribble-file-path
+    (append-to-file (point-min) (point-max) vimgolf-keystrokes-file-path)))
+
+(defun vimgolf-open-dribble-file (file)
+  (if file (open-dribble-file file) (vimgolf-close-and-capture-dribble)))
+
+(defun vimgolf-submit ()
+  "Stop the challenge and attempt to submit the solution to VimGolf."
+  (interactive)
+  (vimgolf-open-dribble-file nil)
+  (if (vimgolf-solution-correct-p) (message "%s" "Hurray!") (vimgolf-revert)))
+
+(defun clear-dribble-file ()
+  (vimgolf-open-dribble-file nil)
+  (with-temp-file vimgolf-keystrokes-file-path
+    (erase-buffer))
+  (vimgolf-open-dribble-file vimgolf-dribble-file-path))
+
+(defun vimgolf-revert ()
+  "Revert the work buffer to it's original state and reset keystrokes."
+  (interactive)
+  (save-current-buffer
+    (set-buffer (get-buffer-create vimgolf-work-buffer-name))
+    (delete-region (point-min) (point-max))
+    (insert-buffer (get-buffer-create vimgolf-start-buffer-name))
+    (clear-dribble-file)
+    (message "%s" "If at first you don't succeed, try, try again.")))
+
+(defun vimgolf-diff ()
+  "Pause the competition and view differences between the buffers."
+  (interactive)
+  (vimgolf-open-dribble-file nil)
+  (ediff-buffers (get-buffer-create vimgolf-work-buffer-name) (get-buffer-create vimgolf-end-buffer-name))
+  (message "%s" "Remember to `C-c C-v c` when you're done."))
+
+(defun vimgolf-continue ()
+  "Restore work and end buffers and begin recording keystrokes again."
+  (interactive)
+  (vimgolf-open-dribble-file vimgolf-dribble-file-path)
+  (set-window-configuration vimgolf-working-window-configuration)
+  (message "%s" "Golf away!"))
+
+(defun vimgolf-pause ()
+  "Stop recording keystrokes."
+  (interactive)
+  (vimgolf-open-dribble-file nil)
+  (message "%s" "Come `C-c C-v c` soon."))
+
+(defun vimgolf-quit ()
+  "Cancel the competition."
+  (interactive)
+  (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
+  (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
+  (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
+  (vimgolf-open-dribble-file nil)
+  (set-window-configuration vimgolf-prior-window-configuration)
+  (message "%s" "I declare you, n00b!"))
+
 ;;;###autoload
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
   (interactive "sChallenge ID: ")
-  (progn
-    (setq vimgolf-prior-window-configuration (current-window-configuration)
-          vimgolf-challenge challenge-id)
-    (let* ((vimgolf-yaml-buffer (url-retrieve-synchronously (concat "http://vimgolf.com/challenges/" challenge-id ".yaml"))))
-      (save-current-buffer
-        (set-buffer vimgolf-yaml-buffer)
-        (goto-char (point-min))
-        (search-forward "data: |+\n" nil t)
-        (if (get-buffer "*vimgolf-start*") (kill-buffer "*vimgolf-start*"))
-        (if (get-buffer "*vimgolf-work*") (kill-buffer "*vimgolf-work*"))
-        (if (get-buffer "*vimgolf-end*") (kill-buffer "*vimgolf-end*"))
-        (let ((vimgolf-start-buffer (get-buffer-create "*vimgolf-start*"))
-              (vimgolf-work-buffer (get-buffer-create "*vimgolf-work*"))
-              (vimgolf-end-buffer (get-buffer-create "*vimgolf-end*")))
-          (progn
-            (append-to-buffer vimgolf-start-buffer (point) (point-max))
-            (append-to-buffer vimgolf-work-buffer (point) (point-max))
-            (save-current-buffer
-              (set-buffer vimgolf-start-buffer)
-              (goto-char (point-min))
-              (search-forward "    \n  type: input" nil t)
-              (delete-region (match-beginning 0) (point-max))
-              (decrease-left-margin (point-min) (point-max) 4)
-              (goto-char (point-min))
-              (vimgolf-mode t))
-            (save-current-buffer
-              (set-buffer vimgolf-work-buffer)
-              (goto-char (point-min))
-              (search-forward "    \n  type: input" nil t)
-              (delete-region (match-beginning 0) (point-max))
-              (decrease-left-margin (point-min) (point-max) 4)
-              (goto-char (point-min))
-              (vimgolf-mode t))
-            (search-forward "data: |+\n" nil t)
-            (append-to-buffer vimgolf-end-buffer (point) (point-max))
-            (save-current-buffer
-              (set-buffer vimgolf-end-buffer)
-              (goto-char (point-min))
-              (search-forward "    \n  type: output")
-              (delete-region (match-beginning 0) (point-max))
-              (decrease-left-margin (point-min) (point-max) 4)
-              (goto-char (point-min))
-              (vimgolf-mode t))
-            (delete-other-windows)
-            (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
-            (set-window-buffer (selected-window) vimgolf-work-buffer)))))))
+  (clear-dribble-file)
+  (setq vimgolf-prior-window-configuration (current-window-configuration)
+        vimgolf-challenge challenge-id)
+  (let* ((vimgolf-yaml-buffer (url-retrieve-synchronously (concat "http://vimgolf.com/challenges/" challenge-id ".yaml"))))
+    (save-current-buffer
+      (set-buffer vimgolf-yaml-buffer)
+      (goto-char (point-min))
+      (search-forward "data: |+\n" nil t)
+      (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
+      (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
+      (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
+      (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))
+            (vimgolf-work-buffer (get-buffer-create vimgolf-work-buffer-name))
+            (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
+        (progn
+          (append-to-buffer vimgolf-start-buffer (point) (point-max))
+          (append-to-buffer vimgolf-work-buffer (point) (point-max))
+          (save-current-buffer
+            (set-buffer vimgolf-start-buffer)
+            (goto-char (point-min))
+            (search-forward "    \n  type: input" nil t)
+            (delete-region (match-beginning 0) (point-max))
+            (decrease-left-margin (point-min) (point-max) 4)
+            (goto-char (point-min))
+            (vimgolf-mode t))
+          (save-current-buffer
+            (set-buffer vimgolf-work-buffer)
+            (goto-char (point-min))
+            (search-forward "    \n  type: input" nil t)
+            (delete-region (match-beginning 0) (point-max))
+            (decrease-left-margin (point-min) (point-max) 4)
+            (goto-char (point-min))
+            (vimgolf-mode t))
+          (search-forward "data: |+\n" nil t)
+          (append-to-buffer vimgolf-end-buffer (point) (point-max))
+          (save-current-buffer
+            (set-buffer vimgolf-end-buffer)
+            (goto-char (point-min))
+            (search-forward "    \n  type: output")
+            (delete-region (match-beginning 0) (point-max))
+            (decrease-left-margin (point-min) (point-max) 4)
+            (goto-char (point-min))
+            (vimgolf-mode t))
+          (delete-other-windows)
+          (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
+          (set-window-buffer (selected-window) vimgolf-work-buffer)
+          (vimgolf-open-dribble-file vimgolf-dribble-file-path)
+          (setq vimgolf-working-window-configuration (current-window-configuration)))))))
 
 
 
-;; Use dribble file to allow for running from within emacs
-;; Main interface should be `M-x vimgolf Challenge ID: <Enter ID> RET <Do Your Editing> C-c C-v C-c`
-;; Could also use C-c C-v o to get the challenge ID prompt
-
-;; We don't load up a vanilla mode. This could be used for sharing useful general code snippets that
-
-;; Important to emphasis a 'good sport' attitude where the community enforces an anti-special solution attitude
 
 ;; Load up two buffers. One with the solution, one with the start.
 ;; Open a dribble file

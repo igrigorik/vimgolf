@@ -191,6 +191,16 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-challenge-url (challenge-id)
   (concat vimgolf-host (vimgolf-challenge-path challenge-id) vimgolf-challenge-extension))
 
+(defun vimgolf-scrub-buffer (buffer)
+  (save-current-buffer
+    (set-buffer buffer)
+    (goto-char (point-min))
+    (re-search-forward data-end-regexp nil t)
+    (delete-region (match-beginning 0) (point-max))
+    (decrease-left-margin (point-min) (point-max) 4)
+    (goto-char (point-min))
+    (vimgolf-mode t)))
+
 ;;;###autoload
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
@@ -215,40 +225,16 @@ with `C-c C-v` prefixes to help in playing VimGolf.
             (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
         (append-to-buffer vimgolf-start-buffer (point) (point-max))
         (append-to-buffer vimgolf-work-buffer (point) (point-max))
-        (save-current-buffer
-          (set-buffer vimgolf-start-buffer)
-          (goto-char (point-min))
-          (re-search-forward data-end-regexp nil t)
-          (delete-region (match-beginning 0) (point-max))
-          (decrease-left-margin (point-min) (point-max) 4)
-          (goto-char (point-min))
-          (vimgolf-mode t))
-        (save-current-buffer
-          (set-buffer vimgolf-work-buffer)
-          (goto-char (point-min))
-          (re-search-forward data-end-regexp nil t)
-          (delete-region (match-beginning 0) (point-max))
-          (decrease-left-margin (point-min) (point-max) 4)
-          (goto-char (point-min))
-          (vimgolf-mode t))
+        (vimgolf-scrub-buffer vimgolf-start-buffer)
+        (vimgolf-scrub-buffer vimgolf-work-buffer)
         (re-search-forward data-start-regexp nil t)
         (append-to-buffer vimgolf-end-buffer (point) (point-max))
-        (save-current-buffer
-          (set-buffer vimgolf-end-buffer)
-          (goto-char (point-min))
-          (re-search-forward data-end-regexp)
-          (delete-region (match-beginning 0) (point-max))
-          (decrease-left-margin (point-min) (point-max) 4)
-          (goto-char (point-min))
-          (vimgolf-mode t))
+        (vimgolf-scrub-buffer vimgolf-end-buffer)
         (delete-other-windows)
         (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
         (set-window-buffer (selected-window) vimgolf-work-buffer)
         (vimgolf-open-dribble-file vimgolf-dribble-file-path)
         (setq vimgolf-working-window-configuration (current-window-configuration))))))
-
-
-
 
 ;; Load up two buffers. One with the solution, one with the start.
 ;; Open a dribble file

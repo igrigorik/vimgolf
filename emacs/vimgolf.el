@@ -179,6 +179,9 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-host "http://vimgolf.com/")
 
 ;; (setq vimgolf-host "http://vimgolf.local:8888/")
+;; (setq vimgolf-host "http://vimgolf.com/")
+;; Overall VimGolf Rank ID: 4d2fb20e63b08b08b0000075
+;; Sort entries based on date ID: 4ea9bc988b36f70001000008
 
 (defvar vimgolf-challenge-extension ".yaml")
 
@@ -195,11 +198,15 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (clear-dribble-file)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
-  (let* ((vimgolf-yaml-buffer (url-retrieve-synchronously (vimgolf-challenge-url challenge-id))))
+  (let ((vimgolf-yaml-buffer (url-retrieve-synchronously (vimgolf-challenge-url challenge-id)))
+        (data-end-regexp "\\([ 	]\\{4\\}\\|[ 	]\\{0\\}\\)
+  type: [a-z]+")
+        (data-start-regexp "  data: |\\+\\{0,1\\}
+"))
     (save-current-buffer
       (set-buffer vimgolf-yaml-buffer)
       (goto-char (point-min))
-      (search-forward "data: |+\n" nil t)
+      (re-search-forward data-start-regexp nil t)
       (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
       (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
       (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
@@ -212,7 +219,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
           (save-current-buffer
             (set-buffer vimgolf-start-buffer)
             (goto-char (point-min))
-            (search-forward "    \n  type: input" nil t)
+            (re-search-forward data-end-regexp nil t)
             (delete-region (match-beginning 0) (point-max))
             (decrease-left-margin (point-min) (point-max) 4)
             (goto-char (point-min))
@@ -220,17 +227,17 @@ with `C-c C-v` prefixes to help in playing VimGolf.
           (save-current-buffer
             (set-buffer vimgolf-work-buffer)
             (goto-char (point-min))
-            (search-forward "    \n  type: input" nil t)
+            (re-search-forward data-end-regexp nil t)
             (delete-region (match-beginning 0) (point-max))
             (decrease-left-margin (point-min) (point-max) 4)
             (goto-char (point-min))
             (vimgolf-mode t))
-          (search-forward "data: |+\n" nil t)
+          (re-search-forward data-start-regexp nil t)
           (append-to-buffer vimgolf-end-buffer (point) (point-max))
           (save-current-buffer
             (set-buffer vimgolf-end-buffer)
             (goto-char (point-min))
-            (search-forward "    \n  type: output")
+            (re-search-forward data-end-regexp)
             (delete-region (match-beginning 0) (point-max))
             (decrease-left-margin (point-min) (point-max) 4)
             (goto-char (point-min))

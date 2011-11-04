@@ -128,8 +128,17 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (message "%s" "Wrong!")
   (vimgolf-diff))
 
+(defun vimgolf-parse-dribble-file (file)
+  (save-current-buffer
+    (let ((temp-buffer (find-file-noselect vimgolf-dribble-file-path)))
+      (set-buffer temp-buffer)
+      (count-matches ".")
+      (kill-buffer temp-buffer))))
+
 (defun vimgolf-right-solution ()
-   (message "%s" "Hurray!"))
+   (message "%s" "Hurray!")
+   (let ((parsed-keystrokes (vimgolf-parse-dribble-file vimgolf-keystrokes-file-path)))
+     (message "%s" "You should really write that parser at some point.")))
 
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."

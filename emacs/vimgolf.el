@@ -114,9 +114,12 @@ with `C-c C-v` prefixes to help in playing VimGolf.
          (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name))))
 
 (defun vimgolf-close-and-capture-dribble ()
-  (open-dribble-file nil)
-  (with-temp-file vimgolf-dribble-file-path
-    (append-to-file (point-min) (point-max) vimgolf-keystrokes-file-path)))
+  (save-current-buffer
+    (let ((temp-buffer (find-file-noselect vimgolf-dribble-file-path)))
+      (set-buffer temp-buffer)
+      (append-to-file (point-min) (point-max) vimgolf-keystrokes-file-path)
+      (kill-buffer temp-buffer)))
+  (open-dribble-file nil))
 
 (defun vimgolf-open-dribble-file (file)
   (if file (open-dribble-file file) (vimgolf-close-and-capture-dribble)))

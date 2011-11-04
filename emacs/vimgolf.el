@@ -144,6 +144,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
     (delete-region (point-min) (point-max))
     (insert-buffer (get-buffer-create vimgolf-start-buffer-name))
     (clear-dribble-file)
+    (set-window-configuration vimgolf-working-window-configuration)
     (message "%s" "If at first you don't succeed, try, try again.")))
 
 (defun vimgolf-diff ()

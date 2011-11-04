@@ -176,6 +176,18 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (set-window-configuration vimgolf-prior-window-configuration)
   (message "%s" "I declare you, n00b!"))
 
+(defvar vimgolf-host "http://vimgolf.com/")
+
+;; (setq vimgolf-host "http://vimgolf.local:8888/")
+
+(defvar vimgolf-challenge-extension ".yaml")
+
+(defun vimgolf-challenge-path (challenge-id)
+  (concat "challenges/" challenge-id))
+
+(defun vimgolf-challenge-url (challenge-id)
+  (concat vimgolf-host (vimgolf-challenge-path challenge-id) vimgolf-challenge-extension))
+
 ;;;###autoload
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
@@ -183,7 +195,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (clear-dribble-file)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
-  (let* ((vimgolf-yaml-buffer (url-retrieve-synchronously (concat "http://vimgolf.com/challenges/" challenge-id ".yaml"))))
+  (let* ((vimgolf-yaml-buffer (url-retrieve-synchronously (vimgolf-challenge-url challenge-id))))
     (save-current-buffer
       (set-buffer vimgolf-yaml-buffer)
       (goto-char (point-min))

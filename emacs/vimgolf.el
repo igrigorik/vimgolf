@@ -201,6 +201,11 @@ with `C-c C-v` prefixes to help in playing VimGolf.
     (goto-char (point-min))
     (vimgolf-mode t)))
 
+(defun vimgolf-kill-existing-session ()
+  (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
+  (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
+  (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name)))
+
 ;;;###autoload
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
@@ -217,9 +222,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
       (set-buffer vimgolf-yaml-buffer)
       (goto-char (point-min))
       (re-search-forward data-start-regexp nil t)
-      (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
-      (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
-      (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
+      (vimgolf-kill-existing-session)
       (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))
             (vimgolf-work-buffer (get-buffer-create vimgolf-work-buffer-name))
             (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))

@@ -125,18 +125,11 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (if file (open-dribble-file file) (vimgolf-close-and-capture-dribble)))
 
 (defun vimgolf-wrong-solution ()
-  (message "%s" "Wrong!")
+  (message "Wrong!")
   (vimgolf-diff))
 
-;; (with-temp-buffer
-;;   (insert "abcdefg")
-;;   (goto-char (point-min))
-;;   (while (not (= (char-after) ?b))
-;;     (forward-char))
-;;   (point))
-
 (defun vimgolf-parse-keychord (keychord-string)
-  (message "%s" keychord-string)
+  (message keychord-string)
   (single-key-description (string-to-number (substring keychord-string 2) 16)))
 
 (defun vimgolf-parse-dribble-file (file)
@@ -150,9 +143,9 @@ with `C-c C-v` prefixes to help in playing VimGolf.
       (kill-buffer temp-buffer))))
 
 (defun vimgolf-right-solution ()
-  (message "%s" "Hurray!")
+  (message "Hurray!")
   (let ((parsed-keystrokes (vimgolf-parse-dribble-file vimgolf-keystrokes-file-path)))
-    (message "%s" "You should really write that parser at some point.")))
+    (message "You should really write that parser at some point.")))
 
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."
@@ -175,27 +168,27 @@ with `C-c C-v` prefixes to help in playing VimGolf.
     (insert-buffer (get-buffer-create vimgolf-start-buffer-name))
     (clear-dribble-file)
     (set-window-configuration vimgolf-working-window-configuration)
-    (message "%s" "If at first you don't succeed, try, try again.")))
+    (message "If at first you don't succeed, try, try again.")))
 
 (defun vimgolf-diff ()
   "Pause the competition and view differences between the buffers."
   (interactive)
   (vimgolf-open-dribble-file nil)
   (ediff-buffers (get-buffer-create vimgolf-work-buffer-name) (get-buffer-create vimgolf-end-buffer-name))
-  (message "%s" "Remember to `C-c C-v c` when you're done."))
+  (message "Remember to `C-c C-v c` when you're done."))
 
 (defun vimgolf-continue ()
   "Restore work and end buffers and begin recording keystrokes again."
   (interactive)
   (vimgolf-open-dribble-file vimgolf-dribble-file-path)
   (set-window-configuration vimgolf-working-window-configuration)
-  (message "%s" "Golf away!"))
+  (message "Golf away!"))
 
 (defun vimgolf-pause ()
   "Stop recording keystrokes."
   (interactive)
   (vimgolf-open-dribble-file nil)
-  (message "%s" "Come `C-c C-v c` soon."))
+  (message "Come `C-c C-v c` soon."))
 
 (defun vimgolf-quit ()
   "Cancel the competition."
@@ -205,7 +198,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
   (vimgolf-open-dribble-file nil)
   (set-window-configuration vimgolf-prior-window-configuration)
-  (message "%s" "I declare you, n00b!"))
+  (message "I declare you, n00b!"))
 
 (defvar vimgolf-host "http://vimgolf.com/")
 

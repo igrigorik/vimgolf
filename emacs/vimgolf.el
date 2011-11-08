@@ -109,9 +109,10 @@ with `C-c C-v` prefixes to help in playing VimGolf.
     (point-max)))
 
 (defun vimgolf-solution-correct-p ()
-  (eq 0 (compare-buffer-substrings
-         (get-buffer vimgolf-work-buffer-name) (point-min-in-buffer vimgolf-work-buffer-name) (point-max-in-buffer vimgolf-work-buffer-name)
-         (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name))))
+  (let ((case-fold-search nil))
+    (eq 0 (compare-buffer-substrings
+           (get-buffer vimgolf-work-buffer-name) (point-min-in-buffer vimgolf-work-buffer-name) (point-max-in-buffer vimgolf-work-buffer-name)
+           (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name)))))
 
 (defun vimgolf-close-and-capture-dribble ()
   (save-current-buffer

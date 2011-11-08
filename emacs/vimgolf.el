@@ -58,7 +58,7 @@
 (defvar vimgolf-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-v C-c") 'vimgolf-submit)
-    (define-key map (kbd "C-c C- r") 'vimgolf-revert)
+    (define-key map (kbd "C-c C-v r") 'vimgolf-revert)
     (define-key map (kbd "C-c C-v d") 'vimgolf-diff)
     (define-key map (kbd "C-c C-v c") 'vimgolf-continue)
     (define-key map (kbd "C-c C-v p") 'vimgolf-pause)

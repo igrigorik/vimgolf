@@ -135,17 +135,17 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 ;;     (forward-char))
 ;;   (point))
 
-(defun vimgolf-parse-meta-keychord (meta-keychord-string)
-  (message "%s" meta-keychord-string)
-  (concat "M-" (byte-to-string (string-to-number (substring meta-keychord-string -2) 16)) " "))
+(defun vimgolf-parse-keychord (keychord-string)
+  (message "%s" keychord-string)
+  (single-key-description (string-to-number (substring keychord-string 2) 16)))
 
 (defun vimgolf-parse-dribble-file (file)
   (save-current-buffer
     (let ((temp-buffer (find-file-noselect file)))
       (set-buffer temp-buffer)
       (goto-char (point-min))
-      (while (re-search-forward "0x80000[a-z0-9]\\{2\\}" nil t)
-        (replace-match (vimgolf-parse-meta-keychord (match-string 0))))
+      (while (re-search-forward "0x[1-9]0000[a-z0-9]\\{2\\}" nil t)
+        (replace-match (vimgolf-parse-keychord (match-string 0))))
       (save-buffer)
       (kill-buffer temp-buffer))))
 

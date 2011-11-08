@@ -99,13 +99,11 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-end-buffer-name "*vimgolf-end*")
 
 (defun point-min-in-buffer (buffer)
-  (save-current-buffer
-    (set-buffer buffer)
+  (with-current-buffer buffer
     (point-min)))
 
 (defun point-max-in-buffer (buffer)
-  (save-current-buffer
-    (set-buffer buffer)
+  (with-current-buffer buffer
     (point-max)))
 
 (defun vimgolf-solution-correct-p ()
@@ -115,11 +113,9 @@ with `C-c C-v` prefixes to help in playing VimGolf.
            (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name)))))
 
 (defun vimgolf-close-and-capture-dribble ()
-  (save-current-buffer
-    (let ((temp-buffer (find-file-noselect vimgolf-dribble-file-path)))
-      (set-buffer temp-buffer)
-      (append-to-file (point-min) (point-max) vimgolf-keystrokes-file-path)
-      (kill-buffer temp-buffer)))
+  (with-current-buffer (find-file-noselect vimgolf-dribble-file-path)
+    (append-to-file (point-min) (point-max) vimgolf-keystrokes-file-path)
+    (kill-buffer))
   (open-dribble-file nil))
 
 (defun vimgolf-open-dribble-file (file)
@@ -134,14 +130,12 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (single-key-description (string-to-number (substring keychord-string 2) 16)))
 
 (defun vimgolf-parse-dribble-file (file)
-  (save-current-buffer
-    (let ((temp-buffer (find-file-noselect file)))
-      (set-buffer temp-buffer)
-      (goto-char (point-min))
-      (while (re-search-forward "0x[1-9]0000[a-z0-9]\\{2\\}" nil t)
-        (replace-match (vimgolf-parse-keychord (match-string 0))))
-      (save-buffer)
-      (kill-buffer temp-buffer))))
+  (with-current-buffer (find-file-noselect file)
+    (beginning-of-buffer)
+    (while (re-search-forward "0x[1-9]0000[a-z0-9]\\{2\\}" nil t)
+      (replace-match (vimgolf-parse-keychord (match-string 0))))
+    (save-buffer)
+    (kill-buffer)))
 
 (defun vimgolf-right-solution ()
   (message "Hurray!")
@@ -163,8 +157,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-revert ()
   "Revert the work buffer to it's original state and reset keystrokes."
   (interactive)
-  (save-current-buffer
-    (set-buffer (get-buffer-create vimgolf-work-buffer-name))
+  (with-current-buffer (get-buffer-create vimgolf-work-buffer-name)
     (delete-region (point-min) (point-max))
     (insert-buffer (get-buffer-create vimgolf-start-buffer-name))
     (clear-dribble-file)
@@ -217,13 +210,12 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (concat vimgolf-host (vimgolf-challenge-path challenge-id) vimgolf-challenge-extension))
 
 (defun vimgolf-scrub-buffer (buffer)
-  (save-current-buffer
-    (set-buffer buffer)
-    (goto-char (point-min))
+  (with-current-buffer buffer
+    (beginning-of-buffer)
     (re-search-forward data-end-regexp nil t)
     (delete-region (match-beginning 0) (point-max))
     (decrease-left-margin (point-min) (point-max) 4)
-    (goto-char (point-min))
+    (beginning-of-buffer)
     (vimgolf-mode t)))
 
 (defun vimgolf-kill-existing-session ()

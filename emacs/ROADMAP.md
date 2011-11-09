@@ -10,10 +10,10 @@
 
     - Bindings should mimic Dired/Ibuffer wherever possible. Magit is listed primarily because I want TAB to open up the long description of the challenge.
 
-      At least:
+        At least:
 
-      - n/p
-      - ENTER/o: launch `vimgolf` with the correct arg.
+        - n/p
+        - ENTER/o: launch `vimgolf` with the correct arg.
 
     Interface Mockup:
 
@@ -43,12 +43,7 @@
 
     - Tab has been pressed on the Refactor to Helpers line and thus it's been expanded.
 
-    - The challenges
-
-            formatted text to markdown - You're converting some posts from an old blog to...
-            Line Zipper - Zip/pair related lines.
-
-        Have both been completed and thus are hidden. Could provide a customization setting that turns this off completely, as well as an `M-x vimgolf-show-all` function to toggle the hiding.
+    - The challenges `formatted text to markdown` and `Line Zipper` have both been completed and thus are hidden. Could provide a customization setting that turns this off completely, as well as an `M-x vimgolf-show-all` function to toggle the hiding.
 
     - Fill column has been set to 80
 

@@ -56,19 +56,19 @@
 
 3. Real submission to vimgolf.
 
-This could look like:
+    This could look like:
 
-Pop-open buffer
+    Pop-open buffer
 
-    You solved the formatted text to markdown challenge in 25 keystrokes! The best entry for this challenge was 23.
-    
-    M-x qrr          ;; query-replace-regexp
-    SPC*2            ;; self-insert-command
-    dummy            ;; self-insert-command * 5
-    .
-    .
-    .
+        You solved the formatted text to markdown challenge in 25 keystrokes! The best entry for this challenge was 23.
 
-Mini-buffer
+        M-x qrr          ;; query-replace-regexp
+        SPC*2            ;; self-insert-command
+        dummy            ;; self-insert-command * 5
+        .
+        .
+        .
 
-    Submit to your solution to vimgolf? <y-or-n-predicate>
+    Mini-buffer
+
+        Submit to your solution to vimgolf? <y-or-n-predicate>

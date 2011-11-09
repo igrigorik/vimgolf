@@ -236,7 +236,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
         (data-start-regexp "  data: |\\+\\{0,1\\}
 "))
     (set-buffer vimgolf-yaml-buffer)
-    (goto-char (point-min))
+    (beginning-of-buffer)
     (re-search-forward data-start-regexp nil t)
     (vimgolf-kill-existing-session)
     (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))

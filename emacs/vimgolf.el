@@ -127,13 +127,16 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 
 (defun vimgolf-parse-keychord (keychord-string)
   (message keychord-string)
-  (single-key-description (string-to-number (substring keychord-string 2) 16)))
+  (single-key-description (string-to-number (substring keychord-string 3) 16)))
 
 (defun vimgolf-parse-dribble-file (file)
   (with-current-buffer (find-file-noselect file)
     (beginning-of-buffer)
-    (while (re-search-forward "0x[1-9]0000[a-z0-9]\\{2\\}" nil t)
+    (while (re-search-forward " 0x[1-9]0000[a-z0-9]\\{2\\}" nil t)
       (replace-match (vimgolf-parse-keychord (match-string 0))))
+    (beginning-of-buffer)
+    (while (re-search-forward "." nil t)
+      (replace-match (single-key-description (char-after))))
     (save-buffer)
     (kill-buffer)))
 

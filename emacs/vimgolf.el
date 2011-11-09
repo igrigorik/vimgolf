@@ -58,7 +58,7 @@
 (defvar vimgolf-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-v C-c") 'vimgolf-submit)
-    (define-key map (kbd "C-c C- r") 'vimgolf-revert)
+    (define-key map (kbd "C-c C-v r") 'vimgolf-revert)
     (define-key map (kbd "C-c C-v d") 'vimgolf-diff)
     (define-key map (kbd "C-c C-v c") 'vimgolf-continue)
     (define-key map (kbd "C-c C-v p") 'vimgolf-pause)
@@ -99,60 +99,48 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-end-buffer-name "*vimgolf-end*")
 
 (defun point-min-in-buffer (buffer)
-  (save-current-buffer
-    (set-buffer buffer)
+  (with-current-buffer buffer
     (point-min)))
 
 (defun point-max-in-buffer (buffer)
-  (save-current-buffer
-    (set-buffer buffer)
+  (with-current-buffer buffer
     (point-max)))
 
 (defun vimgolf-solution-correct-p ()
-  (eq 0 (compare-buffer-substrings
-         (get-buffer vimgolf-work-buffer-name) (point-min-in-buffer vimgolf-work-buffer-name) (point-max-in-buffer vimgolf-work-buffer-name)
-         (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name))))
+  (let ((case-fold-search nil))
+    (eq 0 (compare-buffer-substrings
+           (get-buffer vimgolf-work-buffer-name) (point-min-in-buffer vimgolf-work-buffer-name) (point-max-in-buffer vimgolf-work-buffer-name)
+           (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name)))))
 
 (defun vimgolf-close-and-capture-dribble ()
-  (save-current-buffer
-    (let ((temp-buffer (find-file-noselect vimgolf-dribble-file-path)))
-      (set-buffer temp-buffer)
-      (append-to-file (point-min) (point-max) vimgolf-keystrokes-file-path)
-      (kill-buffer temp-buffer)))
+  (with-current-buffer (find-file-noselect vimgolf-dribble-file-path)
+    (append-to-file (point-min) (point-max) vimgolf-keystrokes-file-path)
+    (kill-buffer))
   (open-dribble-file nil))
 
 (defun vimgolf-open-dribble-file (file)
   (if file (open-dribble-file file) (vimgolf-close-and-capture-dribble)))
 
 (defun vimgolf-wrong-solution ()
-  (message "%s" "Wrong!")
+  (message "Wrong!")
   (vimgolf-diff))
 
-;; (with-temp-buffer
-;;   (insert "abcdefg")
-;;   (goto-char (point-min))
-;;   (while (not (= (char-after) ?b))
-;;     (forward-char))
-;;   (point))
-
-(defun vimgolf-parse-meta-keychord (meta-keychord-string)
-  (message "%s" meta-keychord-string)
-  (concat "M-" (byte-to-string (string-to-number (substring meta-keychord-string -2) 16)) " "))
+(defun vimgolf-parse-keychord (keychord-string)
+  (message keychord-string)
+  (single-key-description (string-to-number (substring keychord-string 2) 16)))
 
 (defun vimgolf-parse-dribble-file (file)
-  (save-current-buffer
-    (let ((temp-buffer (find-file-noselect file)))
-      (set-buffer temp-buffer)
-      (goto-char (point-min))
-      (while (re-search-forward "0x80000[a-z0-9]\\{2\\}" nil t)
-        (replace-match (vimgolf-parse-meta-keychord (match-string 0))))
-      (save-buffer)
-      (kill-buffer temp-buffer))))
+  (with-current-buffer (find-file-noselect file)
+    (beginning-of-buffer)
+    (while (re-search-forward "0x[1-9]0000[a-z0-9]\\{2\\}" nil t)
+      (replace-match (vimgolf-parse-keychord (match-string 0))))
+    (save-buffer)
+    (kill-buffer)))
 
 (defun vimgolf-right-solution ()
-  (message "%s" "Hurray!")
+  (message "Hurray!")
   (let ((parsed-keystrokes (vimgolf-parse-dribble-file vimgolf-keystrokes-file-path)))
-    (message "%s" "You should really write that parser at some point.")))
+    (message "You should really write that parser at some point.")))
 
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."
@@ -169,33 +157,32 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-revert ()
   "Revert the work buffer to it's original state and reset keystrokes."
   (interactive)
-  (save-current-buffer
-    (set-buffer (get-buffer-create vimgolf-work-buffer-name))
+  (with-current-buffer (get-buffer-create vimgolf-work-buffer-name)
     (delete-region (point-min) (point-max))
     (insert-buffer (get-buffer-create vimgolf-start-buffer-name))
     (clear-dribble-file)
     (set-window-configuration vimgolf-working-window-configuration)
-    (message "%s" "If at first you don't succeed, try, try again.")))
+    (message "If at first you don't succeed, try, try again.")))
 
 (defun vimgolf-diff ()
   "Pause the competition and view differences between the buffers."
   (interactive)
   (vimgolf-open-dribble-file nil)
   (ediff-buffers (get-buffer-create vimgolf-work-buffer-name) (get-buffer-create vimgolf-end-buffer-name))
-  (message "%s" "Remember to `C-c C-v c` when you're done."))
+  (message "Remember to `C-c C-v c` when you're done."))
 
 (defun vimgolf-continue ()
   "Restore work and end buffers and begin recording keystrokes again."
   (interactive)
   (vimgolf-open-dribble-file vimgolf-dribble-file-path)
   (set-window-configuration vimgolf-working-window-configuration)
-  (message "%s" "Golf away!"))
+  (message "Golf away!"))
 
 (defun vimgolf-pause ()
   "Stop recording keystrokes."
   (interactive)
   (vimgolf-open-dribble-file nil)
-  (message "%s" "Come `C-c C-v c` soon."))
+  (message "Come `C-c C-v c` soon."))
 
 (defun vimgolf-quit ()
   "Cancel the competition."
@@ -205,7 +192,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
   (vimgolf-open-dribble-file nil)
   (set-window-configuration vimgolf-prior-window-configuration)
-  (message "%s" "I declare you, n00b!"))
+  (message "I declare you, n00b!"))
 
 (defvar vimgolf-host "http://vimgolf.com/")
 
@@ -223,13 +210,12 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (concat vimgolf-host (vimgolf-challenge-path challenge-id) vimgolf-challenge-extension))
 
 (defun vimgolf-scrub-buffer (buffer)
-  (save-current-buffer
-    (set-buffer buffer)
-    (goto-char (point-min))
+  (with-current-buffer buffer
+    (beginning-of-buffer)
     (re-search-forward data-end-regexp nil t)
     (delete-region (match-beginning 0) (point-max))
     (decrease-left-margin (point-min) (point-max) 4)
-    (goto-char (point-min))
+    (beginning-of-buffer)
     (vimgolf-mode t)))
 
 (defun vimgolf-kill-existing-session ()
@@ -250,7 +236,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
         (data-start-regexp "  data: |\\+\\{0,1\\}
 "))
     (set-buffer vimgolf-yaml-buffer)
-    (goto-char (point-min))
+    (beginning-of-buffer)
     (re-search-forward data-start-regexp nil t)
     (vimgolf-kill-existing-session)
     (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))

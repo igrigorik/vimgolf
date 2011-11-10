@@ -97,6 +97,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-work-buffer-name "*vimgolf-work*")
 (defvar vimgolf-start-buffer-name "*vimgolf-start*")
 (defvar vimgolf-end-buffer-name "*vimgolf-end*")
+(defvar vimgolf-keystrokes-buffer-name "*vimgolf-keystrokes*")
 
 (defun point-min-in-buffer (buffer)
   (with-current-buffer buffer
@@ -124,6 +125,17 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-wrong-solution ()
   (message "Wrong!")
   (vimgolf-diff))
+
+(defun vimgolf-capture-keystroke ()
+  (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
+    (end-of-buffer)
+    (insert (princ (mapconcat 'single-key-description
+                              (this-command-keys-vector)
+                              " ")))
+    (insert " ")))
+
+;; (add-hook 'post-command-hook 'vimgolf-capture-keystroke)
+;; (remove-hook 'post-command-hook 'vimgolf-capture-keystroke)
 
 (defun vimgolf-parse-dribble-file (file)
   (with-current-buffer (find-file-noselect file)

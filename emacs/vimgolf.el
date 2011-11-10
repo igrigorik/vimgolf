@@ -90,10 +90,6 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 
 (defvar vimgolf-working-window-configuration nil)
 
-(defvar vimgolf-dribble-file-path (expand-file-name "vimgolf-dribble" temporary-file-directory))
-
-(defvar vimgolf-keystrokes-file-path (expand-file-name "vimgolf-keystrokes" temporary-file-directory))
-
 (defvar vimgolf-work-buffer-name "*vimgolf-work*")
 (defvar vimgolf-start-buffer-name "*vimgolf-start*")
 (defvar vimgolf-end-buffer-name "*vimgolf-end*")
@@ -113,15 +109,6 @@ with `C-c C-v` prefixes to help in playing VimGolf.
            (get-buffer vimgolf-work-buffer-name) (point-min-in-buffer vimgolf-work-buffer-name) (point-max-in-buffer vimgolf-work-buffer-name)
            (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name)))))
 
-(defun vimgolf-close-and-capture-dribble ()
-  (with-current-buffer (find-file-noselect vimgolf-dribble-file-path)
-    (append-to-file (point-min) (point-max) vimgolf-keystrokes-file-path)
-    (kill-buffer))
-  (open-dribble-file nil))
-
-(defun vimgolf-open-dribble-file (file)
-  (if file (open-dribble-file file) (vimgolf-close-and-capture-dribble)))
-
 (defun vimgolf-wrong-solution ()
   (message "Wrong!")
   (vimgolf-diff))
@@ -134,42 +121,26 @@ with `C-c C-v` prefixes to help in playing VimGolf.
                               " ")))
     (insert " ")))
 
-;; (add-hook 'post-command-hook 'vimgolf-capture-keystroke)
-;; (remove-hook 'post-command-hook 'vimgolf-capture-keystroke)
+(defun vimgolf-capture-keystrokes ()
+  (add-hook 'post-command-hook 'vimgolf-capture-keystroke))
 
-(defun vimgolf-parse-dribble-file (file)
-  (with-current-buffer (find-file-noselect file)
-    (beginning-of-buffer)
-    (while (not (eobp))
-      (cond
-       ((looking-at " 0x[1-9]0000[a-z0-9]\\{2\\}")
-        (replace-match (single-key-description
-                        (string-to-number (substring (match-string 0) 3) 16))))
-       ((looking-at "<[[:alnum:]\\-]+>")
-        (goto-char (match-end 0)))
-       ((looking-at ".")
-        (replace-match (single-key-description (char-after)))))
-      (unless (eobp)
-        (insert " ")))
-    (save-buffer)
-    (kill-buffer)))
+(defun vimgolf-stop-capture-keystrokes ()
+  (remove-hook 'post-command-hook 'vimgolf-capture-keystroke))
 
 (defun vimgolf-right-solution ()
   (message "Hurray!")
-  (let ((parsed-keystrokes (vimgolf-parse-dribble-file vimgolf-keystrokes-file-path)))
+  (let ((keystrokes-count nil))        ; Need to implement keystroke counting. Should be as simple as counting spaces and adding 1.
     (message "You should really write that parser at some point.")))
 
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."
   (interactive)
-  (vimgolf-open-dribble-file nil)
+  (vimgolf-stop-capture-keystrokes)
   (if (vimgolf-solution-correct-p) (vimgolf-right-solution) (vimgolf-wrong-solution)))
 
-(defun clear-dribble-file ()
-  (vimgolf-open-dribble-file nil)
-  (with-temp-file vimgolf-keystrokes-file-path
-    (erase-buffer))
-  (vimgolf-open-dribble-file vimgolf-dribble-file-path))
+(defun vimgolf-clear-keystrokes ()
+  (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
+    (erase-buffer)))
 
 (defun vimgolf-revert ()
   "Revert the work buffer to it's original state and reset keystrokes."
@@ -177,28 +148,28 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (with-current-buffer (get-buffer-create vimgolf-work-buffer-name)
     (delete-region (point-min) (point-max))
     (insert-buffer (get-buffer-create vimgolf-start-buffer-name))
-    (clear-dribble-file)
+    (vimgolf-clear-keystrokes)
     (set-window-configuration vimgolf-working-window-configuration)
     (message "If at first you don't succeed, try, try again.")))
 
 (defun vimgolf-diff ()
   "Pause the competition and view differences between the buffers."
   (interactive)
-  (vimgolf-open-dribble-file nil)
+  (vimgolf-stop-capture-keystrokes)
   (ediff-buffers (get-buffer-create vimgolf-work-buffer-name) (get-buffer-create vimgolf-end-buffer-name))
   (message "Remember to `C-c C-v c` when you're done."))
 
 (defun vimgolf-continue ()
   "Restore work and end buffers and begin recording keystrokes again."
   (interactive)
-  (vimgolf-open-dribble-file vimgolf-dribble-file-path)
+  (vimgolf-capture-keystrokes)
   (set-window-configuration vimgolf-working-window-configuration)
   (message "Golf away!"))
 
 (defun vimgolf-pause ()
   "Stop recording keystrokes."
   (interactive)
-  (vimgolf-open-dribble-file nil)
+  (vimgolf-stop-capture-keystrokes)
   (message "Come `C-c C-v c` soon."))
 
 (defun vimgolf-quit ()
@@ -207,7 +178,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
   (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
   (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
-  (vimgolf-open-dribble-file nil)
+  (vimgolf-stop-capture-keystrokes)
   (set-window-configuration vimgolf-prior-window-configuration)
   (message "I declare you, n00b!"))
 
@@ -239,13 +210,14 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-kill-existing-session ()
   (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
   (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
-  (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name)))
+  (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
+  (if (get-buffer vimgolf-keystrokes-buffer-name) (kill-buffer vimgolf-keystrokes-buffer-name)))
 
 ;;;###autoload
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
   (interactive "sChallenge ID: ")
-  (clear-dribble-file)
+  (vimgolf-clear-keystrokes)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
   (let ((vimgolf-yaml-buffer (url-retrieve-synchronously (vimgolf-challenge-url challenge-id)))
@@ -272,7 +244,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
       (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
       (set-window-buffer (selected-window) vimgolf-work-buffer)
       (switch-to-buffer vimgolf-work-buffer)
-      (vimgolf-open-dribble-file vimgolf-dribble-file-path)
+      (vimgolf-capture-keystrokes)
       (setq vimgolf-working-window-configuration (current-window-configuration)))))
 
 ;;; vimgolf.el ends here

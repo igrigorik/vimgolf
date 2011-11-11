@@ -116,8 +116,9 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-capture-keystroke ()
   (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
     (end-of-buffer)
-    (if (not executing-kbd-macro)
+    (if (not (or executing-kbd-macro prefix-arg))
         (progn
+          (message "%s" (this-command-keys-vector))
           (insert (princ (mapconcat 'single-key-description
                                     (this-command-keys-vector)
                                     " ")))

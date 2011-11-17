@@ -155,6 +155,8 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   "Revert the work buffer to it's original state and reset keystrokes."
   (interactive)
   (with-current-buffer (get-buffer-create vimgolf-work-buffer-name)
+    (when defining-kbd-macro
+      (end-kbd-macro))
     (delete-region (point-min) (point-max))
     (insert-buffer (get-buffer-create vimgolf-start-buffer-name))
     (vimgolf-clear-keystrokes)

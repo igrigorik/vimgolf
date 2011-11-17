@@ -113,19 +113,28 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (message "Wrong!")
   (vimgolf-diff))
 
+(defmacro vimgolf-with-saved-command-environment (&rest body)
+  `(let ((deactivate-mark nil)
+         (this-command this-command)
+         (last-command last-command))
+     ,@body))
+
+(defun vimgolf-capturable-keystroke-p ()
+  (not (or executing-kbd-macro (member this-command '(digit-argument negative-argument universal-argument universal-argument-other-key universal-argument-minus universal-argument-more)))))
+
 (defun vimgolf-capture-keystroke ()
-  (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
-    (end-of-buffer)
-    (if (not (or executing-kbd-macro prefix-arg))
-        (progn
-          (insert (key-description (this-command-keys)))
-          (insert " ")))))
+  (vimgolf-with-saved-command-environment
+   (when (vimgolf-capturable-keystroke-p)
+     (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
+       (end-of-buffer)
+       (insert (key-description (this-command-keys)))
+       (insert " ")))))
 
 (defun vimgolf-capture-keystrokes ()
-  (add-hook 'post-command-hook 'vimgolf-capture-keystroke))
+  (add-hook 'pre-command-hook 'vimgolf-capture-keystroke))
 
 (defun vimgolf-stop-capture-keystrokes ()
-  (remove-hook 'post-command-hook 'vimgolf-capture-keystroke))
+  (remove-hook 'pre-command-hook 'vimgolf-capture-keystroke))
 
 (defun vimgolf-right-solution ()
   (message "Hurray!")

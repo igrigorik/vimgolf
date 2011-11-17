@@ -233,7 +233,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
         vimgolf-challenge challenge-id)
   (let ((vimgolf-yaml-buffer (url-retrieve-synchronously (vimgolf-challenge-url challenge-id)))
         (data-end-regexp "\\([ 	]\\{4\\}\\|[ 	]\\{0\\}\\)
-  type: [a-z]+")
+  type: [-a-z]+")
         (data-start-regexp "  data: |\\+\\{0,1\\}
 "))
     (set-buffer vimgolf-yaml-buffer)

@@ -120,7 +120,19 @@ with `C-c C-v` prefixes to help in playing VimGolf.
      ,@body))
 
 (defun vimgolf-capturable-keystroke-p ()
-  (not (or executing-kbd-macro (member this-command '(digit-argument negative-argument universal-argument universal-argument-other-key universal-argument-minus universal-argument-more)))))
+  (not (or executing-kbd-macro
+           (member this-command
+                   '(digit-argument
+                     negative-argument
+                     universal-argument
+                     universal-argument-other-key
+                     universal-argument-minus
+                     universal-argument-more
+                     vimgolf-submit
+                     vimgolf-diff
+                     vimgolf-continue
+                     vimgolf-pause
+                     vimgolf-quit)))))
 
 (defun vimgolf-capture-keystroke ()
   (vimgolf-with-saved-command-environment

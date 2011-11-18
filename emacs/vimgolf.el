@@ -245,6 +245,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 ;; (setq vimgolf-host "http://vimgolf.com/")
 ;; Overall VimGolf Rank ID: 4d2fb20e63b08b08b0000075
 ;; Sort entries based on date ID: 4ea9bc988b36f70001000008
+;; HTML to Haml ID: 4d3c51f1aabf526ed6000030
 
 (defvar vimgolf-challenge-extension ".yaml")
 

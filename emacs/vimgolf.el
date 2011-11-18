@@ -216,6 +216,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
     (delete-region (match-beginning 0) (point-max))
     (decrease-left-margin (point-min) (point-max) 4)
     (beginning-of-buffer)
+    (setq buffer-undo-list nil)
     (vimgolf-mode t)))
 
 (defun vimgolf-kill-existing-session ()

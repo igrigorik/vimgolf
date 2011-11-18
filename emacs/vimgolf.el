@@ -122,6 +122,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 
 (defun vimgolf-capturable-keystroke-p ()
   (not (or executing-kbd-macro
+           (< 0 (recursion-depth))
            (member this-command
                    '(digit-argument
                      negative-argument
@@ -156,11 +157,11 @@ with `C-c C-v` prefixes to help in playing VimGolf.
        (insert " ")))))
 
 ;; (setq vimgolf-logging-enabled t)
-;; (setq vimgolf-logging-enable)
+;; (setq vimgolf-logging-enabled)
 (defvar vimgolf-logging-enabled)
 
 (defun vimgolf-log-keystroke ()
-  (when vimgolf-logging-enabled
+  (when (and vimgolf-logging-enabled (not (< 0 (recursion-depth))))
     (vimgolf-with-saved-command-environment
      (with-current-buffer (get-buffer-create vimgolf-keystrokes-log-buffer-name)
        (end-of-buffer)

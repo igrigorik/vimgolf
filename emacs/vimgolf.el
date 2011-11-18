@@ -94,6 +94,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-start-buffer-name "*vimgolf-start*")
 (defvar vimgolf-end-buffer-name "*vimgolf-end*")
 (defvar vimgolf-keystrokes-buffer-name "*vimgolf-keystrokes*")
+(defvar vimgolf-keystrokes-log-buffer-name "*vimgolf-keystrokes-log*")
 
 (defun point-min-in-buffer (buffer)
   (with-current-buffer buffer
@@ -134,6 +135,10 @@ with `C-c C-v` prefixes to help in playing VimGolf.
                      vimgolf-pause
                      vimgolf-quit)))))
 
+(defun vimgolf-capturable-dangling-keystroke-p ()
+  (member this-command
+          '(calc-dispatch)))
+
 (defun vimgolf-capture-keystroke ()
   (vimgolf-with-saved-command-environment
    (when (vimgolf-capturable-keystroke-p)
@@ -142,11 +147,40 @@ with `C-c C-v` prefixes to help in playing VimGolf.
        (insert (key-description (this-command-keys)))
        (insert " ")))))
 
+(defun vimgolf-capture-dangling-keystroke ()
+  (vimgolf-with-saved-command-environment
+   (when (vimgolf-capturable-dangling-keystroke-p)
+     (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
+       (end-of-buffer)
+       (insert (key-description (this-command-keys)))
+       (insert " ")))))
+
+;; (setq vimgolf-logging-enabled t)
+;; (setq vimgolf-logging-enable)
+(defvar vimgolf-logging-enabled)
+
+(defun vimgolf-log-keystroke ()
+  (when vimgolf-logging-enabled
+    (vimgolf-with-saved-command-environment
+     (with-current-buffer (get-buffer-create vimgolf-keystrokes-log-buffer-name)
+       (end-of-buffer)
+       (insert (key-description (this-command-keys)))
+       (insert " ")
+       (princ this-command (get-buffer-create vimgolf-keystrokes-log-buffer-name))
+       (insert "
+")))))
+
 (defun vimgolf-capture-keystrokes ()
-  (add-hook 'pre-command-hook 'vimgolf-capture-keystroke))
+  (add-hook 'pre-command-hook 'vimgolf-capture-keystroke)
+  (add-hook 'post-command-hook 'vimgolf-capture-dangling-keystroke)
+  (add-hook 'pre-command-hook 'vimgolf-log-keystroke)
+  (add-hook 'post-command-hook 'vimgolf-log-keystroke))
 
 (defun vimgolf-stop-capture-keystrokes ()
-  (remove-hook 'pre-command-hook 'vimgolf-capture-keystroke))
+  (remove-hook 'pre-command-hook 'vimgolf-capture-keystroke)
+  (remove-hook 'post-command-hook 'vimgolf-capture-dangling-keystroke)
+  (remove-hook 'pre-command-hook 'vimgolf-log-keystroke)
+  (remove-hook 'post-command-hook 'vimgolf-log-keystroke))
 
 (defun vimgolf-right-solution ()
   (message "Hurray!")
@@ -231,10 +265,11 @@ with `C-c C-v` prefixes to help in playing VimGolf.
     (vimgolf-mode t)))
 
 (defun vimgolf-kill-existing-session ()
-  (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
-  (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
-  (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
-  (if (get-buffer vimgolf-keystrokes-buffer-name) (kill-buffer vimgolf-keystrokes-buffer-name)))
+  (when (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
+  (when (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
+  (when (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
+  (when (get-buffer vimgolf-keystrokes-buffer-name) (kill-buffer vimgolf-keystrokes-buffer-name))
+  (when (get-buffer vimgolf-keystrokes-log-buffer-name) (kill-buffer vimgolf-keystrokes-log-buffer-name)))
 
 ;;;###autoload
 (defun vimgolf (challenge-id)

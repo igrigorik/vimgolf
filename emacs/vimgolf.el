@@ -182,10 +182,18 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (remove-hook 'pre-command-hook 'vimgolf-log-keystroke)
   (remove-hook 'post-command-hook 'vimgolf-log-keystroke))
 
+(defun vimgolf-count-keystrokes ()
+  (with-current-buffer (get-buffer vimgolf-keystrokes-buffer-name)
+    (beginning-of-buffer)
+    (let ((count 0))
+      (while (search-forward " " nil t)
+        (setq count (1+ count)))
+      count)))
+
 (defun vimgolf-right-solution ()
   (message "Hurray!")
-  (let ((keystrokes-count nil))        ; Need to implement keystroke counting. Should be as simple as counting spaces and adding 1.
-    (message "You should really write that parser at some point.")))
+  (let ((keystrokes-count (vimgolf-count-keystrokes)))        ; Need to implement keystroke counting. Should be as simple as counting spaces and adding 1.
+    (message "You solved %s in %s keystrokes!" vimgolf-challenge keystrokes-count)))
 
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."

@@ -285,10 +285,8 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 
 (defun vimgolf-read-next-data-chunk ()
   "Return the next chunk of data as a string, leaving the point at the end of that chunk."
-  (let ((data-start-regexp "  data: |\\+\\{0,1\\}
-")
-        (data-end-regexp "\\([ 	]\\{4\\}\\|[ 	]\\{0\\}\\)
-  type: [-a-z]+"))
+  (let ((data-start-regexp "  data: |\\+\\{0,1\\}\n")
+        (data-end-regexp "\\([ 	]\\{4\\}\\|[ 	]\\{0\\}\\)\n  type: [-a-z]+"))
     (unless (re-search-forward data-start-regexp nil t)
       (error "Can't find data in response from vimgolf"))
     (let ((start (point)))

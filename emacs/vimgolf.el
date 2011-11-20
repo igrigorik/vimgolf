@@ -164,17 +164,13 @@ with `C-c C-v` prefixes to help in playing VimGolf.
        (insert "
 ")))))
 
-(defun vimgolf-capture-keystrokes ()
-  (add-hook 'pre-command-hook 'vimgolf-capture-keystroke)
-  (add-hook 'post-command-hook 'vimgolf-capture-dangling-keystroke)
-  (add-hook 'pre-command-hook 'vimgolf-log-keystroke)
-  (add-hook 'post-command-hook 'vimgolf-log-keystroke))
-
-(defun vimgolf-stop-capture-keystrokes ()
-  (remove-hook 'pre-command-hook 'vimgolf-capture-keystroke)
-  (remove-hook 'post-command-hook 'vimgolf-capture-dangling-keystroke)
-  (remove-hook 'pre-command-hook 'vimgolf-log-keystroke)
-  (remove-hook 'post-command-hook 'vimgolf-log-keystroke))
+(defun vimgolf-enable-capture (enable)
+  "Enable keystroke logging if `ENABLE' is non-nil otherwise disable it."
+  (let ((f (if enable 'add-hook 'remove-hook)))
+    (funcall f 'pre-command-hook 'vimgolf-capture-keystroke)
+    (funcall f 'post-command-hook 'vimgolf-capture-dangling-keystroke)
+    (funcall f 'pre-command-hook 'vimgolf-log-keystroke)
+    (funcall f 'post-command-hook 'vimgolf-log-keystroke)))
 
 (defun vimgolf-count-keystrokes ()
   (with-current-buffer (get-buffer vimgolf-keystrokes-buffer-name)
@@ -192,7 +188,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."
   (interactive)
-  (vimgolf-stop-capture-keystrokes)
+  (vimgolf-enable-capture nil)
   (if (vimgolf-solution-correct-p) (vimgolf-right-solution) (vimgolf-wrong-solution)))
 
 (defun vimgolf-clear-keystrokes ()
@@ -221,21 +217,21 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-diff ()
   "Pause the competition and view differences between the buffers."
   (interactive)
-  (vimgolf-stop-capture-keystrokes)
+  (vimgolf-enable-capture nil)
   (ediff-buffers (get-buffer-create vimgolf-work-buffer-name) (get-buffer-create vimgolf-end-buffer-name))
   (message "Remember to `C-c C-v c` when you're done."))
 
 (defun vimgolf-continue ()
   "Restore work and end buffers and begin recording keystrokes again."
   (interactive)
-  (vimgolf-capture-keystrokes)
+  (vimgolf-enable-capture t)
   (set-window-configuration vimgolf-working-window-configuration)
   (message "Golf away!"))
 
 (defun vimgolf-pause ()
   "Stop recording keystrokes."
   (interactive)
-  (vimgolf-stop-capture-keystrokes)
+  (vimgolf-enable-capture nil)
   (message "Come `C-c C-v c` soon."))
 
 (defun vimgolf-quit ()
@@ -244,7 +240,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
   (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
   (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
-  (vimgolf-stop-capture-keystrokes)
+  (vimgolf-enable-capture nil)
   (set-window-configuration vimgolf-prior-window-configuration)
   (message "I declare you, n00b!"))
 
@@ -322,6 +318,6 @@ with `C-c C-v` prefixes to help in playing VimGolf.
         (switch-to-buffer vimgolf-work-buffer)
         (setq vimgolf-working-window-configuration (current-window-configuration))
 
-        (vimgolf-capture-keystrokes)))))
+        (vimgolf-enable-capture t)))))
 
 ;;; vimgolf.el ends here

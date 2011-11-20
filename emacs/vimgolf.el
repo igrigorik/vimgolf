@@ -160,7 +160,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
        (end-of-buffer)
        (insert (key-description (this-command-keys)))
        (insert " ")
-       (princ this-command (get-buffer-create vimgolf-keystrokes-log-buffer-name))
+       (princ this-command (current-buffer))
        (insert "\n")))))
 
 (defun vimgolf-enable-capture (enable)

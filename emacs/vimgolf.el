@@ -127,7 +127,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 
 Each entry is a cons cell containing a key sequence vector
 suitable for use with `key-description', and a symbol for the
-command that was executed as a result (which may be nil if un
+command that was executed as a result (which may be nil if an
 unknown key sequence was entered).")
 
 (defun vimgolf-maybe-capture-keystroke (pred)

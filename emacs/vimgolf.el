@@ -133,21 +133,20 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (member this-command
           '(calc-dispatch)))
 
-(defun vimgolf-capture-keystroke ()
+(defun vimgolf-maybe-capture-keystroke (pred)
+  "Log the keystrokes for `this-command' if function `PRED' returns a non-nil result."
   (vimgolf-with-saved-command-environment
-   (when (vimgolf-capturable-keystroke-p)
+   (when (funcall pred)
      (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
        (end-of-buffer)
        (insert (key-description (this-command-keys)))
        (insert " ")))))
 
+(defun vimgolf-capture-keystroke ()
+  (vimgolf-maybe-capture-keystroke 'vimgolf-capturable-keystroke-p))
+
 (defun vimgolf-capture-dangling-keystroke ()
-  (vimgolf-with-saved-command-environment
-   (when (vimgolf-capturable-dangling-keystroke-p)
-     (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
-       (end-of-buffer)
-       (insert (key-description (this-command-keys)))
-       (insert " ")))))
+  (vimgolf-maybe-capture-keystroke 'vimgolf-capturable-dangling-keystroke-p))
 
 ;; (setq vimgolf-logging-enabled t)
 ;; (setq vimgolf-logging-enabled)

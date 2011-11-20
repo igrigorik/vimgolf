@@ -94,7 +94,6 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-start-buffer-name "*vimgolf-start*")
 (defvar vimgolf-end-buffer-name "*vimgolf-end*")
 (defvar vimgolf-keystrokes-buffer-name "*vimgolf-keystrokes*")
-(defvar vimgolf-keystrokes-log-buffer-name "*vimgolf-keystrokes-log*")
 
 (defun vimgolf-solution-correct-p ()
   "Return t if the work text is identical to the solution, nil otherwise."
@@ -133,14 +132,21 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (member this-command
           '(calc-dispatch)))
 
+(defvar vimgolf-keystrokes nil
+  "A list of (keys-vector . command) pairs for the keystrokes entered.
+
+Each entry is a cons cell containing a key sequence vector
+suitable for use with `key-description', and a symbol for the
+command that was executed as a result (which may be nil if un
+unknown key sequence was entered).")
+
 (defun vimgolf-maybe-capture-keystroke (pred)
-  "Log the keystrokes for `this-command' if function `PRED' returns a non-nil result."
+  "Store the keystrokes for `this-command' if result of calling function `PRED' is not nil."
   (vimgolf-with-saved-command-environment
    (when (funcall pred)
-     (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
-       (end-of-buffer)
-       (insert (key-description (this-command-keys)))
-       (insert " ")))))
+     (setq vimgolf-keystrokes
+           (append vimgolf-keystrokes (list (cons (this-command-keys-vector)
+                                                  this-command)))))))
 
 (defun vimgolf-capture-keystroke ()
   (vimgolf-maybe-capture-keystroke 'vimgolf-capturable-keystroke-p))
@@ -148,35 +154,30 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-capture-dangling-keystroke ()
   (vimgolf-maybe-capture-keystroke 'vimgolf-capturable-dangling-keystroke-p))
 
-;; (setq vimgolf-logging-enabled t)
-;; (setq vimgolf-logging-enabled)
-(defvar vimgolf-logging-enabled nil)
-
-(defun vimgolf-log-keystroke ()
-  (when (and vimgolf-logging-enabled (not (< 0 (recursion-depth))))
-    (vimgolf-with-saved-command-environment
-     (with-current-buffer (get-buffer-create vimgolf-keystrokes-log-buffer-name)
-       (end-of-buffer)
-       (insert (key-description (this-command-keys)))
-       (insert " ")
-       (princ this-command (current-buffer))
-       (insert "\n")))))
+(defun vimgolf-refresh-keystroke-log ()
+  "Refresh the contents of the keystrokes log buffer."
+  (when (not (< 0 (recursion-depth)))
+    (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
+      (erase-buffer)
+      (insert (format "Keystrokes (%d)\n\n" (vimgolf-count-keystrokes))
+              (mapconcat 'key-description (mapcar 'car vimgolf-keystrokes) " ")
+              "\n\nFull command log:\n\n")
+      (dolist (entry vimgolf-keystrokes)
+        (insert (key-description (car entry)))
+        (insert " ")
+        (princ (cdr entry) (current-buffer))
+        (insert "\n")))))
 
 (defun vimgolf-enable-capture (enable)
   "Enable keystroke logging if `ENABLE' is non-nil otherwise disable it."
   (let ((f (if enable 'add-hook 'remove-hook)))
     (funcall f 'pre-command-hook 'vimgolf-capture-keystroke)
     (funcall f 'post-command-hook 'vimgolf-capture-dangling-keystroke)
-    (funcall f 'pre-command-hook 'vimgolf-log-keystroke)
-    (funcall f 'post-command-hook 'vimgolf-log-keystroke)))
+    (funcall f 'pre-command-hook 'vimgolf-refresh-keystroke-log)
+    (funcall f 'post-command-hook 'vimgolf-refresh-keystroke-log)))
 
 (defun vimgolf-count-keystrokes ()
-  (with-current-buffer (get-buffer vimgolf-keystrokes-buffer-name)
-    (beginning-of-buffer)
-    (let ((count 0))
-      (while (search-forward " " nil t)
-        (setq count (1+ count)))
-      count)))
+  (apply '+ (mapcar 'length (mapcar 'car vimgolf-keystrokes))))
 
 (defun vimgolf-right-solution ()
   (message "Hurray!")
@@ -190,8 +191,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (if (vimgolf-solution-correct-p) (vimgolf-right-solution) (vimgolf-wrong-solution)))
 
 (defun vimgolf-clear-keystrokes ()
-  (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
-    (erase-buffer)))
+  (setq vimgolf-keystrokes nil))
 
 (defun vimgolf-reset-work-buffer ()
   "Reset the contents of the work buffer, and clear undo/macro history etc."
@@ -269,8 +269,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (dolist (buf (list vimgolf-start-buffer-name
                      vimgolf-work-buffer-name
                      vimgolf-end-buffer-name
-                     vimgolf-keystrokes-buffer-name
-                     vimgolf-keystrokes-log-buffer-name))
+                     vimgolf-keystrokes-buffer-name))
     (when (get-buffer buf)
       (kill-buffer buf))))
 

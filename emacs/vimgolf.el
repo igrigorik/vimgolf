@@ -161,8 +161,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
        (insert (key-description (this-command-keys)))
        (insert " ")
        (princ this-command (get-buffer-create vimgolf-keystrokes-log-buffer-name))
-       (insert "
-")))))
+       (insert "\n")))))
 
 (defun vimgolf-enable-capture (enable)
   "Enable keystroke logging if `ENABLE' is non-nil otherwise disable it."

@@ -106,7 +106,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 
 (defun vimgolf-solution-correct-p ()
   (let ((case-fold-search nil))
-    (eq 0 (compare-buffer-substrings
+    (zerop (compare-buffer-substrings
            (get-buffer vimgolf-work-buffer-name) (point-min-in-buffer vimgolf-work-buffer-name) (point-max-in-buffer vimgolf-work-buffer-name)
            (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name)))))
 
@@ -158,7 +158,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 
 ;; (setq vimgolf-logging-enabled t)
 ;; (setq vimgolf-logging-enabled)
-(defvar vimgolf-logging-enabled)
+(defvar vimgolf-logging-enabled nil)
 
 (defun vimgolf-log-keystroke ()
   (when (and vimgolf-logging-enabled (not (< 0 (recursion-depth))))
@@ -206,17 +206,24 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
     (erase-buffer)))
 
+(defun vimgolf-reset-work-buffer ()
+  "Reset the contents of the work buffer, and clear undo/macro history etc."
+  (with-current-buffer (get-buffer-create vimgolf-work-buffer-name)
+    (vimgolf-init-buffer (current-buffer)
+                         (with-current-buffer vimgolf-start-buffer-name
+                           (buffer-string)))
+    (when defining-kbd-macro
+      (end-kbd-macro))
+    (vimgolf-clear-keystrokes)
+    (setq buffer-undo-list nil)
+    (set-buffer-modified-p nil)))
+
 (defun vimgolf-revert ()
   "Revert the work buffer to it's original state and reset keystrokes."
   (interactive)
-  (with-current-buffer (get-buffer-create vimgolf-work-buffer-name)
-    (when defining-kbd-macro
-      (end-kbd-macro))
-    (delete-region (point-min) (point-max))
-    (insert-buffer (get-buffer-create vimgolf-start-buffer-name))
-    (vimgolf-clear-keystrokes)
-    (set-window-configuration vimgolf-working-window-configuration)
-    (message "If at first you don't succeed, try, try again.")))
+  (vimgolf-reset-work-buffer)
+  (set-window-configuration vimgolf-working-window-configuration)
+  (message "If at first you don't succeed, try, try again."))
 
 (defun vimgolf-diff ()
   "Pause the competition and view differences between the buffers."
@@ -264,22 +271,35 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defun vimgolf-challenge-url (challenge-id)
   (concat vimgolf-host (vimgolf-challenge-path challenge-id) vimgolf-challenge-extension))
 
-(defun vimgolf-scrub-buffer (buffer)
+(defun vimgolf-init-buffer (buffer text)
   (with-current-buffer buffer
+    (erase-buffer)
+    (insert text)
     (beginning-of-buffer)
-    (re-search-forward data-end-regexp nil t)
-    (delete-region (match-beginning 0) (point-max))
-    (decrease-left-margin (point-min) (point-max) 4)
-    (beginning-of-buffer)
-    (setq buffer-undo-list nil)
     (vimgolf-mode t)))
 
 (defun vimgolf-kill-existing-session ()
-  (when (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
-  (when (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
-  (when (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
-  (when (get-buffer vimgolf-keystrokes-buffer-name) (kill-buffer vimgolf-keystrokes-buffer-name))
-  (when (get-buffer vimgolf-keystrokes-log-buffer-name) (kill-buffer vimgolf-keystrokes-log-buffer-name)))
+  (dolist (buf (list vimgolf-start-buffer-name
+                     vimgolf-work-buffer-name
+                     vimgolf-end-buffer-name
+                     vimgolf-keystrokes-buffer-name
+                     vimgolf-keystrokes-log-buffer-name))
+    (when (get-buffer buf)
+      (kill-buffer buf))))
+
+(defun vimgolf-read-next-data-chunk ()
+  "Return the next chunk of data as a string, leaving the point at the end of that chunk."
+  (let ((data-start-regexp "  data: |\\+\\{0,1\\}
+")
+        (data-end-regexp "\\([ 	]\\{4\\}\\|[ 	]\\{0\\}\\)
+  type: [-a-z]+"))
+    (unless (re-search-forward data-start-regexp nil t)
+      (error "Can't find data in response from vimgolf"))
+    (let ((start (point)))
+      (unless (re-search-forward data-end-regexp nil t)
+        (error "Unclosed data section in response from vimgolf"))
+      (let ((str (buffer-substring-no-properties start (match-beginning 0))))
+        (replace-regexp-in-string "^    " "" str)))))
 
 ;;;###autoload
 (defun vimgolf (challenge-id)
@@ -288,31 +308,29 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   (vimgolf-clear-keystrokes)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
-  (let ((vimgolf-yaml-buffer (url-retrieve-synchronously (vimgolf-challenge-url challenge-id)))
-        (data-end-regexp "\\([ 	]\\{4\\}\\|[ 	]\\{0\\}\\)
-  type: [-a-z]+")
-        (data-start-regexp "  data: |\\+\\{0,1\\}
-"))
+  (let ((vimgolf-yaml-buffer (url-retrieve-synchronously (vimgolf-challenge-url challenge-id))))
     (set-buffer vimgolf-yaml-buffer)
     (beginning-of-buffer)
-    (unless (re-search-forward data-start-regexp nil t)
-      (error "Can't find data in response from vimgolf; check challenge ID."))
-    (vimgolf-kill-existing-session)
-    (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))
-          (vimgolf-work-buffer (get-buffer-create vimgolf-work-buffer-name))
-          (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
-      (append-to-buffer vimgolf-start-buffer (point) (point-max))
-      (append-to-buffer vimgolf-work-buffer (point) (point-max))
-      (vimgolf-scrub-buffer vimgolf-start-buffer)
-      (vimgolf-scrub-buffer vimgolf-work-buffer)
-      (re-search-forward data-start-regexp nil t)
-      (append-to-buffer vimgolf-end-buffer (point) (point-max))
-      (vimgolf-scrub-buffer vimgolf-end-buffer)
-      (delete-other-windows)
-      (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
-      (set-window-buffer (selected-window) vimgolf-work-buffer)
-      (switch-to-buffer vimgolf-work-buffer)
-      (vimgolf-capture-keystrokes)
-      (setq vimgolf-working-window-configuration (current-window-configuration)))))
+    (let* ((start-text (vimgolf-read-next-data-chunk))
+           (end-text (vimgolf-read-next-data-chunk)))
+
+      (vimgolf-kill-existing-session)
+
+      (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))
+            (vimgolf-work-buffer (get-buffer-create vimgolf-work-buffer-name))
+            (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
+
+        (vimgolf-init-buffer vimgolf-start-buffer start-text)
+        (vimgolf-init-buffer vimgolf-end-buffer end-text)
+        (vimgolf-reset-work-buffer)
+
+        ;; Set up windows
+        (delete-other-windows)
+        (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
+        (set-window-buffer (selected-window) vimgolf-work-buffer)
+        (switch-to-buffer vimgolf-work-buffer)
+        (setq vimgolf-working-window-configuration (current-window-configuration))
+
+        (vimgolf-capture-keystrokes)))))
 
 ;;; vimgolf.el ends here

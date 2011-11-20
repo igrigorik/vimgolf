@@ -180,9 +180,7 @@ unknown key sequence was entered).")
   (apply '+ (mapcar 'length (mapcar 'car vimgolf-keystrokes))))
 
 (defun vimgolf-right-solution ()
-  (message "Hurray!")
-  (let ((keystrokes-count (vimgolf-count-keystrokes)))        ; Need to implement keystroke counting. Should be as simple as counting spaces and adding 1.
-    (message "You solved %s in %s keystrokes!" vimgolf-challenge keystrokes-count)))
+  (message "Hurray! You solved %s in %d keystrokes!" vimgolf-challenge (vimgolf-count-keystrokes)))
 
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."

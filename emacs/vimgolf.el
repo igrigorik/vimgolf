@@ -95,20 +95,10 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-end-buffer-name "*vimgolf-end*")
 (defvar vimgolf-keystrokes-buffer-name "*vimgolf-keystrokes*")
 
-(defun vimgolf-solution-correct-p ()
-  "Return t if the work text is identical to the solution, nil otherwise."
-  (let ((case-fold-search nil)
-        (work vimgolf-work-buffer-name)
-        (end vimgolf-end-buffer-name))
-    (flet ((point-min-in (buf) (with-current-buffer buf (point-min)))
-           (point-max-in (buf) (with-current-buffer buf (point-max))))
-      (zerop (compare-buffer-substrings
-              (get-buffer work) (point-min-in work) (point-max-in work)
-              (get-buffer end) (point-min-in end) (point-max-in end))))))
 
-(defun vimgolf-wrong-solution ()
-  (message "Wrong!")
-  (vimgolf-diff))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keystroke logging
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmacro vimgolf-with-saved-command-environment (&rest body)
   `(let ((deactivate-mark nil)
@@ -179,6 +169,27 @@ unknown key sequence was entered).")
 (defun vimgolf-count-keystrokes ()
   (apply '+ (mapcar 'length (mapcar 'car vimgolf-keystrokes))))
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Managing and scoring challenges
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun vimgolf-solution-correct-p ()
+  "Return t if the work text is identical to the solution, nil otherwise."
+  (let ((case-fold-search nil)
+        (work vimgolf-work-buffer-name)
+        (end vimgolf-end-buffer-name))
+    (flet ((point-min-in (buf) (with-current-buffer buf (point-min)))
+           (point-max-in (buf) (with-current-buffer buf (point-max))))
+      (zerop (compare-buffer-substrings
+              (get-buffer work) (point-min-in work) (point-max-in work)
+              (get-buffer end) (point-min-in end) (point-max-in end))))))
+
+(defun vimgolf-wrong-solution ()
+  (message "Wrong!")
+  (vimgolf-diff))
+
 (defun vimgolf-right-solution ()
   (message "Hurray! You solved %s in %d keystrokes!" vimgolf-challenge (vimgolf-count-keystrokes)))
 
@@ -233,10 +244,8 @@ unknown key sequence was entered).")
 (defun vimgolf-quit ()
   "Cancel the competition."
   (interactive)
-  (if (get-buffer vimgolf-start-buffer-name) (kill-buffer vimgolf-start-buffer-name))
-  (if (get-buffer vimgolf-work-buffer-name) (kill-buffer vimgolf-work-buffer-name))
-  (if (get-buffer vimgolf-end-buffer-name) (kill-buffer vimgolf-end-buffer-name))
   (vimgolf-enable-capture nil)
+  (vimgolf-kill-existing-session)
   (set-window-configuration vimgolf-prior-window-configuration)
   (message "I declare you, n00b!"))
 
@@ -264,6 +273,7 @@ unknown key sequence was entered).")
     (vimgolf-mode t)))
 
 (defun vimgolf-kill-existing-session ()
+  "Kill any vimgolf-related buffers."
   (dolist (buf (list vimgolf-start-buffer-name
                      vimgolf-work-buffer-name
                      vimgolf-end-buffer-name
@@ -315,4 +325,6 @@ unknown key sequence was entered).")
 
         (vimgolf-enable-capture t)))))
 
+
+(provide 'vimgolf)
 ;;; vimgolf.el ends here

@@ -129,12 +129,8 @@ with `C-c C-v` prefixes to help in playing VimGolf.
                      universal-argument
                      universal-argument-other-key
                      universal-argument-minus
-                     universal-argument-more
-                     vimgolf-submit
-                     vimgolf-diff
-                     vimgolf-continue
-                     vimgolf-pause
-                     vimgolf-quit)))))
+                     universal-argument-more))
+           (string-prefix-p "vimgolf-" (symbol-name this-command)))))
 
 (defun vimgolf-capturable-dangling-keystroke-p ()
   (member this-command

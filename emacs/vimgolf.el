@@ -96,19 +96,16 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-keystrokes-buffer-name "*vimgolf-keystrokes*")
 (defvar vimgolf-keystrokes-log-buffer-name "*vimgolf-keystrokes-log*")
 
-(defun point-min-in-buffer (buffer)
-  (with-current-buffer buffer
-    (point-min)))
-
-(defun point-max-in-buffer (buffer)
-  (with-current-buffer buffer
-    (point-max)))
-
 (defun vimgolf-solution-correct-p ()
-  (let ((case-fold-search nil))
-    (zerop (compare-buffer-substrings
-           (get-buffer vimgolf-work-buffer-name) (point-min-in-buffer vimgolf-work-buffer-name) (point-max-in-buffer vimgolf-work-buffer-name)
-           (get-buffer vimgolf-end-buffer-name) (point-min-in-buffer vimgolf-end-buffer-name) (point-max-in-buffer vimgolf-end-buffer-name)))))
+  "Return t if the work text is identical to the solution, nil otherwise."
+  (let ((case-fold-search nil)
+        (work vimgolf-work-buffer-name)
+        (end vimgolf-end-buffer-name))
+    (flet ((point-min-in (buf) (with-current-buffer buf (point-min)))
+           (point-max-in (buf) (with-current-buffer buf (point-max))))
+      (zerop (compare-buffer-substrings
+              (get-buffer work) (point-min-in work) (point-max-in work)
+              (get-buffer end) (point-min-in end) (point-max-in end))))))
 
 (defun vimgolf-wrong-solution ()
   (message "Wrong!")

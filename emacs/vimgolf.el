@@ -294,37 +294,38 @@ unknown key sequence was entered).")
       (let ((str (buffer-substring-no-properties start (match-beginning 0))))
         (replace-regexp-in-string "^    " "" str)))))
 
+(defun vimgolf-setup (status challenge-id)
+  (vimgolf-clear-keystrokes)
+  (setq vimgolf-prior-window-configuration (current-window-configuration)
+        vimgolf-challenge challenge-id)
+  (beginning-of-buffer)
+  (let* ((start-text (vimgolf-read-next-data-chunk))
+         (end-text (vimgolf-read-next-data-chunk)))
+
+    (vimgolf-kill-existing-session)
+
+    (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))
+          (vimgolf-work-buffer (get-buffer-create vimgolf-work-buffer-name))
+          (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
+
+      (vimgolf-init-buffer vimgolf-start-buffer start-text)
+      (vimgolf-init-buffer vimgolf-end-buffer end-text)
+      (vimgolf-reset-work-buffer)
+
+      ;; Set up windows
+      (delete-other-windows)
+      (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
+      (set-window-buffer (selected-window) vimgolf-work-buffer)
+      (switch-to-buffer vimgolf-work-buffer)
+      (setq vimgolf-working-window-configuration (current-window-configuration))
+
+      (vimgolf-enable-capture t))))
+
 ;;;###autoload
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
   (interactive "sChallenge ID: ")
-  (vimgolf-clear-keystrokes)
-  (setq vimgolf-prior-window-configuration (current-window-configuration)
-        vimgolf-challenge challenge-id)
-  (let ((vimgolf-yaml-buffer (url-retrieve-synchronously (vimgolf-challenge-url challenge-id))))
-    (set-buffer vimgolf-yaml-buffer)
-    (beginning-of-buffer)
-    (let* ((start-text (vimgolf-read-next-data-chunk))
-           (end-text (vimgolf-read-next-data-chunk)))
-
-      (vimgolf-kill-existing-session)
-
-      (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))
-            (vimgolf-work-buffer (get-buffer-create vimgolf-work-buffer-name))
-            (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
-
-        (vimgolf-init-buffer vimgolf-start-buffer start-text)
-        (vimgolf-init-buffer vimgolf-end-buffer end-text)
-        (vimgolf-reset-work-buffer)
-
-        ;; Set up windows
-        (delete-other-windows)
-        (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
-        (set-window-buffer (selected-window) vimgolf-work-buffer)
-        (switch-to-buffer vimgolf-work-buffer)
-        (setq vimgolf-working-window-configuration (current-window-configuration))
-
-        (vimgolf-enable-capture t)))))
+  (url-retrieve (vimgolf-challenge-url challenge-id) 'vimgolf-setup '(challenge-id)))
 
 
 (provide 'vimgolf)

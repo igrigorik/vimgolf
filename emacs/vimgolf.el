@@ -20,6 +20,8 @@
 ;; [VimGolf][1].
 ;;
 ;; On second thought, let's not go to Camelot. It's a silly place.
+;;
+;; Patches are accepted at https://github.com/timvisher/vimgolf
 
 ;;; Installation:
 

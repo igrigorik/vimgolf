@@ -108,7 +108,6 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 
 (defun vimgolf-capturable-keystroke-p ()
   (not (or executing-kbd-macro
-           (< 0 (recursion-depth))
            (member this-command
                    '(digit-argument
                      negative-argument
@@ -147,17 +146,16 @@ unknown key sequence was entered).")
 (defun vimgolf-refresh-keystroke-log ()
   "Refresh the contents of the keystrokes log buffer."
   (let ((deactivate-mark nil))
-    (when (not (< 0 (recursion-depth)))
-      (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
-        (erase-buffer)
-        (insert (format "Keystrokes (%d):\n\n" (vimgolf-count-keystrokes))
-                (mapconcat 'key-description (mapcar 'car vimgolf-keystrokes) " ")
-                "\n\nFull command log:\n\n")
-        (dolist (entry vimgolf-keystrokes)
-          (insert (key-description (car entry)))
-          (insert " ")
-          (princ (cdr entry) (current-buffer))
-          (insert "\n"))))))
+    (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
+      (erase-buffer)
+      (insert (format "Keystrokes (%d):\n\n" (vimgolf-count-keystrokes))
+              (mapconcat 'key-description (mapcar 'car vimgolf-keystrokes) " ")
+              "\n\nFull command log:\n\n")
+      (dolist (entry vimgolf-keystrokes)
+        (insert (key-description (car entry)))
+        (insert " ")
+        (princ (cdr entry) (current-buffer))
+        (insert "\n")))))
 
 (defun vimgolf-enable-capture (enable)
   "Enable keystroke logging if `ENABLE' is non-nil otherwise disable it."

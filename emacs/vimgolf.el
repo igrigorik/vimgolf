@@ -166,7 +166,6 @@ unknown key sequence was entered).")
   (let ((f (if enable 'add-hook 'remove-hook)))
     (funcall f 'pre-command-hook 'vimgolf-capture-keystroke)
     (funcall f 'post-command-hook 'vimgolf-capture-dangling-keystroke)
-    (funcall f 'pre-command-hook 'vimgolf-refresh-keystroke-log)
     (funcall f 'post-command-hook 'vimgolf-refresh-keystroke-log)))
 
 (defun vimgolf-count-keystrokes ()

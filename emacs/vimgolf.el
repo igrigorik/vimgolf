@@ -153,11 +153,13 @@ unknown key sequence was entered).")
       (insert (format "Keystrokes (%d):\n\n" (vimgolf-count-keystrokes))
               (mapconcat 'key-description (mapcar 'car vimgolf-keystrokes) " ")
               "\n\nFull command log:\n\n")
-      (dolist (entry vimgolf-keystrokes)
-        (insert (key-description (car entry)))
-        (insert " ")
-        (princ (cdr entry) (current-buffer))
-        (insert "\n")))))
+      (when vimgolf-keystrokes
+        (let* ((descrs-and-commands
+                (mapcar (lambda (entry) (cons (key-description (car entry)) (cdr entry))) vimgolf-keystrokes))
+               (maxlen (apply 'max (mapcar 'length (mapcar 'car descrs-and-commands))))
+               (fmt (format "%%-%ds  %%s" maxlen)))
+          (dolist (entry descrs-and-commands)
+            (insert (format fmt (car entry) (prin1-to-string (cdr entry) t)) "\n")))))))
 
 (defun vimgolf-enable-capture (enable)
   "Enable keystroke logging if `ENABLE' is non-nil otherwise disable it."

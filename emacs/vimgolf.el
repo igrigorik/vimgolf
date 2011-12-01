@@ -148,6 +148,7 @@ unknown key sequence was entered).")
   "Refresh the contents of the keystrokes log buffer."
   (let ((deactivate-mark nil))
     (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
+      (vimgolf-mode t)
       (erase-buffer)
       (insert (format "Challenge ID: %s\n%s\n\n" vimgolf-challenge (vimgolf-challenge-url vimgolf-challenge))
               (format "Keystrokes (%d):\n\n" (vimgolf-count-keystrokes))
@@ -193,6 +194,8 @@ unknown key sequence was entered).")
   (vimgolf-diff))
 
 (defun vimgolf-right-solution ()
+  (delete-other-windows)
+  (switch-to-buffer vimgolf-keystrokes-buffer-name)
   (message "Hurray! You solved %s in %d keystrokes!" vimgolf-challenge (vimgolf-count-keystrokes)))
 
 (defun vimgolf-submit ()

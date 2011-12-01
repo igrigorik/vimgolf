@@ -5,8 +5,7 @@
 ;; Author: Tim Visher <tim.visher@gmail.com>
 ;; Maintainer: Tim Visher <tim.visher@gmail.com>
 ;; Created: 2011-11-02
-;; Version: 0.1
-;; Package-Version: 6a616502
+;; Version: 0.9.0
 ;; Keywords: games vimgolf vim
 
 ;; This file is not part of GNU Emacs

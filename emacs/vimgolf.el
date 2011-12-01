@@ -97,7 +97,6 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-end-buffer-name "*vimgolf-end*")
 (defvar vimgolf-keystrokes-buffer-name "*vimgolf-keystrokes*")
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keystroke logging
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -150,7 +149,8 @@ unknown key sequence was entered).")
   (let ((deactivate-mark nil))
     (with-current-buffer (get-buffer-create vimgolf-keystrokes-buffer-name)
       (erase-buffer)
-      (insert (format "Keystrokes (%d):\n\n" (vimgolf-count-keystrokes))
+      (insert (format "Challenge ID: %s\n%s\n\n" vimgolf-challenge (vimgolf-challenge-url vimgolf-challenge))
+              (format "Keystrokes (%d):\n\n" (vimgolf-count-keystrokes))
               (mapconcat 'key-description (mapcar 'car vimgolf-keystrokes) " ")
               "\n\nFull command log:\n\n")
       (when vimgolf-keystrokes
@@ -258,6 +258,7 @@ unknown key sequence was entered).")
 ;; Overall VimGolf Rank ID: 4d2fb20e63b08b08b0000075
 ;; Sort entries based on date ID: 4ea9bc988b36f70001000008
 ;; HTML to Haml ID: 4d3c51f1aabf526ed6000030
+;; Assignment Allignment: 4d2c9d06eda6262e4e00007a
 
 (defvar vimgolf-challenge-extension ".yaml")
 
@@ -326,7 +327,7 @@ unknown key sequence was entered).")
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
   (interactive "sChallenge ID: ")
-  (url-retrieve (vimgolf-challenge-url challenge-id) 'vimgolf-setup '(challenge-id)))
+  (url-retrieve (vimgolf-challenge-url challenge-id) 'vimgolf-setup `(,challenge-id)))
 
 
 (provide 'vimgolf)

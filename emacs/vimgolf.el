@@ -274,7 +274,7 @@ unknown key sequence was entered).")
   (with-current-buffer buffer
     (erase-buffer)
     (insert text)
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (vimgolf-mode t)))
 
 (defun vimgolf-kill-existing-session ()
@@ -302,7 +302,7 @@ unknown key sequence was entered).")
   (vimgolf-clear-keystrokes)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
-  (beginning-of-buffer)
+  (goto-char (point-min))
   (let* ((start-text (vimgolf-read-next-data-chunk))
          (end-text (vimgolf-read-next-data-chunk)))
 

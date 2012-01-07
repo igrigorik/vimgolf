@@ -187,14 +187,9 @@ unknown key sequence was entered).")
 
 (defun vimgolf-solution-correct-p ()
   "Return t if the work text is identical to the solution, nil otherwise."
-  (let ((case-fold-search nil)
-        (work vimgolf-work-buffer-name)
-        (end vimgolf-end-buffer-name))
-    (flet ((point-min-in (buf) (with-current-buffer buf (point-min)))
-           (point-max-in (buf) (with-current-buffer buf (point-max))))
-      (zerop (compare-buffer-substrings
-              (get-buffer work) (point-min-in work) (point-max-in work)
-              (get-buffer end) (point-min-in end) (point-max-in end))))))
+  (let ((working (with-current-buffer vimgolf-work-buffer-name (buffer-string)))
+	(end (with-current-buffer vimgolf-end-buffer-name (buffer-string))))
+    (string= working end)))
 
 (defun vimgolf-wrong-solution ()
   (message "Wrong!")

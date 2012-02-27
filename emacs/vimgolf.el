@@ -180,8 +180,6 @@ unknown key sequence was entered).")
 (defun vimgolf-count-keystrokes ()
   (apply '+ (mapcar 'length (mapcar 'car vimgolf-keystrokes))))
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Managing and scoring challenges
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -318,6 +316,7 @@ unknown key sequence was entered).")
 
       (vimgolf-init-buffer vimgolf-start-buffer start-text)
       (vimgolf-init-buffer vimgolf-end-buffer end-text)
+      (with-current-buffer vimgolf-end-buffer (setq buffer-read-only t))
       (vimgolf-reset-work-buffer)
 
       ;; Set up windows
@@ -327,7 +326,7 @@ unknown key sequence was entered).")
       (switch-to-buffer vimgolf-work-buffer)
       (setq vimgolf-working-window-configuration (current-window-configuration))
 
-      (vimgolf-enable-capture t))))
+      (vimgolf-continue))))
 
 ;;;###autoload
 (defun vimgolf (challenge-id)

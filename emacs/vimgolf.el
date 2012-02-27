@@ -21,6 +21,8 @@
 ;; On second thought, let's not go to Camelot. It's a silly place.
 ;;
 ;; Patches are accepted at https://github.com/timvisher/vimgolf
+;;
+;; [1]: http://vimgolf.com/
 
 ;;; Installation:
 
@@ -38,6 +40,12 @@
 ;;; License:
 
 ;; [CC BY-NC-SA 3.0](http://creativecommons.org/licenses/by-nc-sa/3.0/)
+
+;;; Contributors
+
+;; Tim Visher (@timvisher)
+;; Steve Purcell (@sanityinc)
+;; Adam Collard (@acollard)
 
 ;;; Code:
 
@@ -274,7 +282,7 @@ unknown key sequence was entered).")
   (with-current-buffer buffer
     (erase-buffer)
     (insert text)
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (vimgolf-mode t)))
 
 (defun vimgolf-kill-existing-session ()
@@ -302,7 +310,7 @@ unknown key sequence was entered).")
   (vimgolf-clear-keystrokes)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
-  (beginning-of-buffer)
+  (goto-char (point-min))
   (let* ((start-text (vimgolf-read-next-data-chunk))
          (end-text (vimgolf-read-next-data-chunk)))
 

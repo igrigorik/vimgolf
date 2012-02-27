@@ -1,10 +1,11 @@
 module VimGolf
 
-  GOLFHOST  = ENV['GOLFHOST'] || "http://vimgolf.com"
-  GOLFDEBUG = ENV['GOLFDEBUG'].to_sym rescue false
-  GOLFDIFF  = ENV['GOLFDIFF'] || 'diff'
-  GOLFVIM   = ENV['GOLFVIM'] || 'vim'
-  PROXY     = ENV['http_proxy'] || ''
+  GOLFDEBUG    = ENV['GOLFDEBUG'].to_sym rescue false
+  GOLFHOST     = ENV['GOLFHOST']     || "http://vimgolf.com"
+  GOLFDIFF     = ENV['GOLFDIFF']     || 'diff'
+  GOLFSHOWDIFF = ENV['GOLFSHOWDIFF'] || 'vim -d -n -M'
+  GOLFVIM      = ENV['GOLFVIM']      || 'vim'
+  PROXY        = ENV['http_proxy']   || ''
 
   class Error
   end
@@ -75,16 +76,23 @@ module VimGolf
         system(vimcmd)
 
         if $?.exitstatus.zero?
-          diff = `#{GOLFDIFF} \"#{input(id, type)}\" \"#{output(id)}\"`
+          diff_files = "\"#{input(id, type)}\" \"#{output(id)}\""
+          diff = `#{GOLFDIFF} #{diff_files}`
           score = Keylog.score(IO.read(log(id)))
 
           if diff.size > 0
-            VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output:"
-            VimGolf.ui.warn "#"*50
-            puts diff
-            VimGolf.ui.warn "#"*50
-            VimGolf.ui.warn "Please try again! Your score for this (failed) attempt was: #{score}"
-            return
+            loop do
+              VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output."
+              case VimGolf.ui.ask "Would you like to see a [d]iff or [q]uit ?",
+                                  :type      => :warn,
+                                  :choices   => [:diff, :quit]
+              when :diff
+                system("#{GOLFSHOWDIFF} #{diff_files}")
+              when :quit
+                VimGolf.ui.warn "Please try again! Your score for this (failed) attempt was: #{score}"
+                return
+              end
+            end
           end
 
           VimGolf.ui.info "Success! Your output matches. Your score: #{score}"

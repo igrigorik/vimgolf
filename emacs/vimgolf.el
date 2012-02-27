@@ -21,6 +21,8 @@
 ;; On second thought, let's not go to Camelot. It's a silly place.
 ;;
 ;; Patches are accepted at https://github.com/timvisher/vimgolf
+;;
+;; [1]: http://vimgolf.com/
 
 ;;; Installation:
 
@@ -38,6 +40,12 @@
 ;;; License:
 
 ;; [CC BY-NC-SA 3.0](http://creativecommons.org/licenses/by-nc-sa/3.0/)
+
+;;; Contributors
+
+;; Tim Visher (@timvisher)
+;; Steve Purcell (@sanityinc)
+;; Adam Collard (@acollard)
 
 ;;; Code:
 

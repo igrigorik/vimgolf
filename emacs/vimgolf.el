@@ -94,6 +94,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   :group 'vimgolf)
 
 (defvar vimgolf-challenge nil)
+(defvar vimgolf-challenge-history nil)
 
 (defvar vimgolf-prior-window-configuration nil)
 
@@ -331,7 +332,7 @@ unknown key sequence was entered).")
 ;;;###autoload
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
-  (interactive "sChallenge ID: ")
+  (interactive (list (read-from-minibuffer "Challenge ID: " nil nil nil 'vimgolf-challenge-history)))
   (url-retrieve (vimgolf-challenge-url challenge-id) 'vimgolf-setup `(,challenge-id)))
 
 (provide 'vimgolf)

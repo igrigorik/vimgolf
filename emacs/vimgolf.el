@@ -188,7 +188,7 @@ unknown key sequence was entered).")
 (defun vimgolf-solution-correct-p ()
   "Return t if the work text is identical to the solution, nil otherwise."
   (let ((working (with-current-buffer vimgolf-work-buffer-name (buffer-string)))
-	(end (with-current-buffer vimgolf-end-buffer-name (buffer-string))))
+        (end (with-current-buffer vimgolf-end-buffer-name (buffer-string))))
     (string= working end)))
 
 (defun vimgolf-wrong-solution ()
@@ -334,6 +334,10 @@ unknown key sequence was entered).")
   (interactive "sChallenge ID: ")
   (url-retrieve (vimgolf-challenge-url challenge-id) 'vimgolf-setup `(,challenge-id)))
 
-
 (provide 'vimgolf)
+
+;;; Local Variables:
+;;; tab-width:2
+;;; indent-tabs-mode:nil
+;;; End:
 ;;; vimgolf.el ends here

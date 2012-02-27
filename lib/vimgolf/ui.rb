@@ -1,6 +1,13 @@
+require 'highline'
+
 module VimGolf
   class CLI
     class UI < Thor::Base.shell
+
+      def initialize
+          super
+          @hl = HighLine.new($stdin)
+      end
 
       def error(name, message = nil)
         begin
@@ -43,20 +50,29 @@ module VimGolf
         end
       end
 
-      def ask(message, password = false)
+      def ask(message, options)
         begin
-          require 'highline'
-          @hl ||= HighLine.new($stdin)
-          if not $stdin.tty?
-            @hl.ask(message)
-          elsif password
-            @hl.ask(message) {|q| q.echo = "*" }
-          else
-            @hl.ask(message) {|q| q.readline = true }
-          end
+          message = color_string(message, options[:type])
+          details = Proc.new {|q|
+            q.readline = !$stdin.tty?
+          }
+          @hl.ask(message, options[:choices], &details)
         rescue EOFError
           return ''
         end
+      end
+
+      def color_string(str, type)
+        @hl.color(
+          str,
+          case type
+          when :info  then :green
+          when :warn  then :yellow
+          when :error then :red
+          when :debug then :cyan
+          else nil
+          end
+        )
       end
 
       def print_envs(apps, default_env_name = nil, simple = false)

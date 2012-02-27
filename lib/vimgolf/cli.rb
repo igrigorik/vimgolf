@@ -3,12 +3,14 @@ module VimGolf
   GOLFDEBUG    = ENV['GOLFDEBUG'].to_sym rescue false
   GOLFHOST     = ENV['GOLFHOST']     || "http://vimgolf.com"
   GOLFDIFF     = ENV['GOLFDIFF']     || 'diff'
-  GOLFSHOWDIFF = ENV['GOLFSHOWDIFF'] || 'vim -d -n -M'
+  GOLFSHOWDIFF = ENV['GOLFSHOWDIFF'] || 'vim -d -n'
   GOLFVIM      = ENV['GOLFVIM']      || 'vim'
   PROXY        = ENV['http_proxy']   || ''
 
   class Error
   end
+
+  class RetryException < Exception; end
 
   class UI
     def debug(*); end
@@ -61,11 +63,11 @@ module VimGolf
     DESC
 
     def put(id = nil)
-      VimGolf.ui.warn "Launching VimGolf session for challenge: #{id}"
+      VimGolf.ui.warn "Downloading Vimgolf challenge: #{id}"
+      type = download(id)
 
       begin
-        type = download(id)
-
+        VimGolf.ui.warn "Launching VimGolf session for challenge: #{id}"
         # - n - no swap file, memory only editing
         # - +0 - always start on line 0
         # - --noplugin - don't load any plugins, lets be fair!
@@ -83,11 +85,16 @@ module VimGolf
           if diff.size > 0
             loop do
               VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output."
-              case VimGolf.ui.ask "Would you like to see a [d]iff or [q]uit ?",
+              case VimGolf.ui.ask "Would you like to see a [d]iff or [r]etry or [q]uit ?",
                                   :type      => :warn,
-                                  :choices   => [:diff, :quit]
+                                  :choices   => [:diff, :retry, :quit]
               when :diff
+                VimGolf.ui.warn "Showing vimdiff of your attempt (left) and correct output (right)"
                 system("#{GOLFSHOWDIFF} #{diff_files}")
+              when :retry
+                VimGolf.ui.warn "Your score for this (failed) attempt was: #{score}. Let's try again!!\n#{'#'*50}"
+                save_challenge(id)
+                raise RetryException
               when :quit
                 VimGolf.ui.warn "Please try again! Your score for this (failed) attempt was: #{score}"
                 return
@@ -120,10 +127,13 @@ module VimGolf
           VimGolf.ui.error error
         end
 
-      rescue Exception => e
-        VimGolf.ui.error "Uh oh, something went wrong! Error: #{e}"
-        VimGolf.ui.error "If the error persists, please report it to github.com/igrigorik/vimgolf"
+      rescue RetryException => e
+        retry
       end
+
+    rescue Exception => e
+      VimGolf.ui.error "Uh oh, something went wrong! Error: #{e}"
+      VimGolf.ui.error "If the error persists, please report it to github.com/igrigorik/vimgolf"
     end
 
     no_tasks do
@@ -136,27 +146,31 @@ module VimGolf
           proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
           res = proxy.start(url.host, url.port) { |http| http.request(req) }
 
-          data = YAML.load(res.body)
+          @data = YAML.load(res.body)
 
-          if !data.is_a? Hash
+          if !@data.is_a? Hash
             raise
 
-          elsif data['client'] != Vimgolf::VERSION
-            VimGolf.ui.error "Client version mismatch. Installed: #{Vimgolf::VERSION}, Required: #{data['client']}."
+          elsif @data['client'] != Vimgolf::VERSION
+            VimGolf.ui.error "Client version mismatch. Installed: #{Vimgolf::VERSION}, Required: #{@data['client']}."
             VimGolf.ui.error "\t gem install vimgolf"
             raise "Bad Version"
           end
 
-          File.open(Config.put_path + "/#{id}.#{data['in']['type']}", "w") {|f| f.puts data['in']['data']}
-          File.open(Config.put_path + "/#{id}.output", "w") {|f| f.puts data['out']['data']}
-          File.open(Config.put_path + "/#{id}.golfrc", "w") {|f| f.puts data['vimrc']}
+          save_challenge(id)
 
-          data['in']['type']
+          @data['in']['type']
 
         rescue Exception => e
           debug(e)
           raise "Uh oh, couldn't download or parse challenge, please verify your challenge id & client version."
         end
+      end
+
+      def save_challenge(id)
+        File.open(Config.put_path + "/#{id}.#{@data['in']['type']}", "w") {|f| f.puts @data['in']['data']}
+        File.open(Config.put_path + "/#{id}.output", "w") {|f| f.puts @data['out']['data']}
+        File.open(Config.put_path + "/#{id}.golfrc", "w") {|f| f.puts @data['vimrc']}
       end
 
       def upload(id)

@@ -2,11 +2,11 @@
 
 ;; Copyright (C) never, by no one
 
-;; Author: Tim Visher <tim.visher@gmail.com>
-;; Maintainer: Tim Visher <tim.visher@gmail.com>
-;; Created: 2011-11-02
-;; Version: 0.9.0
-;; Keywords: games vimgolf vim
+;;; Author: Tim Visher <tim.visher@gmail.com>
+;;; Maintainer: Tim Visher <tim.visher@gmail.com>
+;;; Created: 2011-11-02
+;;; Version: 0.9.2
+;;; Keywords: games vimgolf vim
 
 ;; This file is not part of GNU Emacs
 
@@ -21,6 +21,8 @@
 ;; On second thought, let's not go to Camelot. It's a silly place.
 ;;
 ;; Patches are accepted at https://github.com/timvisher/vimgolf
+;;
+;; [1]: http://vimgolf.com/
 
 ;;; Installation:
 
@@ -38,6 +40,12 @@
 ;;; License:
 
 ;; [CC BY-NC-SA 3.0](http://creativecommons.org/licenses/by-nc-sa/3.0/)
+
+;;; Contributors
+
+;; Tim Visher (@timvisher)
+;; Steve Purcell (@sanityinc)
+;; Adam Collard (@acollard)
 
 ;;; Code:
 
@@ -86,6 +94,7 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   :group 'vimgolf)
 
 (defvar vimgolf-challenge nil)
+(defvar vimgolf-challenge-history nil)
 
 (defvar vimgolf-prior-window-configuration nil)
 
@@ -171,22 +180,15 @@ unknown key sequence was entered).")
 (defun vimgolf-count-keystrokes ()
   (apply '+ (mapcar 'length (mapcar 'car vimgolf-keystrokes))))
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Managing and scoring challenges
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun vimgolf-solution-correct-p ()
   "Return t if the work text is identical to the solution, nil otherwise."
-  (let ((case-fold-search nil)
-        (work vimgolf-work-buffer-name)
-        (end vimgolf-end-buffer-name))
-    (flet ((point-min-in (buf) (with-current-buffer buf (point-min)))
-           (point-max-in (buf) (with-current-buffer buf (point-max))))
-      (zerop (compare-buffer-substrings
-              (get-buffer work) (point-min-in work) (point-max-in work)
-              (get-buffer end) (point-min-in end) (point-max-in end))))))
+  (let ((working (with-current-buffer vimgolf-work-buffer-name (buffer-string)))
+        (end (with-current-buffer vimgolf-end-buffer-name (buffer-string))))
+    (string= working end)))
 
 (defun vimgolf-wrong-solution ()
   (message "Wrong!")
@@ -274,7 +276,7 @@ unknown key sequence was entered).")
   (with-current-buffer buffer
     (erase-buffer)
     (insert text)
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (vimgolf-mode t)))
 
 (defun vimgolf-kill-existing-session ()
@@ -302,7 +304,7 @@ unknown key sequence was entered).")
   (vimgolf-clear-keystrokes)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
-  (beginning-of-buffer)
+  (goto-char (point-min))
   (let* ((start-text (vimgolf-read-next-data-chunk))
          (end-text (vimgolf-read-next-data-chunk)))
 
@@ -314,6 +316,7 @@ unknown key sequence was entered).")
 
       (vimgolf-init-buffer vimgolf-start-buffer start-text)
       (vimgolf-init-buffer vimgolf-end-buffer end-text)
+      (with-current-buffer vimgolf-end-buffer (setq buffer-read-only t))
       (vimgolf-reset-work-buffer)
 
       ;; Set up windows
@@ -323,14 +326,18 @@ unknown key sequence was entered).")
       (switch-to-buffer vimgolf-work-buffer)
       (setq vimgolf-working-window-configuration (current-window-configuration))
 
-      (vimgolf-enable-capture t))))
+      (vimgolf-continue))))
 
 ;;;###autoload
 (defun vimgolf (challenge-id)
   "Open a VimGolf Challenge"
-  (interactive "sChallenge ID: ")
+  (interactive (list (read-from-minibuffer "Challenge ID: " nil nil nil 'vimgolf-challenge-history)))
   (url-retrieve (vimgolf-challenge-url challenge-id) 'vimgolf-setup `(,challenge-id)))
 
-
 (provide 'vimgolf)
+
+;;; Local Variables:
+;;; tab-width:2
+;;; indent-tabs-mode:nil
+;;; End:
 ;;; vimgolf.el ends here

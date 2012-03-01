@@ -102,7 +102,7 @@ module VimGolf
               when "%i"; "<S-Right>"
 
               when "kB"; "<S-Tab>"
-              when "\xffX"; "<C-Space>"
+              when "\xffX"; "<C-@>"
 
               else
                 #puts "Unknown Vim code: #{code.inspect}"

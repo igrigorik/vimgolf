@@ -198,8 +198,8 @@ module VimGolf
               #when "\xfd\x5f"; "KE_DROP"
               #when "\xfd\x5e"; "KE_CURSORHOLD"
               #when "\xfd\x61"; "KE_NOP"
-              #when "\xfd\x62"; "FOCUS_GAINED"
-              #when "\xfd\x63"; "FOCUS_LOST"
+              when "\xfd\x62"; nil # Focus Gained (GVIM)
+              when "\xfd\x63"; nil # Focus Lost (GVIM)
 
               else
                 #puts "Unknown Vim code: #{code.inspect}"
@@ -227,7 +227,7 @@ module VimGolf
 
         end
 
-        yield out_char
+        yield out_char if out_char
       end
     end
   end

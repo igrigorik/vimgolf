@@ -37,9 +37,9 @@ module VimGolf
           when 0x80
             code = scanner.get_byte + scanner.get_byte
 
-            # This list has been populated by experimentation so far,
-            # because I haven't bothered looking for a more authoritative
-            # source.
+            # This list has been populated by looking at
+            # :h terminal-options and vim source files:
+            # keymap.h and misc2.c
             case code
               when "k1"; "<F1>"
               when "k2"; "<F2>"
@@ -53,6 +53,38 @@ module VimGolf
               when "k;"; "<F10>"
               when "F1"; "<F11>"
               when "F2"; "<F12>"
+              when "F3"; "<F13>"
+              when "F4"; "<F14>"
+              when "F5"; "<F15>"
+              when "F6"; "<F16>"
+              when "F7"; "<F17>"
+              when "F8"; "<F18>"
+              when "F9"; "<F19>"
+
+              when "%1"; "<Help>"
+              when "&8"; "<Undo>"
+              when "#2"; "<S-Home>"
+              when "*7"; "<S-End>"
+              when "K1"; "<kHome>"
+              when "K4"; "<kEnd>"
+              when "K3"; "<kPageUp>"
+              when "K5"; "<kPageDown>"
+              when "K6"; "<kPlus>"
+              when "K7"; "<kMinus>"
+              when "K8"; "<kDivide>"
+              when "K9"; "<kMultiply>"
+              when "KA"; "<kEnter>"
+              when "KB"; "<kPoint>"
+              when "KC"; "<k0>"
+              when "KD"; "<k1>"
+              when "KE"; "<k2>"
+              when "KF"; "<k3>"
+              when "KG"; "<k4>"
+              when "KH"; "<k5>"
+              when "KI"; "<k6>"
+              when "KJ"; "<k7>"
+              when "KK"; "<k8>"
+              when "KL"; "<k9>"
 
               when "kP"; "<PageUp>"
               when "kN"; "<PageDown>"

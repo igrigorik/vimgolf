@@ -1,7 +1,8 @@
 require "helper"
 
+include VimGolf
+
 describe VimGolf::Keylog do
-  include VimGolf
 
   Dir['spec/fixtures/*'].each do |f|
     it "should parse #{f} logfile" do

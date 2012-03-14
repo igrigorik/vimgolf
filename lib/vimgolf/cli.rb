@@ -80,7 +80,7 @@ module VimGolf
         if $?.exitstatus.zero?
           diff_files = "\"#{input(id, type)}\" \"#{output(id)}\""
           diff = `#{GOLFDIFF} #{diff_files}`
-          score = Keylog.score(IO.read(log(id)))
+          score = Keylog.new(IO.read(log(id))).score
 
           if diff.size > 0
             VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output."

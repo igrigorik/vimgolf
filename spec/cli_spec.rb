@@ -22,20 +22,4 @@ describe VimGolf do
     out.should include("launch")
   end
 
-  describe "download / upload challenge" do
-    let(:c) { VimGolf::CLI.new }
-
-    it "should raise error on invalid challenge" do
-      lambda { c.download('invalidID') }.should raise_error
-    end
-
-    it "should return type of challenge on success" do
-      c.download('4d1a1c36567bac34a9000002').should == "rb"
-    end
-
-    it "should raise error on invalid upload id" do
-      lambda { c.upload('invalidID') }.should raise_error
-    end
-  end
-
 end

@@ -1,29 +1,20 @@
 module VimGolf
-  class Session < Array
-    def to_s(sep = '')
-      @log.join(sep)
-    end
-  end
-
   class Keylog
-    def self.parse(input)
-      session = Session.new
-      scan(input) {|s| session << s }
-      session
+    include Enumerable
+
+    alias_method :convert , :to_s
+    alias_method :score   , :count
+
+    def initialize(input)
+      @input = input
     end
 
-    def self.convert(input)
-      parse(input).join('')
+    def to_s(sep = '')
+      to_a.join(sep)
     end
 
-    def self.score(input)
-      keys = 0
-      scan(input) {|s| keys += 1 }
-      keys
-    end
-
-    def self.scan(input)
-      scanner = StringScanner.new(input)
+    def each
+      scanner = StringScanner.new(@input)
       output = ""
 
       until scanner.eos?

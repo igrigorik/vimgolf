@@ -64,7 +64,9 @@ module VimGolf
 
     def put(id = nil)
       VimGolf.ui.warn "Downloading Vimgolf challenge: #{id}"
-      type = download(id)
+      VimGolf::Challenge.path(Config.put_path)
+      challenge = Challenge.new(id)
+      challenge.download
 
       begin
         VimGolf.ui.warn "Launching VimGolf session for challenge: #{id}"
@@ -73,14 +75,14 @@ module VimGolf
         # - --noplugin - don't load any plugins, lets be fair!
         # -i NONE - don't load .viminfo (for saved macros and the like)
         # - u - load vimgolf .vimrc to level the playing field
-        vimcmd = "#{GOLFVIM} -Z --servername \"\" -n --noplugin -i NONE +0 -u \"#{vimrc(id)}\" -W \"#{log(id)}\" \"#{input(id, type)}\""
+        vimcmd = "#{GOLFVIM} -Z --servername \"\" -n --noplugin -i NONE +0 -u \"#{challenge.vimrc_path}\" -W \"#{challenge.log_path}\" \"#{challenge.input_path}\""
         debug(vimcmd)
         system(vimcmd)
 
         if $?.exitstatus.zero?
-          diff_files = "\"#{input(id, type)}\" \"#{output(id)}\""
+          diff_files = "\"#{challenge.input_path}\" \"#{challenge.output_path}\""
           diff = `#{GOLFDIFF} #{diff_files}`
-          score = Keylog.new(IO.read(log(id))).score
+          log = Keylog.new(IO.read(challenge.log_path))
 
           if diff.size > 0
             VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output."
@@ -92,22 +94,22 @@ module VimGolf
                 VimGolf.ui.warn "Showing vimdiff of your attempt (left) and correct output (right)"
                 system("#{GOLFSHOWDIFF} #{diff_files}")
               when :retry
-                VimGolf.ui.warn "Your score for this (failed) attempt was: #{score}. Let's try again!!\n#{'#'*50}"
-                save_challenge(id)
+                VimGolf.ui.warn "Your score for this (failed) attempt was: #{log.score}. Let's try again!!\n#{'#'*50}"
+                challenge.save
                 raise RetryException
               when :quit
-                VimGolf.ui.warn "Please try again! Your score for this (failed) attempt was: #{score}"
+                VimGolf.ui.warn "Please try again! Your score for this (failed) attempt was: #{log.score}"
                 return
               end
             end
           end
 
-          VimGolf.ui.info "Success! Your output matches. Your score: #{score}"
+          VimGolf.ui.info "Success! Your output matches. Your score: #{log.score}"
 
           if VimGolf.ui.yes? "Upload result to VimGolf? (yes / no)"
             VimGolf.ui.warn "Uploading to VimGolf..."
 
-            if upload(id) == :ok
+            if challenge.upload == :ok
               VimGolf.ui.info "Uploaded entry, thanks for golfing!"
               VimGolf.ui.info "View the leaderboard: #{GOLFHOST}/challenges/#{id}"
             else
@@ -136,95 +138,10 @@ module VimGolf
       VimGolf.ui.error "If the error persists, please report it to github.com/igrigorik/vimgolf"
     end
 
-    no_tasks do
-      def download(id)
-        begin
-          url = URI.parse("#{GOLFHOST}/challenges/#{id}.yaml")
-          req = Net::HTTP::Get.new(url.path)
-
-          proxy_url, proxy_user, proxy_pass = get_proxy
-          proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
-          res = proxy.start(url.host, url.port) { |http| http.request(req) }
-
-          @data = YAML.load(res.body)
-
-          if !@data.is_a? Hash
-            raise
-
-          elsif @data['client'] != Vimgolf::VERSION
-            VimGolf.ui.error "Client version mismatch. Installed: #{Vimgolf::VERSION}, Required: #{@data['client']}."
-            VimGolf.ui.error "\t gem install vimgolf"
-            raise "Bad Version"
-          end
-
-          save_challenge(id)
-
-          @data['in']['type']
-
-        rescue Exception => e
-          debug(e)
-          raise "Uh oh, couldn't download or parse challenge, please verify your challenge id & client version."
-        end
-      end
-
-      def save_challenge(id)
-        File.open(Config.put_path + "/#{id}.#{@data['in']['type']}", "w") {|f| f.puts @data['in']['data']}
-        File.open(Config.put_path + "/#{id}.output", "w") {|f| f.puts @data['out']['data']}
-        File.open(Config.put_path + "/#{id}.golfrc", "w") {|f| f.puts @data['vimrc']}
-      end
-
-      def upload(id)
-        begin
-          url = URI.parse("#{GOLFHOST}/entry.yaml")
-
-          proxy_url, proxy_user, proxy_pass = get_proxy
-          proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
-
-          proxy.start(url.host, url.port) do |http|
-            request = Net::HTTP::Post.new(url.request_uri)
-            request.set_form_data({"challenge_id" => id, "apikey" => Config.load['key'], "entry" => IO.read(log(id))})
-            request["Accept"] = "text/yaml"
-
-            res = http.request(request)
-            res = YAML.load(res.body)
-
-            raise if !res.is_a? Hash
-            res['status'].to_sym
-
-          end
-        rescue Exception => e
-          debug(e)
-          raise "Uh oh, entry upload has failed, please check your key."
-        end
-      end
-    end
-
     private
-      def input(id, type);  challenge(id) + ".#{type}"; end
-      def output(id); challenge(id) + ".output"; end
-      def log(id);    challenge(id) + ".log";    end
-      def vimrc(id);  challenge(id) + ".golfrc"; end
-
-      def challenge(id)
-        Config.put_path + "/#{id}"
-      end
-
-      def get_proxy
-        begin
-          proxy_url = URI.parse(PROXY)
-        rescue Exception => e
-          VimGolf.ui.error "Invalid proxy uri in http_proxy environment variable - will try to run with out proxy"
-          proxy_url = URI.parse("");
-        end
-
-        proxy_url.port ||= 80
-        proxy_user, proxy_pass = proxy_url.userinfo.split(/:/) if proxy_url.userinfo
-
-        return proxy_url, proxy_user, proxy_pass
-      end
-
       def debug(msg)
         p [caller.first, msg] if GOLFDEBUG
       end
   end
+
 end

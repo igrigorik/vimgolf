@@ -75,12 +75,12 @@ module VimGolf
         # - --noplugin - don't load any plugins, lets be fair!
         # -i NONE - don't load .viminfo (for saved macros and the like)
         # - u - load vimgolf .vimrc to level the playing field
-        vimcmd = "#{GOLFVIM} -Z --servername \"\" -n --noplugin -i NONE +0 -u \"#{challenge.vimrc_path}\" -W \"#{challenge.log_path}\" \"#{challenge.input_path}\""
+        vimcmd = "#{GOLFVIM} -Z --servername \"\" -n --noplugin -i NONE +0 -u \"#{challenge.vimrc_path}\" -W \"#{challenge.log_path}\" \"#{challenge.work_path}\""
         debug(vimcmd)
         system(vimcmd)
 
         if $?.exitstatus.zero?
-          diff_files = "\"#{challenge.input_path}\" \"#{challenge.output_path}\""
+          diff_files = "\"#{challenge.work_path}\" \"#{challenge.output_path}\""
           diff = `#{GOLFDIFF} #{diff_files}`
           log = Keylog.new(IO.read(challenge.log_path))
 
@@ -95,7 +95,7 @@ module VimGolf
                 system("#{GOLFSHOWDIFF} #{diff_files}")
               when :retry
                 VimGolf.ui.warn "Your score for this (failed) attempt was: #{log.score}. Let's try again!!\n#{'#'*50}"
-                challenge.save
+                challenge.start
                 raise RetryException
               when :quit
                 VimGolf.ui.warn "Please try again! Your score for this (failed) attempt was: #{log.score}"

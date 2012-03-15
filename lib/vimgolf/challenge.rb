@@ -33,10 +33,15 @@ module VimGolf
 
         @type = @data['in']['type']
         save
+        start
       rescue Exception => e
         debug(e)
         raise "Uh oh, couldn't download or parse challenge, please verify your challenge id & client version."
       end
+    end
+
+    def start
+      File.open(work_path, "w")  {|f| f.puts @data['in']['data']}
     end
 
     def save
@@ -71,6 +76,7 @@ module VimGolf
     end
 
     def input_path;  path + ".#{@type}"; end
+    def work_path;   path + ".work.#{@type}"; end
     def output_path; path + ".output"; end
     def log_path;    path + ".log";    end
     def vimrc_path;  path + ".golfrc"; end

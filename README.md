@@ -1,6 +1,6 @@
 # [VimGolf.com](http://www.vimgolf.com) Client
 
-Real Vim ninjas count every keystroke - do you? Head on over to vimgolf.com, pick a challenge, and show us what you've got! The rules are simple:
+Real Vim ninjas count every keystroke - do you? Head on over to vimgolf.com, pick a challenge, and show us what you've got!
 
 * Each challenge provides an input file, and an output file
 * Your goal is to modify the input file such that it matches the output
@@ -8,23 +8,21 @@ Real Vim ninjas count every keystroke - do you? Head on over to vimgolf.com, pic
 
 When you launch a challenge from the command line, it will be downloaded from the site and a local Vim session will be launched, which will log every keystroke you make. Once you're done, simply *:wq* (write and quit) the session and we will score your input and upload it back to the site!
 
-Let the games begin.
-
 ## Setup & Play
 
-<pre>
-1. $> gem install vimgolf
-2. $> vimgolf setup (go to vimgolf.com, sign in, and grab your API key)
-3. Pick a challenge on vimgolf.com
-4. $> vimgolf put [challenge ID]
-</pre>
+```bash
+$> gem install vimgolf
 
-## Todo's & Wishlist
+(Go to vimgolf.com, sign in, and grab your API key)
+$> vimgolf setup 
 
-* At the moment, scoring is done based on the simplest possible model: bytesize of your Vim script file. Instead, we'd like to assign a score based on shortcuts and key-combinations used. Ex: visual mode gets you extra x points, etc.
-* Vim script parser - distinguish between different modes, keystrokes, etc.
+(Pick a challenge on vimgolf.com)
+$> vimgolf put [challenge ID]
+```
 
-Other patches, tips & ideas are welcome!
+**Emacs**: yes, it is true, you can [play vimgolf in emacs too](https://github.com/igrigorik/vimgolf/tree/master/emacs)!
+
+Patches, tips and ideas are welcome!
 
 ## License
 

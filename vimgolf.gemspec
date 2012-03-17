@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency "highline"
 
   s.add_development_dependency "rspec"
+  s.add_development_dependency "rake"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -25,7 +26,7 @@ Gem::Specification.new do |s|
 
    s.post_install_message = %{
 ------------------------------------------------------------------------------
-Thank you for installing vimgolf-#{Vimgolf::VERSION}. 
+Thank you for installing vimgolf-#{Vimgolf::VERSION}.
 
 0.1.3: custom vimgolf .vimrc file to help level the playing field
 0.2.0: proxy support, custom diffs + proper vimscript parser/scoring

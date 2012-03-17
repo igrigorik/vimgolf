@@ -2,7 +2,7 @@ require 'rubygems'
 require 'bundler/setup'
 
 require 'rspec'
-require 'lib/vimgolf'
+require 'vimgolf'
 
 require 'stringio'
 

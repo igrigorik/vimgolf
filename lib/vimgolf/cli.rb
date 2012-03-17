@@ -83,8 +83,8 @@ module VimGolf
           score = Keylog.score(IO.read(log(id)))
 
           if diff.size > 0
+            VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output."
             loop do
-              VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output."
               case VimGolf.ui.ask_question "Would you like to see a [d]iff or [r]etry or [q]uit ?",
                                   :type      => :warn,
                                   :choices   => [:diff, :retry, :quit]

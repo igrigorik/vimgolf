@@ -50,13 +50,13 @@ module VimGolf
         end
       end
 
-      def ask(message, options)
+      def ask_question(message, options = {})
         begin
           message = color_string(message, options[:type])
-          details = Proc.new {|q|
+          details = Proc.new do |q|
             q.readline = !$stdin.tty?
-          }
-          @hl.ask(message, options[:choices], &details)
+          end
+          @hl.ask(message, options[:choices] || [], &details)
         rescue EOFError
           return ''
         end

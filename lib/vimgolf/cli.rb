@@ -75,7 +75,7 @@ module VimGolf
         # - --noplugin - don't load any plugins, lets be fair!
         # -i NONE - don't load .viminfo (for saved macros and the like)
         # - u - load vimgolf .vimrc to level the playing field
-        vimcmd = "#{GOLFVIM} -Z --servername \"\" -n --noplugin -i NONE +0 -u \"#{challenge.vimrc_path}\" -W \"#{challenge.log_path}\" \"#{challenge.work_path}\""
+        vimcmd = "#{GOLFVIM} -Z -n --noplugin -i NONE +0 -u \"#{vimrc(id)}\" -W \"#{log(id)}\" \"#{input(id, type)}\""
         debug(vimcmd)
         system(vimcmd)
 

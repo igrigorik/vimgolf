@@ -202,7 +202,28 @@ unknown key sequence was entered).")
 (defun vimgolf-right-solution ()
   (delete-other-windows)
   (switch-to-buffer vimgolf-keystrokes-buffer-name)
-  (message "Hurray! You solved %s in %d keystrokes!" vimgolf-challenge (vimgolf-count-keystrokes)))
+  (when (yes-or-no-p (concat "You solved " vimgolf-challenge " in "
+                             (number-to-string (vimgolf-count-keystrokes))
+                             " keystrokes! Submit to vimgolf.com? "))
+    (vimgolf-submit-solution))
+)
+
+(defun vimgolf-submit-solution ()
+  "Submits the user's solution to the vimgolf site."
+  (message "Submitting to vimgolf...")
+  (let ((url-request-method "POST")
+        (url-request-extra-headers `(("Accept" . "text/yaml")))
+        (url-request-data
+         (concat "challenge_id=" vimgolf-challenge
+                 "&apikey=" vimgolf-key
+                 "&entry=" (vimgolf-get-keystrokes-as-string)))
+        (url (concat vimgolf-host "entry.yaml")))
+    (url-retrieve url 'vimgolf-submitted `(,vimgolf-challenge))))
+
+(defun vimgolf-submitted (status challenge-id)
+  "Takes user back to keystrokes review buffer and acknowledges submission."
+  (switch-to-buffer vimgolf-keystrokes-buffer-name)
+  (message (concat "Challenge " challenge-id " submitted.")))
 
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."

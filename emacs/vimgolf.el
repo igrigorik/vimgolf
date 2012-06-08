@@ -123,7 +123,8 @@ with `C-c C-v` prefixes to help in playing VimGolf.
                      universal-argument
                      universal-argument-other-key
                      universal-argument-minus
-                     universal-argument-more))
+                     universal-argument-more
+                     isearch-other-meta-char))
            (string-prefix-p "vimgolf-" (symbol-name this-command)))))
 
 (defun vimgolf-capturable-dangling-keystroke-p ()
@@ -152,6 +153,10 @@ unknown key sequence was entered).")
 (defun vimgolf-capture-dangling-keystroke ()
   (vimgolf-maybe-capture-keystroke 'vimgolf-capturable-dangling-keystroke-p))
 
+(defun vimgolf-get-keystrokes-as-string (&optional separator)
+  (unless separator (setq separator " "))
+  (mapconcat 'key-description (mapcar 'car vimgolf-keystrokes) separator))
+
 (defun vimgolf-refresh-keystroke-log ()
   "Refresh the contents of the keystrokes log buffer."
   (let ((deactivate-mark nil))
@@ -160,7 +165,7 @@ unknown key sequence was entered).")
       (erase-buffer)
       (insert (format "Challenge ID: %s\n%s\n\n" vimgolf-challenge (vimgolf-challenge-url vimgolf-challenge))
               (format "Keystrokes (%d):\n\n" (vimgolf-count-keystrokes))
-              (mapconcat 'key-description (mapcar 'car vimgolf-keystrokes) " ")
+              (vimgolf-get-keystrokes-as-string)
               "\n\nFull command log:\n\n")
       (when vimgolf-keystrokes
         (let* ((descrs-and-commands
@@ -197,7 +202,27 @@ unknown key sequence was entered).")
 (defun vimgolf-right-solution ()
   (delete-other-windows)
   (switch-to-buffer vimgolf-keystrokes-buffer-name)
-  (message "Hurray! You solved %s in %d keystrokes!" vimgolf-challenge (vimgolf-count-keystrokes)))
+  (when (yes-or-no-p (concat "You solved " vimgolf-challenge " in "
+                             (number-to-string (vimgolf-count-keystrokes))
+                             " keystrokes! Submit to vimgolf.com? "))
+    (vimgolf-submit-solution)))
+
+(defun vimgolf-submit-solution ()
+  "Submits the user's solution to the vimgolf site."
+  (message "Submitting to vimgolf...")
+  (let ((url-request-method "POST")
+        (url-request-extra-headers `(("Accept" . "text/yaml")))
+        (url-request-data
+         (concat "challenge_id=" vimgolf-challenge
+                 "&apikey=" vimgolf-key
+                 "&entry=" (vimgolf-get-keystrokes-as-string)))
+        (url (concat vimgolf-host "entry.yaml")))
+    (url-retrieve url 'vimgolf-submitted `(,vimgolf-challenge))))
+
+(defun vimgolf-submitted (status challenge-id)
+  "Takes user back to keystrokes review buffer and acknowledges submission."
+  (switch-to-buffer vimgolf-keystrokes-buffer-name)
+  (message (concat "Challenge " challenge-id " submitted.")))
 
 (defun vimgolf-submit ()
   "Stop the challenge and attempt to submit the solution to VimGolf."
@@ -327,6 +352,98 @@ unknown key sequence was entered).")
       (setq vimgolf-working-window-configuration (current-window-configuration))
 
       (vimgolf-continue))))
+
+(defvar *vimgolf-browse-list* nil
+  "Holds a list of parsed VimGolf challenges.")
+
+(defun vimgolf-browse (&optional force-pull)
+  (interactive)
+  (if (or (eq *vimgolf-browse-list* nil)
+            force-pull)
+      (url-retrieve vimgolf-host 'vimgolf-parse-browse-html)
+    (vimgolf-browse-list)))
+
+(defun vimgolf-browse-refresh ()
+  (interactive)
+  (vimgolf-browse t))
+
+(defun vimgolf-parse-browse-html (status)
+  (with-current-buffer (current-buffer)
+      (let ((html (replace-regexp-in-string "\n" "" (buffer-string)))
+            (start 0))
+        (setq *vimgolf-browse-list* nil)
+        (while (string-match "<a href=\"/challenges/\\([a-zA-Z0-9]+\\)\">\\(.*?\\)</a>.*?<p>\\(.*?\\)</p>" html)
+          (add-to-list '*vimgolf-browse-list* (cons (match-string 1 html) (list (match-string 2 html) (match-string 3 html))) t)
+          (setq html (substring html (match-end 0))))
+        *vimgolf-browse-list*))
+  (vimgolf-browse-list))
+
+(defun vimgolf-browse-list ()
+  (let ((browse-buffer (get-buffer-create "*VimGolf Browse*")))
+    (switch-to-buffer browse-buffer)
+    (setq buffer-read-only nil)
+    (kill-region (point-min) (point-max))
+    (insert "VimGolf Challenges")
+    (newline 2)
+    (insert "Press TAB on a challenge to see it's description.")
+    (newline)
+    (insert "Press Enter on a challenge to play.")
+    (newline)
+    (insert "Press n and p on jump to the next and previous challenge listing, respectively.")
+    (newline)
+    (insert "Press g to refresh the list.")
+    (newline 2)
+    (dolist (challenge *vimgolf-browse-list*)
+      (let ((title (first (cdr challenge)))
+            (description (second (cdr challenge)))
+            (challenge-id (car challenge)))
+        (insert-text-button title 'action 'vimgolf-browse-select 'follow-link t 'challenge-id challenge-id))
+      (newline)))
+  (beginning-of-buffer)
+  (setq buffer-read-only t)
+  (local-set-key (kbd "TAB") 'vimgolf-show-description)
+  (local-set-key "g" 'vimgolf-browse-refresh)
+  (local-set-key "n" 'vimgolf-browse-next)
+  (local-set-key "p" 'vimgolf-browse-previous)
+  (message "Happy golfing!"))
+
+(defun vimgolf-browse-select (arg)
+  (let ((challenge-id (get-text-property (point) 'challenge-id)))
+    (vimgolf challenge-id)))
+
+(defun vimgolf-browse-next ()
+  (interactive)
+  (goto-char (next-single-property-change (point) 'challenge-id))
+  (unless (get-text-property (point) 'challenge-id)
+    (goto-char (next-single-property-change (point) 'challenge-id))))
+
+(defun vimgolf-browse-previous ()
+  (interactive)
+  (goto-char (previous-single-property-change (point) 'challenge-id))
+  (unless (get-text-property (point) 'challenge-id)
+    (goto-char (previous-single-property-change (point) 'challenge-id))))
+
+(defun vimgolf-show-description ()
+  (interactive)
+  (let ((challenge-id (get-text-property (point) 'challenge-id)))
+    (save-excursion
+      (setq buffer-read-only nil)
+      (if (text-property-any (point-min) (point-max) 'challenge-description challenge-id)
+          (progn
+            (beginning-of-buffer)
+            (while (not (eq (get-text-property (point) 'challenge-description) challenge-id))
+              (goto-char (next-single-property-change (point) 'challenge-description)))
+            (let ((start (point)))
+              (goto-char (next-single-property-change (point) 'challenge-description))
+              (delete-region start (point))
+              (kill-line 2)))
+        (end-of-line)
+        (newline 2)
+        (forward-line -1)
+        (let ((start (point)))
+          (insert (third (assoc challenge-id *vimgolf-browse-list*)))
+          (add-text-properties start (point) `(challenge-description ,challenge-id))))
+      (setq buffer-read-only t))))
 
 ;;;###autoload
 (defun vimgolf (challenge-id)

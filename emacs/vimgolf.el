@@ -201,6 +201,7 @@ unknown key sequence was entered).")
 
 (defun vimgolf-right-solution ()
   (delete-other-windows)
+  (message "Hurray! You solved %s in %d keystrokes!" vimgolf-challenge (vimgolf-count-keystrokes)))
   (switch-to-buffer vimgolf-keystrokes-buffer-name))
 
 (defun vimgolf-submit ()

@@ -61,6 +61,7 @@ module VimGolf
           @hl.ask(message, options[:choices] || [], &details)
         rescue EOFError
           # be sure to exit, don't loop
+          error "Argh! Forced quit due to EOF error. Please report this problem so we can fix it!"
           return :quit
         end
       end

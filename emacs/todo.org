@@ -1,0 +1,45 @@
+* VimGolf TODO
+
+** Game Excersizes
+
+** Browser
+*** DONE Handle/fix character encoding
+    CLOSED: [2012-07-28 Sat 23:07]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2012-07-28 Sat 23:07] \\
+      Added a utility function to handling &lt, &gt, &amp, and &quot.
+    :END:
+    Things like &lt; and &gt;, etc.
+*** DONE Fix line endings
+    CLOSED: [2012-07-28 Sat 22:51]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2012-07-28 Sat 22:51] \\
+      Added a function to replace ^M with some replacement (default space).
+      Currently only running this function on entry descriptions.
+    :END:
+    Need to convert ^M characters
+*** DONE Add/fix line wrapping
+    CLOSED: [2012-07-28 Sat 22:04]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2012-07-28 Sat 22:04]
+    :END:
+    Can't assume that everyone's emacs will be set the same. Should really set a
+    particular fill-column and enforce it.
+*** DONE Truncate long titles
+    CLOSED: [2012-07-28 Sat 22:21]
+    :LOGBOOK:
+    - State "DONE"       from "IN PROGRESS" [2012-07-28 Sat 22:21]
+    - State "IN PROGRESS" from "TODO"       [2012-07-28 Sat 22:09]
+    :END:
+    Use ellipses to truncate titles that would normally be longer than the
+    fill-column width.
+*** DONE When first loading (via url-retrieve), list isn't showing after the call
+    CLOSED: [2012-07-28 Sat 23:11]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2012-07-28 Sat 23:11] \\
+      The list insertion was happening outside of the async callback. Now it happens
+      during the callback (if url-retrieve is used) and during the browse function
+      itself (if not).
+    :END:
+    I'm not sure if the call back isn't working or what. Manually refreshing
+    will display the list.

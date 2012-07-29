@@ -33,6 +33,13 @@
     :END:
     Use ellipses to truncate titles that would normally be longer than the
     fill-column width.
-*** TODO When first loading (via url-retrieve), list isn't showing after the call
+*** DONE When first loading (via url-retrieve), list isn't showing after the call
+    CLOSED: [2012-07-28 Sat 23:11]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2012-07-28 Sat 23:11] \\
+      The list insertion was happening outside of the async callback. Now it happens
+      during the callback (if url-retrieve is used) and during the browse function
+      itself (if not).
+    :END:
     I'm not sure if the call back isn't working or what. Manually refreshing
     will display the list.

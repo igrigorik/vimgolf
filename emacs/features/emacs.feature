@@ -22,4 +22,3 @@ Feature: VimGolf Browser
     Then the cursor should be before "Make "
     When I press "p"
     Then the cursor should be before "Compl"
-    

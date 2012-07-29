@@ -13,7 +13,14 @@
                    "Copy this command for a circuit layout program to create 10 total smd commands. Increment the number in quotes to name each pad, and add 0.7 to each of the (X Y) coordinates at the end of each line.")
                   ("500855e60599d90002000073"
                    "Convert pandoc unordered list to a numbered list"
-                   "I know it's possible to use #. in pandoc to auto-generate numbered lists, but then it's not easy to tell how many items there are when reading it in Markdown. How fast can you make the switch?")))
+                   "I know it's possible to use #. in pandoc to auto-generate numbered lists, but then it's not easy to tell how many items there are when reading it in Markdown. How fast can you make the switch?")
+                  ("4fe62f8a8b2f800001000043"
+                   "Cleanining up 80 column concatenated text"
+                   "1. Put the whole query on one line, remove the concatenation operators2. Remove the double spaces that appear a few times in the query3. Use string-interpolated variable statementPid rather than the ugly concatenation")
+                  ("4d1b4ac3c58eaa2a8a0005c2"
+                   "Ruby 1.9 compat"
+                   "Remember when Ruby supported `when &lt;expr&gt; :`? Well, it doesn't in 1.9, so let's make sure we use `then`, without ruining our lovely new hash syntax!")
+                  ))
          (vimgolf-browse)))
 
 (When "^I show the description$"

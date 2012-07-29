@@ -3,13 +3,17 @@
 ** Game Excersizes
 
 ** Browser
-*** Handle/fix character encoding
+*** TODO Handle/fix character encoding
     Things like &lt; and &gt;, etc.
-*** Fix line endings
+*** TODO Fix line endings
     Need to convert ^M characters
-*** Add/fix line wrapping
+*** DONE Add/fix line wrapping
+    CLOSED: [2012-07-28 Sat 22:04]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2012-07-28 Sat 22:04]
+    :END:
     Can't assume that everyone's emacs will be set the same. Should really set a
     particular fill-column and enforce it.
-*** Truncate long titles
+*** TODO Truncate long titles
     Use ellipses to truncate titles that would normally be longer than the
     fill-column width.

@@ -10,7 +10,7 @@
          (directory-file-name features-directory))))
   (setq emacs-root-path project-directory)
   (setq emacs-util-path (expand-file-name "util" emacs-root-path)))
-(print emacs-util-path)
+
 (add-to-list 'load-path emacs-root-path)
 (add-to-list 'load-path (expand-file-name "espuds" emacs-util-path))
 (add-to-list 'load-path (expand-file-name "ert" emacs-util-path))

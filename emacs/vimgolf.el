@@ -1,5 +1,4 @@
 ;;; vimgolf.el --- VimGolf interface for the One True Editor
-
 ;; Copyright (C) never, by no one
 
 ;;; Author: Tim Visher <tim.visher@gmail.com>
@@ -338,10 +337,11 @@ unknown key sequence was entered).")
 
 (defun vimgolf-browse (&optional force-pull)
   (interactive)
-  (if (or (eq *vimgolf-browse-list* nil)
+  (when (or (eq *vimgolf-browse-list* nil)
             force-pull)
-      (url-retrieve vimgolf-host 'vimgolf-parse-browse-html)
-    (vimgolf-browse-list)))
+    (url-retrieve vimgolf-host 'vimgolf-parse-browse-html))
+  (vimgolf-browse-list)
+  (vimgolf-browse-next))
 
 (defun vimgolf-browse-refresh ()
   (interactive)
@@ -355,8 +355,7 @@ unknown key sequence was entered).")
         (while (string-match "<a href=\"/challenges/\\([a-zA-Z0-9]+\\)\">\\(.*?\\)</a>.*?<p>\\(.*?\\)</p>" html)
           (add-to-list '*vimgolf-browse-list* (cons (match-string 1 html) (list (match-string 2 html) (match-string 3 html))) t)
           (setq html (substring html (match-end 0))))
-        *vimgolf-browse-list*))
-  (vimgolf-browse-list))
+        *vimgolf-browse-list*)))
 
 (defun vimgolf-browse-list ()
   (let ((browse-buffer (get-buffer-create "*VimGolf Browse*")))
@@ -365,17 +364,9 @@ unknown key sequence was entered).")
     (kill-region (point-min) (point-max))
     (insert "VimGolf Challenges")
     (newline 2)
-    (insert "Press TAB on a challenge to see it's description.")
-    (newline)
-    (insert "Press Enter on a challenge to play.")
-    (newline)
-    (insert "Press n and p on jump to the next and previous challenge listing, respectively.")
-    (newline)
-    (insert "Press g to refresh the list.")
-    (newline 2)
     (dolist (challenge *vimgolf-browse-list*)
-      (let ((title (first (cdr challenge)))
-            (description (second (cdr challenge)))
+      (let ((title (cadr challenge))
+            (description (car (cdr (cdr challenge))))
             (challenge-id (car challenge)))
         (insert-text-button title
                             'action 'vimgolf-browse-select
@@ -384,12 +375,8 @@ unknown key sequence was entered).")
                             'help-echo description))
       (newline)))
   (beginning-of-buffer)
-  (setq buffer-read-only t)
-  (local-set-key (kbd "TAB") 'vimgolf-show-description)
-  (local-set-key "g" 'vimgolf-browse-refresh)
-  (local-set-key "n" 'vimgolf-browse-next)
-  (local-set-key "p" 'vimgolf-browse-previous)
-  (message "Happy golfing!"))
+  (message "Happy golfing!")
+  (vimgolf-browse-mode))
 
 (defun vimgolf-browse-select (arg)
   (let ((challenge-id (get-text-property (point) 'challenge-id)))
@@ -425,7 +412,7 @@ unknown key sequence was entered).")
         (newline 2)
         (forward-line -1)
         (let ((start (point)))
-          (insert (third (assoc challenge-id *vimgolf-browse-list*)))
+          (insert (car (cddr (assoc challenge-id *vimgolf-browse-list*))))
           (add-text-properties start (point) `(challenge-description ,challenge-id))))
       (setq buffer-read-only t))))
 
@@ -434,6 +421,21 @@ unknown key sequence was entered).")
   "Open a VimGolf Challenge"
   (interactive (list (read-from-minibuffer "Challenge ID: " nil nil nil 'vimgolf-challenge-history)))
   (url-retrieve (vimgolf-challenge-url challenge-id) 'vimgolf-setup `(,challenge-id)))
+
+(defvar vimgolf-browse-mode-map (make-sparse-keymap)
+  "Keymap for vimgolf-mode.")
+
+(define-derived-mode vimgolf-browse-mode special-mode "vimgolf browse"
+  "A major mode for completing vimgolf challenges.
+
+\\{vimgolf-browse-mode-map}"
+  (define-key vimgolf-browse-mode-map (kbd "TAB") 'vimgolf-show-description)
+  (define-key vimgolf-browse-mode-map "g" 'vimgolf-browse-refresh)
+  (define-key vimgolf-browse-mode-map "n" 'vimgolf-browse-next)
+  (define-key vimgolf-browse-mode-map "p" 'vimgolf-browse-previous)
+)
+
+(put 'vimgolf-mode 'mode-class 'special)
 
 (provide 'vimgolf)
 

@@ -347,6 +347,9 @@ unknown key sequence was entered).")
   (interactive)
   (vimgolf-browse t))
 
+(defun vimgolf-replace-control-m (string &optional replace)
+  (replace-regexp-in-string "" (or replace " ") string))
+
 (defun vimgolf-parse-browse-html (status)
   (with-current-buffer (current-buffer)
       (let ((html (replace-regexp-in-string "\n" "" (buffer-string)))
@@ -355,8 +358,9 @@ unknown key sequence was entered).")
         (while (string-match "<a href=\"/challenges/\\([a-zA-Z0-9]+\\)\">\\(.*?\\)</a>.*?<p>\\(.*?\\)</p>" html)
           (add-to-list '*vimgolf-browse-list*
                        (cons (match-string 1 html)
-                             (list (url-unhex-string (match-string 2 html))
-                                   (url-unhex-string (match-string 3 html))))
+                             (list (match-string 2 html)
+                                   (vimgolf-replace-control-m
+                                    (match-string 3 html))))
                        t)
           (setq html (substring html (match-end 0))))
         *vimgolf-browse-list*)))

@@ -5,7 +5,13 @@
 ** Browser
 *** TODO Handle/fix character encoding
     Things like &lt; and &gt;, etc.
-*** TODO Fix line endings
+*** DONE Fix line endings
+    CLOSED: [2012-07-28 Sat 22:51]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2012-07-28 Sat 22:51] \\
+      Added a function to replace ^M with some replacement (default space).
+      Currently only running this function on entry descriptions.
+    :END:
     Need to convert ^M characters
 *** DONE Add/fix line wrapping
     CLOSED: [2012-07-28 Sat 22:04]
@@ -22,3 +28,6 @@
     :END:
     Use ellipses to truncate titles that would normally be longer than the
     fill-column width.
+*** TODO When first loading (via url-retrieve), list isn't showing after the call
+    I'm not sure if the call back isn't working or what. Manually refreshing
+    will display the list.

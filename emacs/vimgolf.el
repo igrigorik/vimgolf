@@ -369,9 +369,14 @@ unknown key sequence was entered).")
     (insert "VimGolf Challenges")
     (newline 2)
     (dolist (challenge *vimgolf-browse-list*)
-      (let ((title (cadr challenge))
+      (let ((title (substring (cadr challenge)
+                              0
+                              (min (length (cadr challenge))
+                                   (- fill-column 3))))
             (description (car (cdr (cdr challenge))))
             (challenge-id (car challenge)))
+        (when (< (length title) (length (cadr challenge)))
+          (setq title (concat title "...")))
         (insert-text-button title
                             'action 'vimgolf-browse-select
                             'follow-link t
@@ -379,24 +384,30 @@ unknown key sequence was entered).")
                             'help-echo description))
       (newline)))
   (beginning-of-buffer)
-  (message "Happy golfing!")
   (vimgolf-browse-mode))
 
 (defun vimgolf-browse-select (arg)
   (let ((challenge-id (get-text-property (point) 'challenge-id)))
     (vimgolf challenge-id)))
 
+(defun vimgolf-message-title ()
+  (let ((challenge-id (get-text-property (point) 'challenge-id)))
+    (when challenge-id
+      (message (cadr (assoc challenge-id *vimgolf-browse-list*))))))
+
 (defun vimgolf-browse-next ()
   (interactive)
   (goto-char (next-single-property-change (point) 'challenge-id))
   (unless (get-text-property (point) 'challenge-id)
-    (goto-char (next-single-property-change (point) 'challenge-id))))
+    (goto-char (next-single-property-change (point) 'challenge-id)))
+  (vimgolf-message-title))
 
 (defun vimgolf-browse-previous ()
   (interactive)
   (goto-char (previous-single-property-change (point) 'challenge-id))
   (unless (get-text-property (point) 'challenge-id)
-    (goto-char (previous-single-property-change (point) 'challenge-id))))
+    (goto-char (previous-single-property-change (point) 'challenge-id)))
+  (vimgolf-message-title))
 
 (defun vimgolf-show-description ()
   (interactive)

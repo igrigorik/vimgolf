@@ -3,7 +3,12 @@
 ** Game Excersizes
 
 ** Browser
-*** TODO Handle/fix character encoding
+*** DONE Handle/fix character encoding
+    CLOSED: [2012-07-28 Sat 23:07]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2012-07-28 Sat 23:07] \\
+      Added a utility function to handling &lt, &gt, &amp, and &quot.
+    :END:
     Things like &lt; and &gt;, etc.
 *** DONE Fix line endings
     CLOSED: [2012-07-28 Sat 22:51]

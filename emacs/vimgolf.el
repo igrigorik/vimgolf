@@ -350,20 +350,35 @@ unknown key sequence was entered).")
 (defun vimgolf-replace-control-m (string &optional replace)
   (replace-regexp-in-string "" (or replace " ") string))
 
+(defun vimgolf-parse-html-entites (string)
+  (replace-regexp-in-string
+   "&lt;" "<"
+   (replace-regexp-in-string
+    "&gt;" ">"
+    (replace-regexp-in-string
+     "&amp;" "&"
+     (replace-regexp-in-string
+      "&quot" "\""
+      string)))))
+
 (defun vimgolf-parse-browse-html (status)
   (with-current-buffer (current-buffer)
-      (let ((html (replace-regexp-in-string "\n" "" (buffer-string)))
-            (start 0))
-        (setq *vimgolf-browse-list* nil)
-        (while (string-match "<a href=\"/challenges/\\([a-zA-Z0-9]+\\)\">\\(.*?\\)</a>.*?<p>\\(.*?\\)</p>" html)
-          (add-to-list '*vimgolf-browse-list*
-                       (cons (match-string 1 html)
-                             (list (match-string 2 html)
-                                   (vimgolf-replace-control-m
-                                    (match-string 3 html))))
-                       t)
-          (setq html (substring html (match-end 0))))
-        *vimgolf-browse-list*)))
+    (let ((html (vimgolf-parse-html-entites
+                 (replace-regexp-in-string "\n" "" (buffer-string))))
+          (start 0))
+      (setq *vimgolf-browse-list* nil)
+      (while
+          (string-match
+           "<a href=\"/challenges/\\([a-zA-Z0-9]+\\)\">\\(.*?\\)</a>.*?<p>\\(.*?\\)</p>"
+           html)
+        (add-to-list '*vimgolf-browse-list*
+                     (cons (match-string 1 html)
+                           (list (match-string 2 html)
+                                 (vimgolf-replace-control-m
+                                  (match-string 3 html))))
+                     t)
+        (setq html (substring html (match-end 0))))
+      *vimgolf-browse-list*)))
 
 (defun vimgolf-browse-list ()
   (let ((browse-buffer (get-buffer-create "*VimGolf Browse*")))

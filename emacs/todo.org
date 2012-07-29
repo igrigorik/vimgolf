@@ -1,0 +1,15 @@
+* VimGolf TODO
+
+** Game Excersizes
+
+** Browser
+*** Handle/fix character encoding
+    Things like &lt; and &gt;, etc.
+*** Fix line endings
+    Need to convert ^M characters
+*** Add/fix line wrapping
+    Can't assume that everyone's emacs will be set the same. Should really set a
+    particular fill-column and enforce it.
+*** Truncate long titles
+    Use ellipses to truncate titles that would normally be longer than the
+    fill-column width.

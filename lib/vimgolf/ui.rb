@@ -1,5 +1,7 @@
 require 'highline'
 
+HighLine.track_eof = false
+
 module VimGolf
   class CLI
     class UI < Thor::Base.shell
@@ -58,7 +60,9 @@ module VimGolf
           end
           @hl.ask(message, options[:choices] || [], &details)
         rescue EOFError
-          return ''
+          # be sure to exit, don't loop
+          error "Argh! Forced quit due to EOF error. Please report this problem so we can fix it!"
+          return :quit
         end
       end
 

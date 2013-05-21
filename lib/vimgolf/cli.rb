@@ -84,40 +84,60 @@ module VimGolf
           diff = `#{GOLFDIFF} #{diff_files}`
           log = Keylog.new(IO.read(challenge.log_path))
 
+          # Handle incorrect solutions
           if diff.size > 0
-            VimGolf.ui.warn "Uh oh, looks like your entry does not match the desired output."
+            VimGolf.ui.error "\nUh oh, looks like your entry does not match the desired output."
+            VimGolf.ui.error "Your score for this failed attempt was: #{log.score}"
+
             loop do
-              case VimGolf.ui.ask_question "Would you like to see a [d]iff or [r]etry or [q]uit ?",
+              VimGolf.ui.warn "[d] Show a diff"
+              VimGolf.ui.warn "[r] Retry the current challenge"
+              VimGolf.ui.warn "[q] Quit vimgolf"
+
+              case VimGolf.ui.ask_question "Choice> ",
                                   :type      => :warn,
                                   :choices   => [:diff, :retry, :quit]
               when :diff
                 VimGolf.ui.warn "Showing vimdiff of your attempt (left) and correct output (right)"
                 system("#{GOLFSHOWDIFF} #{diff_files}")
               when :retry
-                VimGolf.ui.warn "Your score for this (failed) attempt was: #{log.score}. Let's try again!!\n#{'#'*50}"
+                VimGolf.ui.warn "Retrying current challenge..."
                 challenge.start
                 raise RetryException
               when :quit
-                VimGolf.ui.warn "Please try again! Your score for this (failed) attempt was: #{log.score}"
+                VimGolf.ui.info "Thanks for playing!"
                 return
               end
             end
           end
 
-          VimGolf.ui.info "Success! Your output matches. Your score: #{log.score}"
+          # Handle correct solutions
+          VimGolf.ui.info "\nSuccess! Your output matches. Your score: #{log.score}"
 
-          if VimGolf.ui.yes? "Upload result to VimGolf? (yes / no)"
-            VimGolf.ui.warn "Uploading to VimGolf..."
+          loop do
+            VimGolf.ui.warn "[w] Upload result and retry the challenge"
+            VimGolf.ui.warn "[x] Upload result and quit"
+            VimGolf.ui.warn "[r] Do not upload result and retry the challenge"
+            VimGolf.ui.warn "[q] Do not upload result and quit"
 
-            if challenge.upload == :ok
-              VimGolf.ui.info "Uploaded entry, thanks for golfing!"
-              VimGolf.ui.info "View the leaderboard: #{GOLFHOST}/challenges/#{id}"
-            else
-              VimGolf.ui.error "Uh oh, upload failed. You're not cheating are you? :-)"
+            case VimGolf.ui.ask_question "Choice> ",
+                                :type    => :warn,
+                                :choices => [:w, :x, :retry, :quit]
+            when :w
+              next unless upload?(challenge)
+              challenge.start
+              raise RetryException
+            when :x
+              next unless upload?(challenge)
+              VimGolf.ui.info "Thanks for playing!"
+              return
+            when :retry
+              challenge.start
+              raise RetryException
+            when :quit
+              VimGolf.ui.info "Thanks for playing!"
+              return
             end
-
-          else
-            VimGolf.ui.warn "Skipping upload. Thanks for playing. Give it another shot!"
           end
 
         else
@@ -139,9 +159,22 @@ module VimGolf
     end
 
     private
-      def debug(msg)
-        p [caller.first, msg] if GOLFDEBUG
+
+    def upload?(challenge)
+      VimGolf.ui.warn "Uploading to VimGolf..."
+
+      if challenge.upload == :ok
+        VimGolf.ui.warn "Uploaded entry."
+        VimGolf.ui.warn "View the leaderboard: #{GOLFHOST}/challenges/#{challenge.id}"
+      else
+        VimGolf.ui.error "Uh oh, upload failed. You're not cheating are you? :-)"
+        nil
       end
+    end
+
+    def debug(msg)
+      p [caller.first, msg] if GOLFDEBUG
+    end
   end
 
 end

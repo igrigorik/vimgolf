@@ -13,14 +13,14 @@ module VimGolf
 
     def download
       begin
-        url = URI.parse("#{GOLFHOST}/challenges/#{@id}.yaml")
+        url = URI.parse("#{GOLFHOST}/challenges/#{@id}.json")
         req = Net::HTTP::Get.new(url.path)
 
         proxy_url, proxy_user, proxy_pass = get_proxy
         proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
         res = proxy.start(url.host, url.port) { |http| http.request(req) }
 
-        @data = YAML.load(res.body)
+        @data = JSON.parse(res.body)
 
         if !@data.is_a? Hash
           raise
@@ -30,6 +30,9 @@ module VimGolf
           VimGolf.ui.error "\t gem install vimgolf"
           raise "Bad Version"
         end
+
+        @data['in']['data'].gsub!(/\r\n/, "\n")
+        @data['out']['data'].gsub!(/\r\n/, "\n")
 
         @type = @data['in']['type']
         save

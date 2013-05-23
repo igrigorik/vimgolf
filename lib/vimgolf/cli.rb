@@ -105,7 +105,7 @@ module VimGolf
                 challenge.start
                 raise RetryException
               when :quit
-                raise StandardExit
+                raise Interrupt
               end
             end
           end
@@ -128,12 +128,12 @@ module VimGolf
               raise RetryException
             when :x
               next unless upload?(challenge)
-              raise StandardExit
+              raise Interrupt
             when :retry
               challenge.start
               raise RetryException
             when :quit
-              raise StandardExit
+              raise Interrupt
             end
           end
 
@@ -150,7 +150,7 @@ module VimGolf
         retry
       end
 
-    rescue Interrupt, StandardError, StandardExit
+    rescue Interrupt, StandardError
       VimGolf.ui.info "\nThanks for playing!"
     rescue Exception => e
       VimGolf.ui.error "Uh oh, something went wrong! Error: #{e}"

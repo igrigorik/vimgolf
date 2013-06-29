@@ -55,7 +55,7 @@ module VimGolf
 
     def upload
       begin
-        url = URI.parse("#{GOLFHOST}/entry.yaml")
+        url = URI.parse("#{GOLFHOST}/entry.json")
 
         proxy_url, proxy_user, proxy_pass = get_proxy
         proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
@@ -63,10 +63,10 @@ module VimGolf
         proxy.start(url.host, url.port) do |http|
           request = Net::HTTP::Post.new(url.request_uri)
           request.set_form_data({"challenge_id" => @id, "apikey" => Config.load['key'], "entry" => IO.read(log_path)})
-          request["Accept"] = "text/yaml"
+          request["Accept"] = "application/json"
 
           res = http.request(request)
-          res = YAML.load(res.body)
+          res = JSON.parse(res.body)
 
           raise if !res.is_a? Hash
           res['status'].to_sym

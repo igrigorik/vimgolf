@@ -150,9 +150,9 @@ module VimGolf
         retry
       end
 
-    rescue Interrupt, StandardError
+    rescue Interrupt
       VimGolf.ui.info "\nThanks for playing!"
-    rescue Exception => e
+    rescue RuntimeError, Exception => e
       VimGolf.ui.error "Uh oh, something went wrong! Error: #{e}"
       VimGolf.ui.error "If the error persists, please report it to github.com/igrigorik/vimgolf"
     end

@@ -90,7 +90,7 @@ module VimGolf
             VimGolf.ui.error "Your score for this failed attempt was: #{log.score}"
 
             loop do
-              VimGolf.ui.warn "[d] Show a diff"
+              VimGolf.ui.warn "[d] Show diff"
               VimGolf.ui.warn "[r] Retry the current challenge"
               VimGolf.ui.warn "[q] Quit vimgolf"
 

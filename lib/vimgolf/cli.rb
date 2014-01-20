@@ -139,8 +139,9 @@ module VimGolf
 
         else
           error = <<-MSG
-          Uh oh, Vim did not exit properly. If the problem persists, please
-          report the error on github.com/igrigorik/vimgolf
+	  Uh oh, Vim did not exit properly. 
+	  Please ensure you can execute 'Vim' from the commandline.
+	  If the problem persists, please report the error on github.com/igrigorik/vimgolf
           MSG
 
           VimGolf.ui.error error

@@ -268,7 +268,7 @@ unknown key sequence was entered).")
 ;; HTML to Haml ID: 4d3c51f1aabf526ed6000030
 ;; Assignment Allignment: 4d2c9d06eda6262e4e00007a
 
-(defvar vimgolf-challenge-extension ".yaml")
+(defvar vimgolf-challenge-extension ".json")
 
 (defun vimgolf-challenge-path (challenge-id)
   (concat "challenges/" challenge-id))
@@ -292,25 +292,17 @@ unknown key sequence was entered).")
     (when (get-buffer buf)
       (kill-buffer buf))))
 
-(defun vimgolf-read-next-data-chunk ()
-  "Return the next chunk of data as a string, leaving the point at the end of that chunk."
-  (let ((data-start-regexp "  data: |\\+\\{0,1\\}\n")
-        (data-end-regexp "\\([ 	]\\{4\\}\\|[ 	]\\{0\\}\\)\n  type: [-a-z]+"))
-    (unless (re-search-forward data-start-regexp nil t)
-      (error "Can't find data in response from vimgolf"))
-    (let ((start (point)))
-      (unless (re-search-forward data-end-regexp nil t)
-        (error "Unclosed data section in response from vimgolf"))
-      (let ((str (buffer-substring-no-properties start (match-beginning 0))))
-        (replace-regexp-in-string "^    " "" str)))))
-
 (defun vimgolf-setup (status challenge-id)
+  (if (file-exists-p ".emacs.d/vimgolf.json")
+    (delete-file ".emacs.d/vimgolf.json"))
+  (url-copy-file (vimgolf-challenge-url challenge-id) ".emacs.d/vimgolf.json")
   (vimgolf-clear-keystrokes)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
   (goto-char (point-min))
-  (let* ((start-text (vimgolf-read-next-data-chunk))
-         (end-text (vimgolf-read-next-data-chunk)))
+  (let* ((start-text (cdr(assq 'data(assq 'in(json-read-file ".emacs.d/vimgolf.json")))))
+         (end-text (cdr(assq 'data(assq 'out(json-read-file ".emacs.d/vimgolf.json"))))))
+
 
     (vimgolf-kill-existing-session)
 

@@ -48,6 +48,8 @@
 
 ;;; Code:
 
+(require 'json)
+
 (defgroup vimgolf nil
   "Compete on VimGolf with the One True Editor."
   :prefix "vimgolf-"
@@ -293,16 +295,17 @@ unknown key sequence was entered).")
       (kill-buffer buf))))
 
 (defun vimgolf-setup (status challenge-id)
-  (if (file-exists-p ".emacs.d/vimgolf.json")
-    (delete-file ".emacs.d/vimgolf.json"))
-  (url-copy-file (vimgolf-challenge-url challenge-id) ".emacs.d/vimgolf.json")
+  (setq vimgolf-json-file ".emacs.d/vimgolf.json")
+  (if (file-exists-p vimgolf-json-file)
+    (delete-file vimgolf-json-file))
+  (url-copy-file (vimgolf-challenge-url challenge-id) vimgolf-json-file)
   (vimgolf-clear-keystrokes)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
   (goto-char (point-min))
-  (let* ((start-text (cdr(assq 'data(assq 'in(json-read-file ".emacs.d/vimgolf.json")))))
-         (end-text (cdr(assq 'data(assq 'out(json-read-file ".emacs.d/vimgolf.json"))))))
-
+  (setq challenge-json (json-read-file vimgolf-json-file))
+  (let* ((start-text (cdr (assq 'data (assq 'in challenge-json))))
+         (end-text (cdr (assq 'data (assq 'out challenge-json)))))
 
     (vimgolf-kill-existing-session)
 

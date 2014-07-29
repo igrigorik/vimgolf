@@ -49,6 +49,8 @@
 ;;; Code:
 
 (require 'json)
+(require 'deferred)
+(require 'request-deferred)
 
 (defgroup vimgolf nil
   "Compete on VimGolf with the One True Editor."
@@ -294,38 +296,44 @@ unknown key sequence was entered).")
     (when (get-buffer buf)
       (kill-buffer buf))))
 
+(defun get-text (var response)
+  (format "%s" (assoc-default 'data (assq var (request-response-data response)))))
+
 (defun vimgolf-setup (status challenge-id)
-  (setq vimgolf-json-file ".emacs.d/vimgolf.json")
-  (if (file-exists-p vimgolf-json-file)
-    (delete-file vimgolf-json-file))
-  (url-copy-file (vimgolf-challenge-url challenge-id) vimgolf-json-file)
-  (vimgolf-clear-keystrokes)
-  (setq vimgolf-prior-window-configuration (current-window-configuration)
-        vimgolf-challenge challenge-id)
-  (goto-char (point-min))
-  (setq challenge-json (json-read-file vimgolf-json-file))
-  (let* ((start-text (cdr (assq 'data (assq 'in challenge-json))))
-         (end-text (cdr (assq 'data (assq 'out challenge-json)))))
+  (defvar cid challenge-id)
+  (deferred:$
+    (request-deferred
+     (format "%s" (vimgolf-challenge-url challenge-id))
+     :parser 'json-read)
+    (deferred:nextc it
+      (lambda (response)
 
-    (vimgolf-kill-existing-session)
+        (vimgolf-clear-keystrokes)
+        (setq vimgolf-prior-window-configuration (current-window-configuration)
+              vimgolf-challenge cid)
+        (goto-char (point-min))
 
-    (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))
-          (vimgolf-work-buffer (get-buffer-create vimgolf-work-buffer-name))
-          (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
+        (let* ((start-text (get-text 'in response))
+               (end-text   (get-text 'out response)))
+          (vimgolf-kill-existing-session)
 
-      (vimgolf-init-buffer vimgolf-start-buffer start-text)
-      (vimgolf-init-buffer vimgolf-end-buffer end-text)
-      (with-current-buffer vimgolf-end-buffer (setq buffer-read-only t))
-      (vimgolf-reset-work-buffer)
+          (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))
+                (vimgolf-work-buffer (get-buffer-create vimgolf-work-buffer-name))
+                (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
 
-      ;; Set up windows
-      (delete-other-windows)
-      (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
-      (set-window-buffer (selected-window) vimgolf-work-buffer)
-      (switch-to-buffer vimgolf-work-buffer)
-      (setq vimgolf-working-window-configuration (current-window-configuration))
+            (vimgolf-init-buffer vimgolf-start-buffer start-text)
+            (vimgolf-init-buffer vimgolf-end-buffer end-text)
+            (with-current-buffer vimgolf-end-buffer (setq buffer-read-only t))
+            (vimgolf-reset-work-buffer)
 
-      (vimgolf-continue))))
+            ;; Set up windows
+            (delete-other-windows)
+            (display-buffer vimgolf-end-buffer 'display-buffer-pop-up-window)
+            (set-window-buffer (selected-window) vimgolf-work-buffer)
+            (switch-to-buffer vimgolf-work-buffer)
+            (setq vimgolf-working-window-configuration (current-window-configuration))
+
+            (vimgolf-continue)))))))
 
 (defvar *vimgolf-browse-list* nil
   "Holds a list of parsed VimGolf challenges.")

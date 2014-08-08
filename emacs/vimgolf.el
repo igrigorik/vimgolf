@@ -109,6 +109,9 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 ; Prevent the server from compressing the response
 (setq url-mime-encoding-string "identity")
 
+; Put url-http-end-of-headers in current scope
+(defvar url-http-end-of-headers)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keystroke logging
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -308,8 +311,6 @@ unknown key sequence was entered).")
     (json-read)))
 
 (defun vimgolf-setup (status challenge-id)
-  (defvar url-http-end-of-headers)
-
   (setq response (read-json challenge-id))
 
   (vimgolf-clear-keystrokes)

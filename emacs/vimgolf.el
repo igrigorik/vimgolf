@@ -106,12 +106,6 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 (defvar vimgolf-end-buffer-name "*vimgolf-end*")
 (defvar vimgolf-keystrokes-buffer-name "*vimgolf-keystrokes*")
 
-; Prevent the server from compressing the response
-(setq url-mime-encoding-string "identity")
-
-; Put url-http-end-of-headers in current scope
-(defvar url-http-end-of-headers)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keystroke logging
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -300,10 +294,10 @@ unknown key sequence was entered).")
     (when (get-buffer buf)
       (kill-buffer buf))))
 
-(defun get-text (var response)
+(defun vimgolf-get-text (var response)
   (format "%s" (assoc-default 'data (assq var response))))
 
-(defun read-json (challenge-id)
+(defun vimgolf-retrieve-challenge (challenge-id)
   (interactive)
   (with-current-buffer
       (url-retrieve-synchronously (vimgolf-challenge-url challenge-id))
@@ -311,15 +305,17 @@ unknown key sequence was entered).")
     (json-read)))
 
 (defun vimgolf-setup (status challenge-id)
-  (setq response (read-json challenge-id))
+  (let ((defvar url-http-end-of-headers)
+        (url-mime-encoding-string "identitiy"))
+    (setq response (vimgolf-retrieve-challenge challenge-id)))
 
   (vimgolf-clear-keystrokes)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
   (goto-char (point-min))
 
-  (let* ((start-text (get-text 'in response))
-         (end-text   (get-text 'out response)))
+  (let* ((start-text (vimgolf-get-text 'in response))
+         (end-text   (vimgolf-get-text 'out response)))
     (vimgolf-kill-existing-session)
 
     (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))

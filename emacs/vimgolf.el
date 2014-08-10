@@ -299,23 +299,23 @@ unknown key sequence was entered).")
 
 (defun vimgolf-retrieve-challenge (challenge-id)
   (interactive)
+  (declare (special url-http-end-of-headers))
   (with-current-buffer
       (url-retrieve-synchronously (vimgolf-challenge-url challenge-id))
     (goto-char url-http-end-of-headers)
     (json-read)))
 
 (defun vimgolf-setup (status challenge-id)
-  (let ((defvar url-http-end-of-headers)
-        (url-mime-encoding-string "identitiy"))
-    (setq response (vimgolf-retrieve-challenge challenge-id)))
+  (let ((url-mime-encoding-string "identity"))
+    (setq vimgolf-response (vimgolf-retrieve-challenge challenge-id)))
 
   (vimgolf-clear-keystrokes)
   (setq vimgolf-prior-window-configuration (current-window-configuration)
         vimgolf-challenge challenge-id)
   (goto-char (point-min))
 
-  (let* ((start-text (vimgolf-get-text 'in response))
-         (end-text   (vimgolf-get-text 'out response)))
+  (let* ((start-text (vimgolf-get-text 'in vimgolf-response))
+         (end-text   (vimgolf-get-text 'out vimgolf-response)))
     (vimgolf-kill-existing-session)
 
     (let ((vimgolf-start-buffer (get-buffer-create vimgolf-start-buffer-name))

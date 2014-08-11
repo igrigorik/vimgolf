@@ -299,7 +299,6 @@ unknown key sequence was entered).")
 
 (defun vimgolf-retrieve-challenge (challenge-id)
   (interactive)
-  (declare (special url-http-end-of-headers))
   (with-current-buffer
       (url-retrieve-synchronously (vimgolf-challenge-url challenge-id))
     (goto-char url-http-end-of-headers)

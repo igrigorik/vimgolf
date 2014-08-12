@@ -1,4 +1,4 @@
-## 0.9.4
+## 0.10.0
 
 2014-08-12 Siddhanathan Shanmugam <siddhanathan@gmail.com>
 

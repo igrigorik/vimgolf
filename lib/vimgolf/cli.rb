@@ -1,7 +1,7 @@
 module VimGolf
 
   GOLFDEBUG    = ENV['GOLFDEBUG'].to_sym rescue false
-  GOLFHOST     = ENV['GOLFHOST']     || "http://vimgolf.com"
+  GOLFHOST     = ENV['GOLFHOST']     || "http://www.vimgolf.com"
   GOLFDIFF     = ENV['GOLFDIFF']     || 'diff'
   GOLFSHOWDIFF = ENV['GOLFSHOWDIFF'] || 'vim -d -n'
   GOLFVIM      = ENV['GOLFVIM']      || 'vim'

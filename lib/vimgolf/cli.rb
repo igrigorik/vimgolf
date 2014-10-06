@@ -63,6 +63,7 @@ module VimGolf
     DESC
 
     def put(id = nil)
+      FileUtils.mkdir_p Config.put_path
       VimGolf.ui.warn "Downloading Vimgolf challenge: #{id}"
       VimGolf::Challenge.path(Config.put_path)
       challenge = Challenge.new(id)
@@ -114,14 +115,21 @@ module VimGolf
           VimGolf.ui.info "\nSuccess! Your output matches. Your score: #{log.score}"
 
           loop do
-            VimGolf.ui.warn "[w] Upload result and retry the challenge"
-            VimGolf.ui.warn "[x] Upload result and quit"
+            begin
+              Config.load
+              choices = [:w, :x]
+              VimGolf.ui.warn "[w] Upload result and retry the challenge"
+              VimGolf.ui.warn "[x] Upload result and quit"
+            rescue
+              choices = [:setup]
+              VimGolf.ui.warn "[s] Set up vimgolf.com key to submit result"
+            end
             VimGolf.ui.warn "[r] Do not upload result and retry the challenge"
             VimGolf.ui.warn "[q] Do not upload result and quit"
 
             case VimGolf.ui.ask_question "Choice> ",
                                 :type    => :warn,
-                                :choices => [:w, :x, :retry, :quit]
+                                :choices => choices + [:retry, :quit]
             when :w
               next unless upload?(challenge)
               challenge.start
@@ -129,6 +137,8 @@ module VimGolf
             when :x
               next unless upload?(challenge)
               raise Interrupt
+            when :setup
+              setup
             when :retry
               challenge.start
               raise RetryException

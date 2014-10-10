@@ -116,7 +116,7 @@ module VimGolf
 
           loop do
             begin
-              Config.load
+              Config.load # raises error if user hasn't finished setup
               choices = [:w, :x]
               VimGolf.ui.warn "[w] Upload result and retry the challenge"
               VimGolf.ui.warn "[x] Upload result and quit"
@@ -139,6 +139,7 @@ module VimGolf
               raise Interrupt
             when :setup
               setup
+              next # we can hopefully submit this time
             when :retry
               challenge.start
               raise RetryException

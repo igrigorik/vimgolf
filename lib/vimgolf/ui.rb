@@ -40,6 +40,18 @@ module VimGolf
         end
       end
 
+      # Take list of keystrokes, pretty-print them
+      def print_log(strokes)
+        strokes.each do |stroke|
+          if stroke.length == 1 # not a special character
+            say stroke, color=nil, force_new_line=false
+          else
+            say stroke, color=:red, force_new_line=false
+          end
+        end
+        say
+      end
+
       def debug(name, message = nil)
         return unless ENV["DEBUG"]
 

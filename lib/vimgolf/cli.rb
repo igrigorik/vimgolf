@@ -43,7 +43,12 @@ module VimGolf
       DESC
 
     def setup
-      key = VimGolf.ui.ask "Please specify your VimGolf API key (register on vimgolf.com to get it):"
+      VimGolf.ui.info "\nLet's setup your VimGolf key..."
+      VimGolf.ui.warn "1) Open vimgolf.com in your browser."
+      VimGolf.ui.warn "2) Click \"Sign in with Twitter\"."
+      VimGolf.ui.warn "3) Once signed in, copy your key (black box, top right)."
+
+      key = VimGolf.ui.ask "\nPaste your VimGolf key:"
 
       if key =~ /[\w\d]{32}/
         FileUtils.mkdir_p Config.path
@@ -63,6 +68,7 @@ module VimGolf
     DESC
 
     def put(id = nil)
+      FileUtils.mkdir_p Config.put_path
       VimGolf.ui.warn "Downloading Vimgolf challenge: #{id}"
       VimGolf::Challenge.path(Config.put_path)
       challenge = Challenge.new(id)
@@ -114,14 +120,21 @@ module VimGolf
           VimGolf.ui.info "\nSuccess! Your output matches. Your score: #{log.score}"
 
           loop do
-            VimGolf.ui.warn "[w] Upload result and retry the challenge"
-            VimGolf.ui.warn "[x] Upload result and quit"
+            begin
+              Config.load # raises error if user hasn't finished setup
+              choices = [:w, :x]
+              VimGolf.ui.warn "[w] Upload result and retry the challenge"
+              VimGolf.ui.warn "[x] Upload result and quit"
+            rescue
+              choices = [:setup]
+              VimGolf.ui.warn "[s] Set up vimgolf.com key to submit result"
+            end
             VimGolf.ui.warn "[r] Do not upload result and retry the challenge"
             VimGolf.ui.warn "[q] Do not upload result and quit"
 
             case VimGolf.ui.ask_question "Choice> ",
                                 :type    => :warn,
-                                :choices => [:w, :x, :retry, :quit]
+                                :choices => choices + [:retry, :quit]
             when :w
               next unless upload?(challenge)
               challenge.start
@@ -129,6 +142,9 @@ module VimGolf
             when :x
               next unless upload?(challenge)
               raise Interrupt
+            when :setup
+              setup
+              next # we can hopefully submit this time
             when :retry
               challenge.start
               raise RetryException
@@ -139,7 +155,7 @@ module VimGolf
 
         else
           error = <<-MSG
-	  Uh oh, Vim did not exit properly. 
+	  Uh oh, Vim did not exit properly.
 	  Please ensure you can execute 'Vim' from the commandline.
 	  If the problem persists, please report the error on github.com/igrigorik/vimgolf
           MSG

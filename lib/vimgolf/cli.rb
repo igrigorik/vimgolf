@@ -43,12 +43,12 @@ module VimGolf
       DESC
 
     def setup
-      VimGolf.ui.info "Once you've entered your API key, you'll be able to submit your\nentries to vimgolf.com"
-      VimGolf.ui.warn "1) You'll need a Twitter account. Log into the Twitter account you\n   want to use."
-      VimGolf.ui.warn "2) On vimgolf.com, click SIGN IN WITH TWITTER, and follow the\n   instructions given."
+      VimGolf.ui.info "\nLet's setup your VimGolf key..."
+      VimGolf.ui.warn "1) Open vimgolf.com in your browser."
+      VimGolf.ui.warn "2) Click \"Sign in with Twitter\"."
+      VimGolf.ui.warn "3) Once signed in, copy your key (black box, top right)."
 
-      VimGolf.ui.info "\n'Your VimGolf key' should be in a box at the top-right on vimgolf.com"
-      key = VimGolf.ui.ask "Paste the key here:"
+      key = VimGolf.ui.ask "\nPaste your VimGolf key:"
 
       if key =~ /[\w\d]{32}/
         FileUtils.mkdir_p Config.path
@@ -155,7 +155,7 @@ module VimGolf
 
         else
           error = <<-MSG
-	  Uh oh, Vim did not exit properly. 
+	  Uh oh, Vim did not exit properly.
 	  Please ensure you can execute 'Vim' from the commandline.
 	  If the problem persists, please report the error on github.com/igrigorik/vimgolf
           MSG

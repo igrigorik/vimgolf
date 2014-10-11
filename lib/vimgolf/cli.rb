@@ -43,7 +43,12 @@ module VimGolf
       DESC
 
     def setup
-      key = VimGolf.ui.ask "Please specify your VimGolf API key (register on vimgolf.com to get it):"
+      VimGolf.ui.info "Once you've entered your API key, you'll be able to submit your\nentries to vimgolf.com"
+      VimGolf.ui.warn "1) You'll need a Twitter account. Log into the Twitter account you\n   want to use."
+      VimGolf.ui.warn "2) On vimgolf.com, click SIGN IN WITH TWITTER, and follow the\n   instructions given."
+
+      VimGolf.ui.info "\n'Your VimGolf key' should be in a box at the top-right on vimgolf.com"
+      key = VimGolf.ui.ask "Paste the key here:"
 
       if key =~ /[\w\d]{32}/
         FileUtils.mkdir_p Config.path

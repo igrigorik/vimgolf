@@ -139,7 +139,7 @@ module VimGolf
         print_table(table, :ident => 2, :truncate => true, :colwidth => 20)
       end
 
-      def set_color(string, color, bold=false)
+      def set_color(string, *colors)
         ($stdout.tty? || ENV['THOR_SHELL']) ? super : string
       end
 

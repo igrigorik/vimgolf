@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module VimGolf
   class Keylog
     include Enumerable

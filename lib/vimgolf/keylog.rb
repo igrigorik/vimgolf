@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module VimGolf
   class Keylog
     include Enumerable
@@ -95,6 +97,27 @@ module VimGolf
               when "kB"; "<S-Tab>"
               when "\xffX"; "<C-@>"
 
+              # This is how you escape literal 0x80
+              when "\xfeX"; "<0x80>"
+
+              # These rarely-used modifiers should be combined with the next
+              # stroke (like <S-Space>), but let's put them here for now
+              when "\xfc\x02"; "<S->"
+              when "\xfc\x04"; "<C->"
+              when "\xfc\x06"; "<C-S->"
+              when "\xfc\x08"; "<A->"
+              when "\xfc\x0a"; "<A-S->"
+              when "\xfc\x0c"; "<C-A>"
+              when "\xfc\x0e"; "<C-A-S->"
+              when "\xfc\x10"; "<M->"
+              when "\xfc\x12"; "<M-S->"
+              when "\xfc\x14"; "<M-C->"
+              when "\xfc\x16"; "<M-C-S->"
+              when "\xfc\x18"; "<M-A->"
+              when "\xfc\x1a"; "<M-A-S->"
+              when "\xfc\x1c"; "<M-C-A>"
+              when "\xfc\x1e"; "<M-C-A-S->"
+
               when "\xfd\x4"; "<S-Up>"
               when "\xfd\x5"; "<S-Down>"
               when "\xfd\x6"; "<S-F1>"
@@ -144,7 +167,7 @@ module VimGolf
               when "\xfd\x32"; "<RightMouse>"
               when "\xfd\x33"; "<RightDrag>"
               when "\xfd\x34"; "<RightRelease>"
-              #when "\xfd\x35"; "KE_IGNORE"
+              when "\xfd\x35"; nil # KE_IGNORE
               #when "\xfd\x36"; "KE_TAB"
               #when "\xfd\x37"; "KE_S_TAB_OLD"
               #when "\xfd\x38"; "KE_SNIFF"
@@ -166,18 +189,28 @@ module VimGolf
               #when "\xfd\x48"; "KE_S_XF2"
               #when "\xfd\x49"; "KE_S_XF3"
               #when "\xfd\x4a"; "KE_S_XF4"
-              when "\xfd\x4b"; "<MouseDown>"
-              when "\xfd\x4c"; "<MouseUp>"
-              when "\xfd\x4d"; "<MouseLeft>"
-              when "\xfd\x4e"; "<MouseRight>"
-              #when "\xfd\x4f"; "KE_KINS"
-              #when "\xfd\x50"; "KE_KDEL"
-              #when "\xfd\x51"; "KE_CSI"
+              when "\xfd\x4b"; "<ScrollWheelUp>"
+              when "\xfd\x4c"; "<ScrollWheelDown>"
+
+              # Horizontal scroll wheel support was added in Vim 7.3c. These
+              # 2 entries shifted the rest of the KS_EXTRA mappings down 2.
+              # Though Vim 7.2 is rare today, it was common soon after
+              # vimgolf.com was launched. In cases where the 7.3 code is
+              # never used but the 7.2 code was common, it makes sense to use
+              # the 7.2 code. There are conflicts though, so some legacy
+              # keycodes have to stay wrong.
+              when "\xfd\x4d"; "<ScrollWheelRight>"
+              when "\xfd\x4e"; "<ScrollWheelLeft>"
+              when "\xfd\x4f"; "<kInsert>"
+              when "\xfd\x50"; "<kDel>"
+              when "\xfd\x51"; "<0x9b>" # :help <CSI>
               #when "\xfd\x52"; "KE_SNR"
-              #when "\xfd\x53"; "KE_PLUG"
-              #when "\xfd\x54"; "KE_CMDWIN"
-              when "\xfd\x55"; "<C-Left>"
-              when "\xfd\x56"; "<C-Right>"
+              #when "\xfd\x53"; "KE_PLUG" # never used
+              when "\xfd\x53"; "<C-Left>" # 7.2 compat
+              #when "\xfd\x54"; "KE_CMDWIN" # never used
+              when "\xfd\x54"; "<C-Right>" # 7.2 compat
+              when "\xfd\x55"; "<C-Left>" # 7.2 <C-Home> conflict
+              when "\xfd\x56"; "<C-Right>" # 7.2 <C-End> conflict
               when "\xfd\x57"; "<C-Home>"
               when "\xfd\x58"; "<C-End>"
               #when "\xfd\x59"; "KE_X1MOUSE"
@@ -186,8 +219,10 @@ module VimGolf
               #when "\xfd\x5c"; "KE_X2MOUSE"
               #when "\xfd\x5d"; "KE_X2DRAG"
               #when "\xfd\x5e"; "KE_X2RELEASE"
+              when "\xfd\x5e"; nil # 7.2 compat (I think?)
               #when "\xfd\x5f"; "KE_DROP"
-              #when "\xfd\x5e"; "KE_CURSORHOLD"
+              #when "\xfd\x60"; "KE_CURSORHOLD"
+              when "\xfd\x60"; nil # 7.2 Focus Gained compat
               #when "\xfd\x61"; "KE_NOP"
               when "\xfd\x62"; nil # Focus Gained (GVIM)
               when "\xfd\x63"; nil # Focus Lost (GVIM)
@@ -197,6 +232,9 @@ module VimGolf
                 '<%02x-%02x>' % code.unpack('CC')
             end
 
+            # Printable ASCII
+          when 32..126; c
+
             # Control characters with special names
           when 0; "<Nul>"
           when 9; "<Tab>"
@@ -204,13 +242,8 @@ module VimGolf
           when 13; "<CR>"
           when 27; "<Esc>"
 
-          when 127; "<Del>"
-
-            # Otherwise, use <C-x> format
-          when 0..31; "<C-#{(n + 64).chr}>"
-
-            # The rest of ANSI is printable
-          when 32..126; c
+            # Otherwise, use <C-x> format. Flip bit 7
+          when 0..127; "<C-#{(n ^ 0x40).chr}>"
 
           else
             #puts "Unexpected extended ASCII: #{'%#04x' % n}"

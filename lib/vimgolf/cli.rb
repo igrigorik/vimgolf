@@ -90,6 +90,9 @@ module VimGolf
           diff = `#{GOLFDIFF} #{diff_files}`
           log = Keylog.new(IO.read(challenge.log_path))
 
+          VimGolf.ui.info "\nHere are your keystrokes:"
+          VimGolf.ui.print_log log
+
           # Handle incorrect solutions
           if diff.size > 0
             VimGolf.ui.error "\nUh oh, looks like your entry does not match the desired output."

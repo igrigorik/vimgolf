@@ -120,7 +120,7 @@ module VimGolf
           VimGolf.ui.print_log log
 
           # Handle incorrect solutions
-          if !challenge.correct()
+          if !challenge.correct?()
             VimGolf.ui.error "\nUh oh, looks like your entry does not match the desired output."
             VimGolf.ui.error "Your score for this failed attempt was: #{log.score}"
             loop do

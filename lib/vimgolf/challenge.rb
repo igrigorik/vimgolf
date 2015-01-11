@@ -109,7 +109,7 @@ module VimGolf
     attr_reader :log_path
     attr_reader :vimrc_path
 
-    def correct
+    def correct?
       FileUtils.compare_file(@work_path, @output_path)
     end
 

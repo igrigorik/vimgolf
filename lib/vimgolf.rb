@@ -1,9 +1,12 @@
+require 'rubygems'
 require 'fileutils'
 require 'net/http'
 require 'strscan'
 require 'json'
 require 'yaml'
 require 'thor'
+require 'shellwords'
+require 'tempfile'
 
 require 'vimgolf/version'
 require 'vimgolf/config'

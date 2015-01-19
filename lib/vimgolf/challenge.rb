@@ -24,9 +24,13 @@ module VimGolf
     def work_files
       @vimrc_path = File.expand_path('../vimgolf.vimrc', __FILE__)
 
-      # keep these temp files around so they don't close
+      # keep these Tempfile's around so they don't unlink
       @work = Tempfile.new(['vimgolf', ".#{@type}"])
       @log = Tempfile.new('golflog')
+      # close tmp files, but don't unlink
+      @work.close
+      @log.close
+
       @work_path = @work.path()
       @log_path = @log.path()
     end

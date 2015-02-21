@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# encoding: ASCII-8BIT
 
 module VimGolf
   class Keylog

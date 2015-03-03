@@ -1,5 +1,7 @@
 FROM ruby:2.2.0
 
+MAINTAINER kramos
+
 RUN apt-get update && apt-get install -y vim
 
 RUN gem install vimgolf

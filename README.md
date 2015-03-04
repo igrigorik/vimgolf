@@ -20,6 +20,16 @@ $> vimgolf setup
 $> vimgolf put [challenge ID]
 ```
 
+## Setup & Play (Docker)
+
+On a machine with Docker installed
+```bash
+
+$> docker run --rm -it -e "key=[vimgolf key]" kramos/vimgolf [challenge ID]
+
+```
+
+
 **Emacs**: yes, it is true, you can [play vimgolf in emacs too](https://github.com/igrigorik/vimgolf/tree/master/emacs)!
 
 Patches, tips and ideas are welcome!
@@ -27,3 +37,4 @@ Patches, tips and ideas are welcome!
 ## License
 
 (MIT License) - Copyright (c) 2010 Ilya Grigorik
+

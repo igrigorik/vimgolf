@@ -1,4 +1,4 @@
-# [VimGolf.com](http://www.vimgolf.com) Client
+# [VimGolf.com](http://www.vimgolf.com) 
 
 Real Vim ninjas count every keystroke - do you? Head on over to vimgolf.com, pick a challenge, and show us what you've got!
 
@@ -13,16 +13,19 @@ When you launch a challenge from the command line, it will be downloaded from th
 ```bash
 $> gem install vimgolf
 
-(Go to vimgolf.com, sign in, and grab your API key)
+# Go to vimgolf.com, sign in, and grab your API key
 $> vimgolf setup 
 
-(Pick a challenge on vimgolf.com)
+# Pick a challenge on vimgolf.com
 $> vimgolf put [challenge ID]
 ```
 
-**Emacs**: yes, it is true, you can [play vimgolf in emacs too](https://github.com/igrigorik/vimgolf/tree/master/emacs)!
+## Contribute
 
-Patches, tips and ideas are welcome!
+Patches, tips and ideas are welcome! The code is split between two branches:
+
+- `master` branch contains the CLI code.
+- `web` branch contains the Rails app powering the site.
 
 ## License
 

@@ -16,8 +16,9 @@ Vimgolf::Application.routes.draw do
   match "/feed" => "main#feed", :defaults => {:format => "rss"}
   match "/about" => "main#about"
 
-  match "/top" => "users#top", :as => :top
-  match "/:username" => "users#show", :as => :profile
+  # match "/top" => "users#top", :as => :top
+  # match "/:username" => "users#show", :as => :profile
+  match "*unmatched_route", :to => redirect('/about', status: 302)
 
   root :to => "main#index"
 

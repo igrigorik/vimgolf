@@ -2,6 +2,7 @@
 
     <h3><b>Changelog</b></h3>
     <ul>
+        <li><b>Dec 28, 2016</b>: disabled user profile pages (<a href="https://github.com/igrigorik/vimgolf/issues/150">bug</a>)</li>
         <li><b>Jan 18, 2015</b>: shipped v0.4.8 with windows bugfix</li>
         <li><b>Jan 18, 2015</b>: shipped v0.4.7 with new "local" CLI mode</li>
         <li><b>Aug 14, 2014</b>: shipped v0.4.6 with routing updates</li>
@@ -14,7 +15,6 @@
         <li><b>Jan 30, 2011</b>: fix order of top vimgolf ninjas displayed on homepage</li>
         <li><b>Jan 06, 2011</b>: shipped v0.3.0 with no native extensions + windows support</li>
         <li><b>Jan 05, 2011</b>: show top 5 VimGolf ninjas on homepage</li>
-        <li><b>Jan 05, 2011</b>: <%= link_to "leaderboard", top_path %> is live!</li>
         <li><b>Jan 04, 2011</b>: site performance improvements</li>
         <li><b>Jan 02, 2011</b>: added user profile pages! ex: vimgolf.com/your_handle</li>
         <li><b>Jan 01, 2011</b>: added RSS feed of latest challenges</li>
@@ -82,7 +82,7 @@
  <h3>Moderators</h3>
  <ul>
     <% ADMINS.each do |user| %>
-        <li><%= profile_link(user) %></li>
+        <li><%= user %></li>
     <% end %>
  </ul>
 

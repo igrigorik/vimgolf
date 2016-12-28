@@ -17,18 +17,6 @@
 </div>
 
 <div class="grid_5">
-    <% if @top_users %>
-        <h4><b>Top VimGolf Ninjas</b> - <%= link_to "view leaderboard", top_path %></h4>
-        <% @top_users.each_with_index do |user,idx| %>
-          <div class="notice clearfix">
-                <%= twitter_avatar user.nickname %>
-                <h6 style="margin-bottom:0">
-                    <b>#<%= idx+1 %> - <%= user.name %></b> <br /> <%= profile_link(user.nickname) %>
-                </h6>
-            </div>
-        <% end %>
-    <% end %>
-
     <h4>VimGolf Chatter</h4>
     <%= render :partial => "shared/tweets" %>
 </div>

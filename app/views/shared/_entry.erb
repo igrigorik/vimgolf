@@ -2,7 +2,7 @@
 
     <h6 style="margin-bottom:0.5em">
         <a class="anchor" href="#<%= entry.id %>" name="<%= entry.id %>"><b>#<%= offset+1 %></b></a>
-        <%= user.name %> / <%= profile_link(user.nickname) %> -
+        <%= user.name %> / <%= user.nickname %> -
         <b>Score: <%= entry.score %></b> -
         <span style="font-size:0.9em"><%= entry.created_at.strftime("%m/%d/%y @ %H:%M") %></span>
     </h6>
@@ -12,7 +12,7 @@
 </pre>
 
     <% entry.comments.each do |c| %>
-        <p class="comment"><%= profile_link(c.nickname) %>: <%= c.comment %></p>
+        <p class="comment"><%= c.nickname %>: <%= c.comment %></p>
     <% end %>
 
     <p style="padding:0.5em 0 0 0; margin:0">

@@ -20,9 +20,9 @@ class MainController < ApplicationController
       :entries => @entry_counts.values.inject(:+)
     }
 
-    if users = Rails.cache.read(:top_users)
-      @top_users = User.find(users).sort_by {|u| users.index(u._id) }
-    end
+    # if users = Rails.cache.read(:top_users)
+    #   @top_users = User.find(users).sort_by {|u| users.index(u._id) }
+    # end
   end
 
   def feed

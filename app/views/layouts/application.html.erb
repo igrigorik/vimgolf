@@ -41,7 +41,7 @@
       <div id="about" class="grid_7">
         <h3 style="margin:0.5em 0 0.5em 0">Real Vim ninjas count <b>every</b> keystroke - do you?</h3>
         <h6>Pick a challenge, fire up Vim, and show us what you got.</h6>
-        <p><b><%= link_to "Leaderboard", top_path %></b>, <%= link_to "Changelog, Rules & FAQ", about_path %>, updates: <a href="http://twitter.com/vimgolf">@vimgolf</a>, <a href="http://feeds.vimgolf.com/latest-challenges">RSS</a>.</p>
+        <p><%= link_to "Changelog, Rules & FAQ", about_path %>, updates: <a href="http://twitter.com/vimgolf">@vimgolf</a>, <a href="http://feeds.vimgolf.com/latest-challenges">RSS</a>.</p>
       </div>
       <div id="instructions" class="grid_5">
 <pre class="terminal">
@@ -60,7 +60,6 @@
 
   <div id="footer" class="container_12 clearfix">
     <div id="copy">
-        <%= link_to "Leaderboard", top_path %>, &nbsp;&nbsp;
         <%= link_to "Changelog, Rules & FAQ", about_path %>, &nbsp;&nbsp;
         CLI Version: <b><a href="https://github.com/igrigorik/vimgolf"><%= Vimgolf::VERSION %></a></b>, &nbsp;&nbsp;
         Author: <a href="http://www.igvita.com">Ilya Grigorik</a> / <a href="http://twitter.com/igrigorik">@igrigorik</a>

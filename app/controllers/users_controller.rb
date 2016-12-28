@@ -4,7 +4,8 @@ class UsersController < ApplicationController
     @user = User.find(:conditions => {:nickname => params[:username]}).first
     return redirect_to root_path if @user.nil?
 
-    @contributed  = Challenge.where('user_id' => @user.id).all.to_a
+    @contributed  = Challenge.where('user_id' => @user.id)
+          .only('entries.user_id', 'entries.score', :title).all.to_a
     @participated = Challenge.where('entries.user_id' => @user.id)
           .only('entries.user_id', 'entries.score', :title).all.to_a
 

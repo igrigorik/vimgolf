@@ -91,7 +91,7 @@ module VimGolf
 
         proxy.start(url.host, url.port) do |http|
           request = Net::HTTP::Post.new(url.request_uri)
-          request.set_form_data({"challenge_id" => @id, "apikey" => Config.load['key'], "entry" => IO.read(log_path)})
+          request.set_form_data({"challenge_id" => @id, "apikey" => Config.load['key'], "entry" => IO.binread(log_path)})
           request["Accept"] = "application/json"
 
           res = http.request(request)

@@ -1,0 +1,38 @@
+<div class="<%= (current_user == user) ? "note" : "success" %> clearfix">
+
+    <h6 style="margin-bottom:0.5em">
+        <a class="anchor" href="#<%= entry.id %>" name="<%= entry.id %>"><b>#<%= offset+1 %></b></a>
+        <%= user.name %> / <%= profile_link(user.nickname) %> -
+        <b>Score: <%= entry.score %></b> -
+        <span style="font-size:0.9em"><%= entry.created_at.strftime("%m/%d/%y @ %H:%M") %></span>
+    </h6>
+
+<pre style="margin-bottom:0">
+<% VimGolf::Keylog.new(entry.script).each do |key| %><% if key.size > 1 %><span style="color:#990000;font-weight:bold"><%= key %></span><% else %><%= key %><% end %><% end %>
+</pre>
+
+    <% entry.comments.each do |c| %>
+        <p class="comment"><%= profile_link(c.nickname) %>: <%= c.comment %></p>
+    <% end %>
+
+    <p style="padding:0.5em 0 0 0; margin:0">
+        <b><%= pluralize entry.comments.size, 'comment' %></b>
+        <% if current_user %>
+             - <a href="#" onClick="$('#comments-<%= entry.id %>').toggle(); return false;">
+                Comment <% if challenge.owner?(current_user) || entry.owner?(current_user) %> / Edit <% end %>
+            </a>
+        <% end %>
+    </p>
+
+    <div id="comments-<%= entry.id %>" style="display:none">
+        <%= form_for :comment, :url => comment_entry_path(challenge, entry) do |f| %>
+            <%= f.text_area "text", :rows => 2, :class => :text, :style => 'width:98%' %><br/>
+            <%= f.submit "Comment" %>
+
+            <% if challenge.owner?(current_user) || entry.owner?(current_user) %>
+                <%= link_to "Delete Entry", delete_entry_path(challenge, entry), :class => :action, :style => 'float:right' %>
+            <% end %>
+        <% end %>
+    </div>
+
+</div>

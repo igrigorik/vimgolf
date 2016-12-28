@@ -1,0 +1,48 @@
+<h2>Submit new VimGolf challenge:</h2>
+
+<%= form_for(@challenge, :html => { :multipart => true }) do |f| %>
+  <% if @challenge.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@challenge.errors.count, "error") %> prohibited this challenge from being saved:</h2>
+
+      <ul>
+      <% @challenge.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div id="about" class="grid_7">
+      <div class="field" >
+        <%= f.label :title %><br />
+        <%= f.text_field :title, :size => 50, :class => :title %>
+      </div>
+      <div class="field">
+        <%= f.label :description %><br />
+        <%= f.text_area :description, :cols => 67, :rows => 8 %><br />
+        <em>Please provide a description of the challenge, main challenges, etc.</em>
+      </div>
+  </div>
+
+  <div id="about" class="grid_5">
+      <div class="field">
+          <%= f.label "Input File" %><br />
+          <%= f.file_field :input %>
+      </div>
+      <div class="field">
+        <%= f.label "Output File" %><br />
+        <%= f.file_field :output %>
+      </div>
+      <div class="field">
+        <%= f.label "Diff" %><br />
+        <%= f.file_field :diff %><br />
+        <em>To create a diff file: <b>diff input.file output.file > diff.file</b></em>
+      </div>
+  </div>
+
+  <div class="grid_12 actions">
+    <%= f.submit "Create challenge", :class => 'ui-button' %>
+  </div>
+
+<% end %>

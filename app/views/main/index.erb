@@ -1,0 +1,34 @@
+<div class="grid_7">
+<h2 style="padding-bottom:1em; border-bottom: 1px dotted;">
+    <b class="stat"><%= @stats[:users] %></b> active golfers, <b class="stat"><%= @stats[:entries] %></b> entries, <b class="stat"><%= @stats[:challenges]%></b> challenges
+</h2>
+
+<h3><b>Open VimGolf challenges</b></h3>
+
+<% @challenges.each do |c| %>
+    <div>
+        <h5 class="challenge">
+            <%= link_to c.title, challenge_path(c) %> - <%= @entry_counts[c.id] || 0 %> entries
+        </h5>
+        <p><%= c.description %></p>
+    </div>
+<% end %>
+
+</div>
+
+<div class="grid_5">
+    <% if @top_users %>
+        <h4><b>Top VimGolf Ninjas</b> - <%= link_to "view leaderboard", top_path %></h4>
+        <% @top_users.each_with_index do |user,idx| %>
+          <div class="notice clearfix">
+                <%= twitter_avatar user.nickname %>
+                <h6 style="margin-bottom:0">
+                    <b>#<%= idx+1 %> - <%= user.name %></b> <br /> <%= profile_link(user.nickname) %>
+                </h6>
+            </div>
+        <% end %>
+    <% end %>
+
+    <h4>VimGolf Chatter</h4>
+    <%= render :partial => "shared/tweets" %>
+</div>

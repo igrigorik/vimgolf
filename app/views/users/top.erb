@@ -1,0 +1,41 @@
+<div class="grid_7">
+    <h3>
+        <b>Top <b class="stat">100</b> VimGolf Ninjas</b>
+        <span style="float:right">
+            <%= tweet_button({
+            :via => "",
+            :url => current_url,
+            :text => "awesome VimGolf challenge: @",
+            :related => ["igrigorik", "vimcasts", "learnvim"],
+            :count => "horizontal"
+            }) %>
+        </span>
+
+    </h3>
+
+    <% @top.each_with_index do |(user,score), idx| %>
+        <% user = @users[user] %>
+        <div class="notice clearfix">
+            <%= twitter_avatar user.nickname %>
+            <div style="float:right; text-align:center;font-size:2.4em;margin-left:1em"><b><%= idx+1 %></b></div>
+
+            <h6 style="margin-bottom:0">
+                <b><%= user.name %></b> / <%= profile_link(user.nickname) %>
+            </h6>
+            <p style="margin-bottom:0"><%= user.description %></p>
+        </div>
+    <% end %>
+
+</div>
+
+<div class="grid_5">
+    <h4 style="margin-top:0.5em">Leaderboard rules:</h4>
+    <ul>
+        <li>Global rank is the sum of your ranks on each challenge</li>
+        <li>Skipping a challenge implicitly yields the lowest rank</li>
+    </ul>
+
+    <p>To climb the global ladder, you need to climb the individual ladders of each challenge. The more challenges you complete, and the higher you place on each, the higher your global rank will be. If you skip a challenge, then it's equivalent to placing last in that challenge.</p>
+
+    <%= render :partial => "shared/tweets" %>
+</div>

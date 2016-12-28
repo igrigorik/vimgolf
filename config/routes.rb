@@ -6,8 +6,6 @@ Vimgolf::Application.routes.draw do
   match "/entry" => "entry#create"
   match "/entry/:challenge/delete/:entry" => "entry#destroy",
     :as => :delete_entry
-  match "/entry/:challenge/vote/:entry/:direction" => "entry#vote",
-    :as => :vote_on_entry
   match "/entry/:challenge/comment/:entry" => "entry#comment",
     :as => :comment_entry
 

@@ -1,6 +1,6 @@
 class EntryController < ApplicationController
 
-  before_filter :login, :only => [:comment, :vote]
+  before_filter :login, :only => [:comment]
   before_filter :load_entry, :only => [:comment]
 
   def comment
@@ -13,30 +13,6 @@ class EntryController < ApplicationController
     rescue Exception => e
     ensure
       redirect_to challenge_path(params[:challenge])
-    end
-  end
-
-  def vote
-    begin
-      challenge = Challenge.find(params[:challenge])
-      entry = challenge.entries.find(params[:entry])
-
-      if challenge.owner?(current_user) || challenge.competitor?(current_user)
-        case params[:direction]
-          when 'upvote' then
-            entry.upvote(current_user.nickname)
-          when 'downvote' then
-            entry.downvote(current_user.nickname)
-        end
-
-        challenge.save
-      end
-
-    rescue Exception => e
-    ensure
-      respond_to do |format|
-        format.json { render :json => {'status' => 'ok'} }
-      end
     end
   end
 

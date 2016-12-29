@@ -1,3 +1,7 @@
 pkg/*
 *.gem
 .bundle
+db/*.sqlite3
+tmp/
+log/
+LOCAL.md

@@ -1,0 +1,21 @@
+defaults: &defaults
+  host: localhost
+
+development:
+  <<: *defaults
+  database: vimgolf
+
+test:
+  <<: *defaults
+  database: vimgolf_test
+
+production:
+  host: <%= ENV['DATABASE_HOST'] %>
+  port: <%= ENV['DATABASE_PORT'] %>
+  username: <%= ENV['DATABASE_USERNAME'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  database: <%= ENV['DATABASE_NAME'] %>
+
+# TODO:
+# - upgrade mongo + mongoid gems to enable URI parsing and failover support
+# uri: <%= ENV['MONGOHQ_URL'] %>

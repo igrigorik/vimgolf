@@ -1,0 +1,41 @@
+div.field, div.actions {
+  margin-bottom: 10px;
+}
+
+label {
+  font-size: 1.1em;
+}
+
+#notice {
+  color: green;
+}
+
+.field_with_errors {
+  padding: 2px;
+  background-color: #f0f0f0;
+  display: table;
+}
+
+#error_explanation {
+  width: 480px;
+  padding: 7px;
+  padding-bottom: 0;
+  margin: 10px;
+  background-color: #f0f0f0;
+}
+
+#error_explanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  margin-bottom: 0px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#error_explanation ul li {
+  font-size: 12px;
+  list-style: square;
+}

@@ -1,0 +1,50 @@
+#nav li {
+  font-size:1.2em;
+}
+
+pre.terminal {
+  border-radius: 10px;
+  border: 0px solid #000;
+  background-color: #000;
+  color: #65B042;
+}
+
+pre.terminal .shell { color: #fff; }
+
+.terminal a, .terminal a:visited { color: green; }
+
+img.user {
+  float:left;
+  padding-right:1em;
+  width: 48px;
+  height: 48px;
+}
+
+h5.challenge {
+  margin:0;
+}
+
+pre.diff {
+  display: none;
+}
+
+b.stat {
+  color: #529000;
+}
+
+.action, a.action {
+  color: #990000;
+  font-weight:bold;
+}
+
+a.anchor {
+  border-bottom: 1px dotted;
+}
+
+a:visited {
+  color: #000066;
+}
+
+.comment {
+  padding:0.5em 0 0 0; margin:0;
+}

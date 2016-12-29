@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+  <meta http-equiv="Cache-control" content="no-cache" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <title>VimGolf - real Vim ninjas count every keystroke!</title>
+
+  <%= stylesheet_link_tag :all %>
+
+  <%= javascript_include_tag "prettify/prettify" %>
+  <%= javascript_include_tag "jquery.min" %>
+  <%= javascript_include_tag "jquery-ui.min" %>
+  <%= javascript_include_tag "application" %>
+
+  <%= auto_discovery_link_tag(:rss, "http://feeds.vimgolf.com/latest-challenges", {:title => "Latest VimGolf challenges"}) %>
+
+  <%= csrf_meta_tag %>
+</head>
+
+<body onload="prettyPrint()">
+  <div id="header" class="container_12 clearfix">
+    <div id="logo">
+      <div><a href="/"><img src="/images/vim_golf_logo.png"> VimGolf</a></div>
+    </div>
+    <div id="navigation">
+      <ul id="nav">
+        <% if current_user %>
+            <li>Welcome <b><%= current_user.nickname %></b></li>
+            <li><%= link_to "Submit challenge", new_challenge_path %></li>
+            <li><%= link_to "Sign out", signout_path %></li>
+        <% else %>
+            <li><%= link_to "Sign in with Twitter", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <div id="about" class="container_12 clearfix">
+      <div id="about" class="grid_7">
+        <h3 style="margin:0.5em 0 0.5em 0">Real Vim ninjas count <b>every</b> keystroke - do you?</h3>
+        <h6>Pick a challenge, fire up Vim, and show us what you got.</h6>
+        <p><%= link_to "Changelog, Rules & FAQ", about_path %>, updates: <a href="http://twitter.com/vimgolf">@vimgolf</a>, <a href="http://feeds.vimgolf.com/latest-challenges">RSS</a>.</p>
+      </div>
+      <div id="instructions" class="grid_5">
+<pre class="terminal">
+<span class="shell">Your VimGolf key: <%= current_user.nil? ? link_to("please sign in", "/auth/twitter?x_auth_access_type=read&use_authorize=true") : current_user['key'] %></span>
+
+<span class="shell">$</span> gem install vimgolf
+<span class="shell">$</span> vimgolf setup
+<span class="shell">$</span> vimgolf put <%= content_for?(:challenge_id) ? yield(:challenge_id) : '[challenge ID]' %>
+</pre>
+      </div>
+  </div>
+
+  <div id="content" class="container_12 clearfix">
+    <%= yield %>
+  </div>
+
+  <div id="footer" class="container_12 clearfix">
+    <div id="copy">
+        <%= link_to "Changelog, Rules & FAQ", about_path %>, &nbsp;&nbsp;
+        CLI Version: <b><a href="https://github.com/igrigorik/vimgolf"><%= Vimgolf::VERSION %></a></b>, &nbsp;&nbsp;
+        <a href="https://github.com/igrigorik/vimgolf/">Contribute on GitHub</a>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-71196-5']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+</body>
+</html>

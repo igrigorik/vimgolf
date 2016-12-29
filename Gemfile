@@ -13,13 +13,12 @@ gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'tweet-button'
 gem 'newrelic_rpm'
-gem 'vimgolf', :git => 'git://github.com/igrigorik/vimgolf.git'
 gem 'unicorn'
 gem 'rack-timeout'
 gem 'rails3_serve_static_assets', github: 'heroku/rails3_serve_static_assets'
 gem 'test-unit'
 
-#gem 'vimgolf', :path => '/git/vimgolf'
+gem 'vimgolf', path: 'lib/vimgolf'
 
 group :test, :development do
 	%w[rspec rspec-core rspec-expectations rspec-mocks rspec-support].each do |lib|

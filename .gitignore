@@ -1,7 +1,8 @@
-pkg/*
-*.gem
 .bundle
+*.gem
 db/*.sqlite3
-tmp/
-log/
-LOCAL.md
+lib/*/Gemfile.lock
+pkg/*
+tmp/*
+log/*
+local/*

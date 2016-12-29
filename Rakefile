@@ -4,6 +4,7 @@
 require File.expand_path('../config/application', __FILE__)
 require 'rake'
 
+Vimgolf::Application.load_tasks
 
 begin
   require 'rspec/core/rake_task'
@@ -14,5 +15,3 @@ begin
 rescue LoadError
   # no rspec available
 end
-
-Vimgolf::Application.load_tasks

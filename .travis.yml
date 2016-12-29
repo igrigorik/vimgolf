@@ -2,6 +2,3 @@ language: ruby
 rvm:
     - 2.1.5
 services: mongodb
-branches:
-    only:
-        - web

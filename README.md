@@ -31,3 +31,7 @@ $> bundle exec unicorn -c config/unicorn.rb -E development
 # deploy to Heroku
 $> git push heroku web:master
 ```
+
+## Run tests
+
+Go to the root folder and run `rake`.

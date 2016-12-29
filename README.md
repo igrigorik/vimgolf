@@ -22,6 +22,8 @@ $> vimgolf put [challenge ID]
 
 # VimGolf.com web app
 
+[![Build Status](https://travis-ci.org/nelsonsar/vimgolf.svg?branch=web)](https://travis-ci.org/nelsonsar/vimgolf)
+
 ```bash
 # start local server
 $> bundle exec unicorn -c config/unicorn.rb -E development

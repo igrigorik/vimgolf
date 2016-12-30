@@ -22,6 +22,8 @@ $> vimgolf put [challenge ID]
 
 # VimGolf.com web app
 
+[![Build Status](https://travis-ci.org/igrigorik/vimgolf.svg?branch=master)](https://travis-ci.org/igrigorik/vimgolf)
+
 ```bash
 # start local server
 $> bundle exec unicorn -c config/unicorn.rb -E development
@@ -29,3 +31,7 @@ $> bundle exec unicorn -c config/unicorn.rb -E development
 # deploy to Heroku
 $> git push heroku web:master
 ```
+
+## Run tests
+
+Go to the root folder and run `rake`.

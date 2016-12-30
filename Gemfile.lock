@@ -28,6 +28,19 @@ GIT
       rspec-support (= 3.6.0.beta2)
 
 GIT
+  remote: git://github.com/rspec/rspec-rails.git
+  revision: a0997675c004e5155c499205087833c85809cd18
+  specs:
+    rspec-rails (3.6.0.beta2)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (= 3.6.0.beta2)
+      rspec-expectations (= 3.6.0.beta2)
+      rspec-mocks (= 3.6.0.beta2)
+      rspec-support (= 3.6.0.beta2)
+
+GIT
   remote: git://github.com/rspec/rspec-support.git
   revision: 436adb4b6d9b256fe8bb721a8d44080bd0701df9
   specs:
@@ -179,14 +192,9 @@ DEPENDENCIES
   rspec-core!
   rspec-expectations!
   rspec-mocks!
+  rspec-rails!
   rspec-support!
   test-unit
   tweet-button
   unicorn
   vimgolf!
-
-RUBY VERSION
-   ruby 2.3.1p112
-
-BUNDLED WITH
-   1.13.6

@@ -1,5 +1,5 @@
 source 'http://rubygems.org'
-ruby '2.3.1'
+ruby '2.1.5'
 
 gem 'rails', '3.0.19'
 gem 'mongo', '1.1.5'
@@ -21,7 +21,7 @@ gem 'test-unit'
 gem 'vimgolf', path: 'lib/vimgolf'
 
 group :test, :development do
-	%w[rspec rspec-core rspec-expectations rspec-mocks rspec-support].each do |lib|
+	%w[rspec rspec-core rspec-expectations rspec-mocks rspec-support rspec-rails].each do |lib|
 	  gem lib, git: "git://github.com/rspec/#{lib}.git"
 	end
 end

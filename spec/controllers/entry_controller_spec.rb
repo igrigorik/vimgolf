@@ -3,6 +3,13 @@ require 'spec_helper'
 describe EntryController do
 
   it "should create an entry for an existing challenge without login" do
+    User.create!(
+      name: "Bill Nye",
+      nickname: "The Science Guy",
+      provider: "foo",
+      image: "bar",
+      uid: 12345
+    )
     c = Challenge.new({
                         :title => :test,
                         :description => :test,

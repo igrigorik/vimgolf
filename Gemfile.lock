@@ -98,6 +98,7 @@ GEM
     bson_ext (1.1.5)
     builder (2.1.2)
     dalli (2.7.6)
+    database_cleaner (1.5.1)
     diff-lcs (1.2.5)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -158,6 +159,8 @@ GEM
     rake (12.0.0)
     rdoc (3.12.2)
       json (~> 1.4)
+    shoulda-matchers (2.8.0)
+      activesupport (>= 3.0.0)
     test-unit (3.2.3)
       power_assert
     thor (0.14.6)
@@ -178,6 +181,7 @@ DEPENDENCIES
   bson (= 1.1.5)
   bson_ext (= 1.1.5)
   dalli
+  database_cleaner (= 1.5.1)
   json (= 1.8.2)
   memcachier
   mongo (= 1.1.5)
@@ -194,7 +198,14 @@ DEPENDENCIES
   rspec-mocks!
   rspec-rails!
   rspec-support!
+  shoulda-matchers
   test-unit
   tweet-button
   unicorn
   vimgolf!
+
+RUBY VERSION
+   ruby 2.1.5p273
+
+BUNDLED WITH
+   1.13.7

@@ -6,6 +6,13 @@ describe Entry do
   it { should validate_length_of(:script) }
 
   let(:c) do
+    User.create(
+      name: "Bill Nye",
+      nickname: "The Science Guy",
+      provider: "foo",
+      image: "bar",
+      uid: 12345
+    )
     c = Challenge.new({
                         :title => :test,
                         :description => :test,
@@ -24,7 +31,7 @@ describe Entry do
 
     c.entries << e1
     c.entries << e2
-    c.save.should be_true
+    c.save.should be true
 
     c.entries.size.should == 2
     c.entries.first.created_at.should_not be_nil

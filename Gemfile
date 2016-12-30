@@ -25,4 +25,5 @@ group :test, :development do
 	  gem lib, git: "git://github.com/rspec/#{lib}.git"
 	end
   gem "shoulda-matchers"
+  gem "database_cleaner"
 end

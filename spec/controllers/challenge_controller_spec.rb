@@ -10,11 +10,11 @@ describe ChallengesController do
   end
 
   it "should allow download of challenge without login" do
-    Challenge.create(
+    Challenge.create!(
       title: "foo",
       description: "bar",
       input: "baz",
-      ouput: "qux",
+      output: "qux",
       diff: "hoge"
     )
     request.accept = 'application/json'

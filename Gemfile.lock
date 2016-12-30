@@ -98,7 +98,7 @@ GEM
     bson_ext (1.1.5)
     builder (2.1.2)
     dalli (2.7.6)
-    database_cleaner (1.5.3)
+    database_cleaner (1.5.1)
     diff-lcs (1.2.5)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -181,7 +181,7 @@ DEPENDENCIES
   bson (= 1.1.5)
   bson_ext (= 1.1.5)
   dalli
-  database_cleaner
+  database_cleaner (= 1.5.1)
   json (= 1.8.2)
   memcachier
   mongo (= 1.1.5)

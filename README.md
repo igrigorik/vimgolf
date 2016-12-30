@@ -22,7 +22,7 @@ $> vimgolf put [challenge ID]
 
 # VimGolf.com web app
 
-[![Build Status](https://travis-ci.org/nelsonsar/vimgolf.svg?branch=web)](https://travis-ci.org/nelsonsar/vimgolf)
+[![Build Status](https://travis-ci.org/igrigorik/vimgolf.svg?branch=master)](https://travis-ci.org/igrigorik/vimgolf)
 
 ```bash
 # start local server

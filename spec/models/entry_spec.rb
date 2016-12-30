@@ -11,7 +11,7 @@ describe Entry do
       nickname: "The Science Guy",
       provider: "foo",
       image: "bar",
-      uid: "baz"
+      uid: 12345
     )
     c = Challenge.new({
                         :title => :test,

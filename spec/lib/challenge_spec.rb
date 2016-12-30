@@ -1,4 +1,4 @@
-require "helper"
+require "spec_helper"
 require "tmpdir"
 require "fileutils"
 
@@ -14,7 +14,7 @@ describe VimGolf::Challenge do
   end
 
   it "should raise error on invalid challenge" do
-    lambda { VimGolf::Challenge.new('invalidID').download }.should raise_error
+    lambda { VimGolf::Challenge.new('invalidID').download }.should raise_error(RuntimeError)
   end
 
   it "should return type of challenge on success" do
@@ -24,7 +24,7 @@ describe VimGolf::Challenge do
   end
 
   it "should raise error on invalid upload id" do
-    lambda { VimGolf::Challenge.new('invalidID').upload }.should raise_error
+    lambda { VimGolf::Challenge.new('invalidID').upload }.should raise_error(RuntimeError)
   end
 end
 

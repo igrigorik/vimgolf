@@ -24,7 +24,7 @@ describe Entry do
 
     c.entries << e1
     c.entries << e2
-    c.save.should be_true
+    c.save.should be true
 
     c.entries.size.should == 2
     c.entries.first.created_at.should_not be_nil

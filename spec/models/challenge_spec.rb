@@ -12,8 +12,6 @@ describe Challenge do
   it { should validate_length_of(:diff) }
 
   it "should maintain associations between user and challenges" do
-    pending "this appears to be broken in mongoid.. ugh"
-
     u = User.create({
                    :provider => :fake,
                    :uid => 1,

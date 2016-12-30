@@ -24,4 +24,5 @@ group :test, :development do
 	%w[rspec rspec-core rspec-expectations rspec-mocks rspec-support rspec-rails].each do |lib|
 	  gem lib, git: "git://github.com/rspec/#{lib}.git"
 	end
+  gem "shoulda-matchers"
 end

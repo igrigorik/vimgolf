@@ -1,5 +1,7 @@
 # [VimGolf.com](http://www.vimgolf.com)
 
+[![Build Status](https://travis-ci.org/igrigorik/vimgolf.svg?branch=master)](https://travis-ci.org/igrigorik/vimgolf) [![Code Climate](https://codeclimate.com/github/igrigorik/vimgolf/badges/gpa.svg)](https://codeclimate.com/github/igrigorik/vimgolf) [![Issue Count](https://codeclimate.com/github/igrigorik/vimgolf/badges/issue_count.svg)](https://codeclimate.com/github/igrigorik/vimgolf)
+
 Real Vim ninjas count every keystroke - do you? Head on over to vimgolf.com, pick a challenge, and show us what you've got!
 
 * Each challenge provides an input file, and an output file
@@ -22,7 +24,7 @@ $> vimgolf put [challenge ID]
 
 # VimGolf.com web app
 
-[![Build Status](https://travis-ci.org/igrigorik/vimgolf.svg?branch=master)](https://travis-ci.org/igrigorik/vimgolf)
+
 
 ```bash
 # start local server

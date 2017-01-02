@@ -5,3 +5,5 @@ services: mongodb
 addons:
   code_climate:
     repo_token: 87b58d792ac24c87c9eb7957aa3fe7e05f72f800619452853270ed6a8f5b3853
+after_success:
+    - bundle exec codeclimate-test-reporter

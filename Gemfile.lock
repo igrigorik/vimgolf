@@ -97,6 +97,8 @@ GEM
     bson (1.1.5)
     bson_ext (1.1.5)
     builder (2.1.2)
+    codeclimate-test-reporter (1.0.4)
+      simplecov
     dalli (2.7.6)
     database_cleaner (1.5.1)
     diff-lcs (1.2.5)
@@ -186,6 +188,7 @@ PLATFORMS
 DEPENDENCIES
   bson (= 1.1.5)
   bson_ext (= 1.1.5)
+  codeclimate-test-reporter (~> 1.0.0)
   dalli
   database_cleaner (= 1.5.1)
   json (= 1.8.2)

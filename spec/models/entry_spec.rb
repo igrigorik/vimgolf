@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Entry do
 
-  it { should have_fields(:script) }
-  it { should validate_length_of(:script) }
+  it { is_expected.to have_fields(:script) }
+  it { is_expected.to validate_length_of(:script) }
 
   let(:c) do
     User.create(
@@ -31,10 +31,10 @@ describe Entry do
 
     c.entries << e1
     c.entries << e2
-    c.save.should be true
+    expect(c.save).to be true
 
-    c.entries.size.should == 2
-    c.entries.first.created_at.should_not be_nil
-    c.entries.first.user.should == User.first
+    expect(c.entries.size).to eq(2)
+    expect(c.entries.first.created_at).not_to be_nil
+    expect(c.entries.first.user).to eq(User.first)
   end
 end

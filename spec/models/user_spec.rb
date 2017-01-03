@@ -3,11 +3,11 @@ require 'spec_helper'
 describe User do
   @fields = [:provider, :uid, :nickname, :name, :location, :image, :description, :key]
 
-  it { should have_fields(*@fields) }
-  it { should validate_numericality_of(:uid) }
+  it { is_expected.to have_fields(*@fields) }
+  it { is_expected.to validate_numericality_of(:uid) }
 
   (@fields - [:uid, :key, :location, :description]).each do |field|
-    it { should validate_presence_of(field) }
+    it { is_expected.to validate_presence_of(field) }
   end
 
   it "should create an API key on save" do
@@ -21,7 +21,7 @@ describe User do
                    :location => 'fake'
     })
 
-    u.key.size.should == 32
+    expect(u.key.size).to eq(32)
   end
 
 end

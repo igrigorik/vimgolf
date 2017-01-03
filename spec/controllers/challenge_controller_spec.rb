@@ -6,7 +6,7 @@ describe ChallengesController do
     request.accept = 'application/json'
     post "create", :format => :json
 
-    response.status.should == 302
+    expect(response.status).to eq(302)
   end
 
   it "should allow download of challenge without login" do
@@ -20,7 +20,7 @@ describe ChallengesController do
     request.accept = 'application/json'
     get "show", :id => Challenge.first.id.to_s, :format => :json
 
-    response.status.should == 200
+    expect(response.status).to eq(200)
   end
 
 end

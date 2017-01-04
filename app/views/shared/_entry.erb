@@ -19,7 +19,7 @@
         <b><%= pluralize entry.comments.size, 'comment' %></b>
         <% if current_user %>
              - <a href="#" onClick="$('#comments-<%= entry.id %>').toggle(); return false;">
-                Comment <% if challenge.owner?(current_user) || entry.owner?(current_user) %> / Edit <% end %>
+                Comment <% if challenge.owner?(current_user) || entry.owned_by?(current_user) %> / Edit <% end %>
             </a>
         <% end %>
     </p>
@@ -29,7 +29,7 @@
             <%= f.text_area "text", :rows => 2, :class => :text, :style => 'width:98%' %><br/>
             <%= f.submit "Comment" %>
 
-            <% if challenge.owner?(current_user) || entry.owner?(current_user) %>
+            <% if challenge.owner?(current_user) || entry.owned_by?(current_user) %>
                 <%= link_to "Delete Entry", delete_entry_path(challenge, entry), :class => :action, :style => 'float:right' %>
             <% end %>
         <% end %>

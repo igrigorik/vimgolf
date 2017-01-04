@@ -29,7 +29,7 @@ class Challenge
   end
 
   def top_entries
-    entries.sort_by {|e| [e.score, e.created_at] }.uniq {|e| e.user_id }
+    entries.top_by_user
   end
 
   def participator?(current_user)
@@ -40,34 +40,33 @@ class Challenge
     current_user && ((user_id == current_user.id) || current_user.admin?)
   end
 
-  def competitor?(current_user)
-    current_user && entries.detect {|e| e.user_id == current_user.id }
-  end
-
   def allowed_entries(current_user)
+    top = top_entries
+
     # owner + admin can see all entries
-    if owner?(current_user)
-      [top_entries]
+    return [top, 0] if owner?(current_user)
 
     # competitors can see all entries below them
-    elsif competitor?(current_user)
-      top = top_entries
-
+    if competitor?(current_user)
       # users top submission
-      user_top  = top.detect {|e| e.user_id == current_user.id }
+      user_top  = top.detect { |e| e.user_id == current_user.id }
       # index of top submission with same score
-      score_top = top.detect {|e| e.score == user_top.score }
+      index = top.index { |e| e.score == user_top.score }
 
-      user_index = top.index(score_top)
-      solution_offset = [user_index-5, 0].max
+      solution_offset = [index - 5, 0].max
 
       [top[solution_offset, top.size], solution_offset]
 
     # non-competitors can see bottom 20%
     else
-      top = top_entries
       solution_offset = (top.size * 0.2).ceil
       [top.last(solution_offset), top.size - solution_offset]
     end
+  end
+
+  private
+
+  def competitor?(current_user)
+    current_user && entries.any_owned_by?(current_user)
   end
 end

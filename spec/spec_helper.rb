@@ -27,6 +27,8 @@ RSpec.configure do |config|
   config.mock_with :rspec
   config.infer_spec_type_from_file_location!
 
+  config.include Mongoid::Matchers
+
   config.before(:suite) do
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean_with(:truncation)

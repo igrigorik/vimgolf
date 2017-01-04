@@ -29,16 +29,16 @@ describe EntryController do
       :apikey => User.first.key
     }
 
-    response.status.should == 200
-    ActiveSupport::JSON.decode(response.body).should include 'status'
+    expect(response.status).to eq(200)
+    expect(ActiveSupport::JSON.decode(response.body)).to include 'status'
   end
 
   it "should report an error for a non-existing challenge" do
     request.accept = 'application/json'
     post "create", :format => :json
 
-    response.status.should == 400
-    ActiveSupport::JSON.decode(response.body).should include 'status'
+    expect(response.status).to eq(400)
+    expect(ActiveSupport::JSON.decode(response.body)).to include 'status'
   end
 
 end

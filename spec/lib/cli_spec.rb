@@ -2,15 +2,15 @@ require "spec_helper"
 
 describe VimGolf do
   it "provides VimGolf errors" do
-    VimGolf::Error.should be
+    expect(VimGolf::Error).to be
   end
 
   it "sets up VimGolf.ui" do
-    VimGolf.ui.should be_an(VimGolf::UI)
+    expect(VimGolf.ui).to be_an(VimGolf::UI)
     capture_stdout do
       VimGolf::CLI.start(["help"])
     end
-    VimGolf.ui.should be_an(VimGolf::CLI::UI)
+    expect(VimGolf.ui).to be_an(VimGolf::CLI::UI)
   end
 
   it "provides a help prompt" do
@@ -18,8 +18,8 @@ describe VimGolf do
       VimGolf::CLI.start(["help"])
     end
 
-    out.should include("setup")
-    out.should include("launch")
+    expect(out).to include("setup")
+    expect(out).to include("launch")
   end
 
 end

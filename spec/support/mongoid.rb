@@ -33,7 +33,3 @@ module Mongoid
     end
   end
 end
-
-RSpec.configure do |configuration|
-  configuration.include Mongoid::Matchers
-end

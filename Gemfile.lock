@@ -112,11 +112,15 @@ GEM
       simplecov
     coderay (1.1.1)
     dalli (2.7.6)
-    database_cleaner (1.5.1)
+    database_cleaner (1.5.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
     erubis (2.6.6)
       abstract (>= 1.0.0)
+    factory_girl (4.8.0)
+      activesupport (>= 3.0.0)
+    faker (1.7.2)
+      i18n (~> 0.5)
     hashie (3.4.6)
     highline (1.7.8)
     i18n (0.5.4)
@@ -226,7 +230,9 @@ DEPENDENCIES
   capybara
   codeclimate-test-reporter (~> 1.0.0)
   dalli
-  database_cleaner (= 1.5.1)
+  database_cleaner (= 1.5.3)
+  factory_girl (~> 4.0)
+  faker
   json (= 1.8.2)
   memcachier
   mongo (= 1.1.5)

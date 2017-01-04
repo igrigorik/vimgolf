@@ -2,14 +2,14 @@ class Challenge
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  field :title, :type => String
-  field :description, :type => String
+  field :title, type: String
+  field :description, type: String
 
-  field :diff, :type => String
-  field :input, :type => String
-  field :input_type, :type => String
-  field :output, :type => String
-  field :output_type, :type => String
+  field :diff, type: String
+  field :input, type: String
+  field :input_type, type: String
+  field :output, type: String
+  field :output_type, type: String
 
   referenced_in :user
   embeds_many :entries
@@ -17,9 +17,9 @@ class Challenge
   validates_presence_of :title
   validates_presence_of :description
 
-  validates_length_of :input, :minimum => 1, :maximum => MAX_FILESIZE
-  validates_length_of :output, :minimum => 1, :maximum => MAX_FILESIZE
-  validates_length_of :diff, :minimum => 1, :maximum => MAX_FILESIZE
+  validates_length_of :input, minimum: 1, maximum: MAX_FILESIZE
+  validates_length_of :output, minimum: 1, maximum: MAX_FILESIZE
+  validates_length_of :diff, minimum: 1, maximum: MAX_FILESIZE
 
   def self.count_entries
     map =     "function() { if (this.entries) { emit(this._id, this.entries.length) }}"

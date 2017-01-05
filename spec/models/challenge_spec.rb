@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Challenge, type: :model do
+describe Challenge do
 
   describe 'Validations' do
     it { should have_fields(:title, :description, :input, :output, :diff) }

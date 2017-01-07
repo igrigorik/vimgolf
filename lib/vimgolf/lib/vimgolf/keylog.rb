@@ -170,6 +170,10 @@ module VimGolf
               when "\xfd\x35"; nil # KE_IGNORE
               #when "\xfd\x36"; "KE_TAB"
               #when "\xfd\x37"; "KE_S_TAB_OLD"
+
+              # Vim 7.4.1433 removed KE_SNIFF. Unfortunately, this changed the
+              # offset of every keycode after it. No keycode after this point
+              # can be trusted.
               #when "\xfd\x38"; "KE_SNIFF"
               #when "\xfd\x39"; "KE_XF1"
               #when "\xfd\x3a"; "KE_XF2"
@@ -223,7 +227,7 @@ module VimGolf
               #when "\xfd\x5f"; "KE_DROP"
               #when "\xfd\x60"; "KE_CURSORHOLD"
               when "\xfd\x60"; nil # 7.2 Focus Gained compat
-              #when "\xfd\x61"; "KE_NOP"
+              when "\xfd\x61"; nil # Focus Gained (GVIM) (>7.4.1433)
               when "\xfd\x62"; nil # Focus Gained (GVIM)
               when "\xfd\x63"; nil # Focus Lost (GVIM)
 

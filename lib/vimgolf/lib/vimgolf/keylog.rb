@@ -1,4 +1,5 @@
-# encoding: UTF-8
+# encoding: ASCII-8BIT
+# Force encoding of string literals. Must match solution text.
 
 module VimGolf
   class Keylog
@@ -8,7 +9,8 @@ module VimGolf
     alias_method :score   , :count
 
     def initialize(input)
-      @input = input
+      # Force encoding of solution text. Must match string literals.
+      @input = input.b
     end
 
     def to_s(sep = '')
@@ -17,246 +19,243 @@ module VimGolf
 
     def each
       scanner = StringScanner.new(@input)
-      output = ""
 
-      until scanner.eos?
-        c = scanner.get_byte
-        n = c.unpack('C').first
-
-        out_char = \
-        case n
-
-          # Special platform-independent encoding stuff
-          when 0x80
-            code = scanner.get_byte + scanner.get_byte
-
-            # This list has been populated by looking at
-            # :h terminal-options and vim source files:
-            # keymap.h and misc2.c
-            case code
-              when "k1"; "<F1>"
-              when "k2"; "<F2>"
-              when "k3"; "<F3>"
-              when "k4"; "<F4>"
-              when "k5"; "<F5>"
-              when "k6"; "<F6>"
-              when "k7"; "<F7>"
-              when "k8"; "<F8>"
-              when "k9"; "<F9>"
-              when "k;"; "<F10>"
-              when "F1"; "<F11>"
-              when "F2"; "<F12>"
-              when "F3"; "<F13>"
-              when "F4"; "<F14>"
-              when "F5"; "<F15>"
-              when "F6"; "<F16>"
-              when "F7"; "<F17>"
-              when "F8"; "<F18>"
-              when "F9"; "<F19>"
-
-              when "%1"; "<Help>"
-              when "&8"; "<Undo>"
-              when "#2"; "<S-Home>"
-              when "*7"; "<S-End>"
-              when "K1"; "<kHome>"
-              when "K4"; "<kEnd>"
-              when "K3"; "<kPageUp>"
-              when "K5"; "<kPageDown>"
-              when "K6"; "<kPlus>"
-              when "K7"; "<kMinus>"
-              when "K8"; "<kDivide>"
-              when "K9"; "<kMultiply>"
-              when "KA"; "<kEnter>"
-              when "KB"; "<kPoint>"
-              when "KC"; "<k0>"
-              when "KD"; "<k1>"
-              when "KE"; "<k2>"
-              when "KF"; "<k3>"
-              when "KG"; "<k4>"
-              when "KH"; "<k5>"
-              when "KI"; "<k6>"
-              when "KJ"; "<k7>"
-              when "KK"; "<k8>"
-              when "KL"; "<k9>"
-
-              when "kP"; "<PageUp>"
-              when "kN"; "<PageDown>"
-              when "kh"; "<Home>"
-              when "@7"; "<End>"
-              when "kI"; "<Insert>"
-              when "kD"; "<Del>"
-              when "kb"; "<BS>"
-
-              when "ku"; "<Up>"
-              when "kd"; "<Down>"
-              when "kl"; "<Left>"
-              when "kr"; "<Right>"
-              when "#4"; "<S-Left>"
-              when "%i"; "<S-Right>"
-
-              when "kB"; "<S-Tab>"
-              when "\xffX"; "<C-@>"
-
-              # This is how you escape literal 0x80
-              when "\xfeX"; "<0x80>"
-
-              # These rarely-used modifiers should be combined with the next
-              # stroke (like <S-Space>), but let's put them here for now
-              when "\xfc\x02"; "<S->"
-              when "\xfc\x04"; "<C->"
-              when "\xfc\x06"; "<C-S->"
-              when "\xfc\x08"; "<A->"
-              when "\xfc\x0a"; "<A-S->"
-              when "\xfc\x0c"; "<C-A>"
-              when "\xfc\x0e"; "<C-A-S->"
-              when "\xfc\x10"; "<M->"
-              when "\xfc\x12"; "<M-S->"
-              when "\xfc\x14"; "<M-C->"
-              when "\xfc\x16"; "<M-C-S->"
-              when "\xfc\x18"; "<M-A->"
-              when "\xfc\x1a"; "<M-A-S->"
-              when "\xfc\x1c"; "<M-C-A>"
-              when "\xfc\x1e"; "<M-C-A-S->"
-
-              when "\xfd\x4"; "<S-Up>"
-              when "\xfd\x5"; "<S-Down>"
-              when "\xfd\x6"; "<S-F1>"
-              when "\xfd\x7"; "<S-F2>"
-              when "\xfd\x8"; "<S-F3>"
-              when "\xfd\x9"; "<S-F4>"
-              when "\xfd\xa"; "<S-F5>"
-              when "\xfd\xb"; "<S-F6>"
-              when "\xfd\xc"; "<S-F7>"
-              when "\xfd\xd"; "<S-F9>"
-              when "\xfd\xe"; "<S-F10>"
-              when "\xfd\xf"; "<S-F10>"
-              when "\xfd\x10"; "<S-F11>"
-              when "\xfd\x11"; "<S-F12>"
-              when "\xfd\x12"; "<S-F13>"
-              when "\xfd\x13"; "<S-F14>"
-              when "\xfd\x14"; "<S-F15>"
-              when "\xfd\x15"; "<S-F16>"
-              when "\xfd\x16"; "<S-F17>"
-              when "\xfd\x17"; "<S-F18>"
-              when "\xfd\x18"; "<S-F19>"
-              when "\xfd\x19"; "<S-F20>"
-              when "\xfd\x1a"; "<S-F21>"
-              when "\xfd\x1b"; "<S-F22>"
-              when "\xfd\x1c"; "<S-F23>"
-              when "\xfd\x1d"; "<S-F24>"
-              when "\xfd\x1e"; "<S-F25>"
-              when "\xfd\x1f"; "<S-F26>"
-              when "\xfd\x20"; "<S-F27>"
-              when "\xfd\x21"; "<S-F28>"
-              when "\xfd\x22"; "<S-F29>"
-              when "\xfd\x23"; "<S-F30>"
-              when "\xfd\x24"; "<S-F31>"
-              when "\xfd\x25"; "<S-F32>"
-              when "\xfd\x26"; "<S-F33>"
-              when "\xfd\x27"; "<S-F34>"
-              when "\xfd\x28"; "<S-F35>"
-              when "\xfd\x29"; "<S-F36>"
-              when "\xfd\x2a"; "<S-F37>"
-              when "\xfd\x2b"; "<Mouse>"
-              when "\xfd\x2c"; "<LeftMouse>"
-              when "\xfd\x2d"; "<LeftDrag>"
-              when "\xfd\x2e"; "<LeftRelease>"
-              when "\xfd\x2f"; "<MiddleMouse>"
-              when "\xfd\x30"; "<MiddleDrag>"
-              when "\xfd\x31"; "<MiddleRelease>"
-              when "\xfd\x32"; "<RightMouse>"
-              when "\xfd\x33"; "<RightDrag>"
-              when "\xfd\x34"; "<RightRelease>"
-              when "\xfd\x35"; nil # KE_IGNORE
-              #when "\xfd\x36"; "KE_TAB"
-              #when "\xfd\x37"; "KE_S_TAB_OLD"
-
-              # Vim 7.4.1433 removed KE_SNIFF. Unfortunately, this changed the
-              # offset of every keycode after it. No keycode after this point
-              # can be trusted.
-              #when "\xfd\x38"; "KE_SNIFF"
-              #when "\xfd\x39"; "KE_XF1"
-              #when "\xfd\x3a"; "KE_XF2"
-              #when "\xfd\x3b"; "KE_XF3"
-              #when "\xfd\x3c"; "KE_XF4"
-              #when "\xfd\x3d"; "KE_XEND"
-              #when "\xfd\x3e"; "KE_ZEND"
-              #when "\xfd\x3f"; "KE_XHOME"
-              #when "\xfd\x40"; "KE_ZHOME"
-              #when "\xfd\x41"; "KE_XUP"
-              #when "\xfd\x42"; "KE_XDOWN"
-              #when "\xfd\x43"; "KE_XLEFT"
-              #when "\xfd\x44"; "KE_XRIGHT"
-              #when "\xfd\x45"; "KE_LEFTMOUSE_NM"
-              #when "\xfd\x46"; "KE_LEFTRELEASE_NM"
-              #when "\xfd\x47"; "KE_S_XF1"
-              #when "\xfd\x48"; "KE_S_XF2"
-              #when "\xfd\x49"; "KE_S_XF3"
-              #when "\xfd\x4a"; "KE_S_XF4"
-              when "\xfd\x4b"; "<ScrollWheelUp>"
-              when "\xfd\x4c"; "<ScrollWheelDown>"
-
-              # Horizontal scroll wheel support was added in Vim 7.3c. These
-              # 2 entries shifted the rest of the KS_EXTRA mappings down 2.
-              # Though Vim 7.2 is rare today, it was common soon after
-              # vimgolf.com was launched. In cases where the 7.3 code is
-              # never used but the 7.2 code was common, it makes sense to use
-              # the 7.2 code. There are conflicts though, so some legacy
-              # keycodes have to stay wrong.
-              when "\xfd\x4d"; "<ScrollWheelRight>"
-              when "\xfd\x4e"; "<ScrollWheelLeft>"
-              when "\xfd\x4f"; "<kInsert>"
-              when "\xfd\x50"; "<kDel>"
-              when "\xfd\x51"; "<0x9b>" # :help <CSI>
-              #when "\xfd\x52"; "KE_SNR"
-              #when "\xfd\x53"; "KE_PLUG" # never used
-              when "\xfd\x53"; "<C-Left>" # 7.2 compat
-              #when "\xfd\x54"; "KE_CMDWIN" # never used
-              when "\xfd\x54"; "<C-Right>" # 7.2 compat
-              when "\xfd\x55"; "<C-Left>" # 7.2 <C-Home> conflict
-              when "\xfd\x56"; "<C-Right>" # 7.2 <C-End> conflict
-              when "\xfd\x57"; "<C-Home>"
-              when "\xfd\x58"; "<C-End>"
-              #when "\xfd\x59"; "KE_X1MOUSE"
-              #when "\xfd\x5a"; "KE_X1DRAG"
-              #when "\xfd\x5b"; "KE_X1RELEASE"
-              #when "\xfd\x5c"; "KE_X2MOUSE"
-              #when "\xfd\x5d"; "KE_X2DRAG"
-              #when "\xfd\x5e"; "KE_X2RELEASE"
-              when "\xfd\x5e"; nil # 7.2 compat (I think?)
-              #when "\xfd\x5f"; "KE_DROP"
-              #when "\xfd\x60"; "KE_CURSORHOLD"
-              when "\xfd\x60"; nil # 7.2 Focus Gained compat
-              when "\xfd\x61"; nil # Focus Gained (GVIM) (>7.4.1433)
-              when "\xfd\x62"; nil # Focus Gained (GVIM)
-              when "\xfd\x63"; nil # Focus Lost (GVIM)
-
-              else
-                #puts "Unknown Vim code: #{code.inspect}"
-                '<%02x-%02x>' % code.unpack('CC')
-            end
-
-            # Printable ASCII
-          when 32..126; c
-
-            # Control characters with special names
-          when 0; "<Nul>"
-          when 9; "<Tab>"
-          when 10; "<NL>"
-          when 13; "<CR>"
-          when 27; "<Esc>"
-
-            # Otherwise, use <C-x> format. Flip bit 7
-          when 0..127; "<C-#{(n ^ 0x40).chr}>"
-
-          else
-            #puts "Unexpected extended ASCII: #{'%#04x' % n}"
-            '<%#04x>' % n
-
+      # A Vim keycode is either a single byte, or a 3-byte sequence starting
+      # with 0x80.
+      while c = scanner.get_byte
+        n = c.ord
+        if n == 0x80
+          special = scanner.get_byte + scanner.get_byte
+          code = @@kc_mbyte[special]
+          yield code if code # ignore "nil" keystrokes (like window focus)
+        else
+          yield @@kc_1byte[n]
         end
-
-        yield out_char if out_char
       end
     end
+
+    # Quick lookup array for single-byte keycodes
+    @@kc_1byte = []
+    (0..255).each {|n| @@kc_1byte.push("<%#04x>" % n)} # Fallback for non-ASCII
+    (1..127).each {|n| @@kc_1byte[n] = "<C-#{(n ^ 0x40).chr}>"}
+    (32..126).each {|c| @@kc_1byte[c] = c.chr } # Printing chars
+    @@kc_1byte[0x1b] = "<Esc>" # Special names for a few control chars
+    @@kc_1byte[0x0d] = "<CR>"
+    @@kc_1byte[0x0a] = "<NL>"
+    @@kc_1byte[0x09] = "<Tab>"
+
+    @@kc_mbyte = Hash.new do |h,k|
+      '<' + k.bytes.map {|b| "%02x" % b}.join('-') + '>' # For missing keycodes
+    end.update({
+      # This list has been populated by looking at
+      # :h terminal-options and vim source files:
+      # keymap.h and misc2.c
+      "k1" => "<F1>",
+      "k2" => "<F2>",
+      "k3" => "<F3>",
+      "k4" => "<F4>",
+      "k5" => "<F5>",
+      "k6" => "<F6>",
+      "k7" => "<F7>",
+      "k8" => "<F8>",
+      "k9" => "<F9>",
+      "k;" => "<F10>",
+      "F1" => "<F11>",
+      "F2" => "<F12>",
+      "F3" => "<F13>",
+      "F4" => "<F14>",
+      "F5" => "<F15>",
+      "F6" => "<F16>",
+      "F7" => "<F17>",
+      "F8" => "<F18>",
+      "F9" => "<F19>",
+
+      "%1" => "<Help>",
+      "&8" => "<Undo>",
+      "#2" => "<S-Home>",
+      "*7" => "<S-End>",
+      "K1" => "<kHome>",
+      "K4" => "<kEnd>",
+      "K3" => "<kPageUp>",
+      "K5" => "<kPageDown>",
+      "K6" => "<kPlus>",
+      "K7" => "<kMinus>",
+      "K8" => "<kDivide>",
+      "K9" => "<kMultiply>",
+      "KA" => "<kEnter>",
+      "KB" => "<kPoint>",
+      "KC" => "<k0>",
+      "KD" => "<k1>",
+      "KE" => "<k2>",
+      "KF" => "<k3>",
+      "KG" => "<k4>",
+      "KH" => "<k5>",
+      "KI" => "<k6>",
+      "KJ" => "<k7>",
+      "KK" => "<k8>",
+      "KL" => "<k9>",
+
+      "kP" => "<PageUp>",
+      "kN" => "<PageDown>",
+      "kh" => "<Home>",
+      "@7" => "<End>",
+      "kI" => "<Insert>",
+      "kD" => "<Del>",
+      "kb" => "<BS>",
+
+      "ku" => "<Up>",
+      "kd" => "<Down>",
+      "kl" => "<Left>",
+      "kr" => "<Right>",
+      "#4" => "<S-Left>",
+      "%i" => "<S-Right>",
+
+      "kB" => "<S-Tab>",
+      "\xffX" => "<C-@>",
+
+      # This is how you escape literal 0x80
+      "\xfeX" => "<0x80>",
+
+      # These rarely-used modifiers should be combined with the next
+      # stroke (like <S-Space>), but let's put them here for now
+      "\xfc\x02" => "<S->",
+      "\xfc\x04" => "<C->",
+      "\xfc\x06" => "<C-S->",
+      "\xfc\x08" => "<A->",
+      "\xfc\x0a" => "<A-S->",
+      "\xfc\x0c" => "<C-A>",
+      "\xfc\x0e" => "<C-A-S->",
+      "\xfc\x10" => "<M->",
+      "\xfc\x12" => "<M-S->",
+      "\xfc\x14" => "<M-C->",
+      "\xfc\x16" => "<M-C-S->",
+      "\xfc\x18" => "<M-A->",
+      "\xfc\x1a" => "<M-A-S->",
+      "\xfc\x1c" => "<M-C-A>",
+      "\xfc\x1e" => "<M-C-A-S->",
+
+      # KS_EXTRA keycodes (starting with 0x80 0xfd) are defined by an enum in
+      # Vim's keymap.h. Sometimes, a new Vim adds or removes a keycode, which
+      # changes the binary representation of every keycode after it. Very
+      # annoying.
+      #
+      # TODO: Find a better way of handling the shifting keycodes.
+      "\xfd\x4" => "<S-Up>",
+      "\xfd\x5" => "<S-Down>",
+      "\xfd\x6" => "<S-F1>",
+      "\xfd\x7" => "<S-F2>",
+      "\xfd\x8" => "<S-F3>",
+      "\xfd\x9" => "<S-F4>",
+      "\xfd\xa" => "<S-F5>",
+      "\xfd\xb" => "<S-F6>",
+      "\xfd\xc" => "<S-F7>",
+      "\xfd\xd" => "<S-F9>",
+      "\xfd\xe" => "<S-F10>",
+      "\xfd\xf" => "<S-F10>",
+      "\xfd\x10" => "<S-F11>",
+      "\xfd\x11" => "<S-F12>",
+      "\xfd\x12" => "<S-F13>",
+      "\xfd\x13" => "<S-F14>",
+      "\xfd\x14" => "<S-F15>",
+      "\xfd\x15" => "<S-F16>",
+      "\xfd\x16" => "<S-F17>",
+      "\xfd\x17" => "<S-F18>",
+      "\xfd\x18" => "<S-F19>",
+      "\xfd\x19" => "<S-F20>",
+      "\xfd\x1a" => "<S-F21>",
+      "\xfd\x1b" => "<S-F22>",
+      "\xfd\x1c" => "<S-F23>",
+      "\xfd\x1d" => "<S-F24>",
+      "\xfd\x1e" => "<S-F25>",
+      "\xfd\x1f" => "<S-F26>",
+      "\xfd\x20" => "<S-F27>",
+      "\xfd\x21" => "<S-F28>",
+      "\xfd\x22" => "<S-F29>",
+      "\xfd\x23" => "<S-F30>",
+      "\xfd\x24" => "<S-F31>",
+      "\xfd\x25" => "<S-F32>",
+      "\xfd\x26" => "<S-F33>",
+      "\xfd\x27" => "<S-F34>",
+      "\xfd\x28" => "<S-F35>",
+      "\xfd\x29" => "<S-F36>",
+      "\xfd\x2a" => "<S-F37>",
+      "\xfd\x2b" => "<Mouse>",
+      "\xfd\x2c" => "<LeftMouse>",
+      "\xfd\x2d" => "<LeftDrag>",
+      "\xfd\x2e" => "<LeftRelease>",
+      "\xfd\x2f" => "<MiddleMouse>",
+      "\xfd\x30" => "<MiddleDrag>",
+      "\xfd\x31" => "<MiddleRelease>",
+      "\xfd\x32" => "<RightMouse>",
+      "\xfd\x33" => "<RightDrag>",
+      "\xfd\x34" => "<RightRelease>",
+      "\xfd\x35" => nil, # KE_IGNORE
+      #"\xfd\x36" => "KE_TAB",
+      #"\xfd\x37" => "KE_S_TAB_OLD",
+
+      # Vim 7.4.1433 removed KE_SNIFF. Unfortunately, this changed the
+      # offset of every keycode after it. No keycode after this point
+      # can be trusted.
+      #"\xfd\x38" => "KE_SNIFF",
+      #"\xfd\x39" => "KE_XF1",
+      #"\xfd\x3a" => "KE_XF2",
+      #"\xfd\x3b" => "KE_XF3",
+      #"\xfd\x3c" => "KE_XF4",
+      #"\xfd\x3d" => "KE_XEND",
+      #"\xfd\x3e" => "KE_ZEND",
+      #"\xfd\x3f" => "KE_XHOME",
+      #"\xfd\x40" => "KE_ZHOME",
+      #"\xfd\x41" => "KE_XUP",
+      #"\xfd\x42" => "KE_XDOWN",
+      #"\xfd\x43" => "KE_XLEFT",
+      #"\xfd\x44" => "KE_XRIGHT",
+      #"\xfd\x45" => "KE_LEFTMOUSE_NM",
+      #"\xfd\x46" => "KE_LEFTRELEASE_NM",
+      #"\xfd\x47" => "KE_S_XF1",
+      #"\xfd\x48" => "KE_S_XF2",
+      #"\xfd\x49" => "KE_S_XF3",
+      #"\xfd\x4a" => "KE_S_XF4",
+      "\xfd\x4b" => "<ScrollWheelUp>",
+      "\xfd\x4c" => "<ScrollWheelDown>",
+
+      # Horizontal scroll wheel support was added in Vim 7.3c. These
+      # 2 entries shifted the rest of the KS_EXTRA mappings down 2.
+      # Though Vim 7.2 is rare today, it was common soon after
+      # vimgolf.com was launched. In cases where the 7.3 code is
+      # never used but the 7.2 code was common, it makes sense to use
+      # the 7.2 code. There are conflicts though, so some legacy
+      # keycodes have to stay wrong.
+      "\xfd\x4d" => "<ScrollWheelRight>",
+      "\xfd\x4e" => "<ScrollWheelLeft>",
+      "\xfd\x4f" => "<kInsert>",
+      "\xfd\x50" => "<kDel>",
+      "\xfd\x51" => "<0x9b>", # :help <CSI>
+      #"\xfd\x52" => "KE_SNR",
+      #"\xfd\x53" => "KE_PLUG", # never used
+      "\xfd\x53" => "<C-Left>", # 7.2 compat
+      #"\xfd\x54" => "KE_CMDWIN", # never used
+      "\xfd\x54" => "<C-Right>", # 7.2 compat
+      "\xfd\x55" => "<C-Left>", # 7.2 <C-Home> conflict
+      "\xfd\x56" => "<C-Right>", # 7.2 <C-End> conflict
+      "\xfd\x57" => "<C-Home>",
+      "\xfd\x58" => "<C-End>",
+      #"\xfd\x59" => "KE_X1MOUSE",
+      #"\xfd\x5a" => "KE_X1DRAG",
+      #"\xfd\x5b" => "KE_X1RELEASE",
+      #"\xfd\x5c" => "KE_X2MOUSE",
+      #"\xfd\x5d" => "KE_X2DRAG",
+      #"\xfd\x5e" => "KE_X2RELEASE",
+      "\xfd\x5e" => nil, # 7.2 compat (I think?)
+      #"\xfd\x5f" => "KE_DROP",
+      #"\xfd\x60" => "KE_CURSORHOLD",
+
+      # If you use gvim, you'll get an entry in your keylog every time the
+      # window gains or loses focus. These "keystrokes" should not show and
+      # should not be counted.
+      "\xfd\x60" => nil, # 7.2 Focus Gained compat
+      "\xfd\x61" => nil, # Focus Gained (GVIM) (>7.4.1433)
+      "\xfd\x62" => nil, # Focus Gained (GVIM)
+      "\xfd\x63" => nil, # Focus Lost (GVIM)
+    })
   end
 end

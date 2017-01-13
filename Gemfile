@@ -28,4 +28,6 @@ group :test, :development do
   gem "database_cleaner", "1.5.1"
   gem 'simplecov', :require => false
   gem "codeclimate-test-reporter", "~> 1.0.0"
+  gem "capybara"
+  gem "pry-byebug"
 end

@@ -93,12 +93,23 @@ GEM
       activemodel (= 3.0.19)
       activesupport (= 3.0.19)
     activesupport (3.0.19)
+    addressable (2.5.0)
+      public_suffix (~> 2.0, >= 2.0.2)
     arel (2.0.10)
     bson (1.1.5)
     bson_ext (1.1.5)
     builder (2.1.2)
+    byebug (9.0.6)
+    capybara (2.11.0)
+      addressable
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      xpath (~> 2.0)
     codeclimate-test-reporter (1.0.4)
       simplecov
+    coderay (1.1.1)
     dalli (2.7.6)
     database_cleaner (1.5.1)
     diff-lcs (1.2.5)
@@ -117,7 +128,9 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     memcachier (0.0.2)
+    method_source (0.8.2)
     mime-types (1.25.1)
+    mini_portile2 (2.1.0)
     mongo (1.1.5)
       bson (>= 1.1.5)
     mongoid (2.0.0.beta.20)
@@ -126,6 +139,8 @@ GEM
       tzinfo (~> 0.3.22)
       will_paginate (~> 3.0.pre)
     newrelic_rpm (3.17.2.327)
+    nokogiri (1.7.0)
+      mini_portile2 (~> 2.1.0)
     oauth (0.5.1)
     omniauth (1.3.1)
       hashie (>= 1.2, < 4)
@@ -138,6 +153,14 @@ GEM
       omniauth-oauth (~> 1.1)
     polyglot (0.3.5)
     power_assert (0.4.1)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-byebug (3.4.2)
+      byebug (~> 9.0)
+      pry (~> 0.10)
+    public_suffix (2.0.5)
     rack (1.2.8)
     rack-mount (0.6.14)
       rack (>= 1.0.0)
@@ -169,6 +192,7 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
+    slop (3.6.0)
     test-unit (3.2.3)
       power_assert
     thor (0.14.6)
@@ -181,6 +205,8 @@ GEM
       kgio (~> 2.6)
       raindrops (~> 0.7)
     will_paginate (3.1.5)
+    xpath (2.0.0)
+      nokogiri (~> 1.3)
 
 PLATFORMS
   ruby
@@ -188,6 +214,7 @@ PLATFORMS
 DEPENDENCIES
   bson (= 1.1.5)
   bson_ext (= 1.1.5)
+  capybara
   codeclimate-test-reporter (~> 1.0.0)
   dalli
   database_cleaner (= 1.5.1)
@@ -198,6 +225,7 @@ DEPENDENCIES
   newrelic_rpm
   omniauth
   omniauth-twitter
+  pry-byebug
   rack-timeout
   rails (= 3.0.19)
   rails3_serve_static_assets!

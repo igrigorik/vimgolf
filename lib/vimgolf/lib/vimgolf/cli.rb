@@ -114,7 +114,7 @@ module VimGolf
         system(*vimcmd) # assembled as an array, bypasses the shell
 
         if $?.exitstatus.zero?
-          log = Keylog.new(IO.read(challenge.log_path))
+          log = Keylog.new(IO.binread(challenge.log_path))
 
           VimGolf.ui.info "\nHere are your keystrokes:"
           VimGolf.ui.print_log log

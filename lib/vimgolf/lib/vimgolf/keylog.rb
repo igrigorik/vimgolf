@@ -5,9 +5,6 @@ module VimGolf
   class Keylog
     include Enumerable
 
-    alias_method :convert , :to_s
-    alias_method :score   , :count
-
     def initialize(input)
       # Force encoding of solution text. Must match string literals.
       @input = input.b
@@ -16,6 +13,9 @@ module VimGolf
     def to_s(sep = '')
       to_a.join(sep)
     end
+
+    alias_method :convert , :to_s
+    alias_method :score   , :count
 
     def each
       scanner = StringScanner.new(@input)

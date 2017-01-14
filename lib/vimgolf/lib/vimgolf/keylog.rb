@@ -5,9 +5,10 @@ module VimGolf
   class Keylog
     include Enumerable
 
-    def initialize(input)
+    def initialize(input, time=Time.now.utc)
       # Force encoding of solution text. Must match string literals.
       @input = input.b
+      @time = time
     end
 
     def to_s(sep = '')
@@ -22,11 +23,15 @@ module VimGolf
 
       # A Vim keycode is either a single byte, or a 3-byte sequence starting
       # with 0x80.
-      while c = scanner.get_byte
+      while (c = scanner.get_byte)
         n = c.ord
         if n == 0x80
-          special = scanner.get_byte + scanner.get_byte
-          code = @@kc_mbyte[special]
+          b2, b3 = scanner.get_byte, scanner.get_byte
+          if b2 == "\xfd" && b3 >= "\x38" && @time > @@sniff_date
+            # Should we account for KE_SNIFF removal?
+            b3 = (b3.ord + 1).chr
+          end
+          code = @@kc_mbyte[b2+b3]
           yield code if code # ignore "nil" keystrokes (like window focus)
         else
           yield @@kc_1byte[n]
@@ -44,7 +49,10 @@ module VimGolf
     @@kc_1byte[0x0a] = "<NL>"
     @@kc_1byte[0x09] = "<Tab>"
 
-    @@kc_mbyte = Hash.new do |h,k|
+    # After this date, assume KE_SNIFF is removed
+    @@sniff_date = Time.utc(2016, 4)
+
+    @@kc_mbyte = Hash.new do |_h,k|
       '<' + k.bytes.map {|b| "%02x" % b}.join('-') + '>' # For missing keycodes
     end.update({
       # This list has been populated by looking at
@@ -138,8 +146,6 @@ module VimGolf
       # Vim's keymap.h. Sometimes, a new Vim adds or removes a keycode, which
       # changes the binary representation of every keycode after it. Very
       # annoying.
-      #
-      # TODO: Find a better way of handling the shifting keycodes.
       "\xfd\x4" => "<S-Up>",
       "\xfd\x5" => "<S-Down>",
       "\xfd\x6" => "<S-F1>",
@@ -194,8 +200,8 @@ module VimGolf
       #"\xfd\x37" => "KE_S_TAB_OLD",
 
       # Vim 7.4.1433 removed KE_SNIFF. Unfortunately, this changed the
-      # offset of every keycode after it. No keycode after this point
-      # can be trusted.
+      # offset of every keycode after it. Keycodes after this point should be
+      # accurate BEFORE that change.
       #"\xfd\x38" => "KE_SNIFF",
       #"\xfd\x39" => "KE_XF1",
       #"\xfd\x3a" => "KE_XF2",

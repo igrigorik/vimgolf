@@ -40,7 +40,7 @@ describe VimGolf::Keylog do
   end
 
   it "should ignore certain non-keystroke keycodes" do
-    input = "\x80\xfd5\x80\xfdbhello\x80\xfdc world"
+    input = "\x80\xfd\x35\x80\xfdbhello\x80\xfd\x61\x80\xfd\x62 world"
     output = "hello world"
 
     log = Keylog.new(input)
@@ -54,5 +54,14 @@ describe VimGolf::Keylog do
 
     log = Keylog.new(input)
     expect(log.convert).to eql(output)
+  end
+  
+  it "should parse some keycodes differently depending on date submitted" do
+    early  = "\x80\xfd\x55\x80\xfd\x56\x80\xfd\x57\x80\xfd\x58\x80\xfd\x2c"
+    late   = "\x80\xfd\x54\x80\xfd\x55\x80\xfd\x56\x80\xfd\x57\x80\xfd\x2c"
+    output = "<C-Left><C-Right><C-Home><C-End><LeftMouse>"
+
+    expect(Keylog.new(early, Time.utc(2016, 3)).convert).to eql(output)
+    expect(Keylog.new(late, Time.utc(2016, 5)).convert).to eql(output)
   end
 end

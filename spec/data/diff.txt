@@ -1,0 +1,5 @@
+6a7
+> *temp var7 11
+9a11,12
+> New text.
+> 

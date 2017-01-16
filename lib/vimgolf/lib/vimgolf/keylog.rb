@@ -27,32 +27,32 @@ module VimGolf
         n = c.ord
         if n == 0x80
           b2, b3 = scanner.get_byte, scanner.get_byte
-          if b2 == "\xfd" && b3 >= "\x38" && @time > @@sniff_date
+          if b2 == "\xfd" && b3 >= "\x38" && @time > SNIFF_DATE
             # Should we account for KE_SNIFF removal?
             b3 = (b3.ord + 1).chr
           end
-          code = @@kc_mbyte[b2+b3]
+          code = KC_MBYTE[b2+b3]
           yield code if code # ignore "nil" keystrokes (like window focus)
         else
-          yield @@kc_1byte[n]
+          yield KC_1BYTE[n]
         end
       end
     end
 
     # Quick lookup array for single-byte keycodes
-    @@kc_1byte = []
-    (0..255).each {|n| @@kc_1byte.push("<%#04x>" % n)} # Fallback for non-ASCII
-    (1..127).each {|n| @@kc_1byte[n] = "<C-#{(n ^ 0x40).chr}>"}
-    (32..126).each {|c| @@kc_1byte[c] = c.chr } # Printing chars
-    @@kc_1byte[0x1b] = "<Esc>" # Special names for a few control chars
-    @@kc_1byte[0x0d] = "<CR>"
-    @@kc_1byte[0x0a] = "<NL>"
-    @@kc_1byte[0x09] = "<Tab>"
+    KC_1BYTE = []
+    (0..255).each {|n| KC_1BYTE.push("<%#04x>" % n)} # Fallback for non-ASCII
+    (1..127).each {|n| KC_1BYTE[n] = "<C-#{(n ^ 0x40).chr}>"}
+    (32..126).each {|c| KC_1BYTE[c] = c.chr } # Printing chars
+    KC_1BYTE[0x1b] = "<Esc>" # Special names for a few control chars
+    KC_1BYTE[0x0d] = "<CR>"
+    KC_1BYTE[0x0a] = "<NL>"
+    KC_1BYTE[0x09] = "<Tab>"
 
     # After this date, assume KE_SNIFF is removed
-    @@sniff_date = Time.utc(2016, 4)
+    SNIFF_DATE = Time.utc(2016, 4)
 
-    @@kc_mbyte = Hash.new do |_h,k|
+    KC_MBYTE = Hash.new do |_h,k|
       '<' + k.bytes.map {|b| "%02x" % b}.join('-') + '>' # For missing keycodes
     end.update({
       # This list has been populated by looking at

@@ -1,4 +1,4 @@
-require "spec_helper"
+require "cli_helper"
 
 describe VimGolf do
   it "provides VimGolf errors" do

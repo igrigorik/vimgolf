@@ -1,7 +1,21 @@
 language: ruby
-rvm:
-    - 2.1.5
+matrix:
+  include:
+    - rvm: 2.1.5 # Test web AND cli with specific version
+      gemfile: Gemfile
+    # Otherwise test only the cli
+    - rvm: 1.9
+      gemfile: lib/vimgolf/Gemfile
+    - rvm: 2.3
+      gemfile: lib/vimgolf/Gemfile
+
 services: mongodb
+before_install:
+    - ls -l /home/travis/.rvm/gems # Future reference, targets for quick build
+    - cd `dirname $BUNDLE_GEMFILE`
+    - pwd # For debug info
+    - gem update bundler # Travis's Bundler 1.7.6 is causing problems
+script: bundle exec rake
 addons:
   code_climate:
     repo_token: 87b58d792ac24c87c9eb7957aa3fe7e05f72f800619452853270ed6a8f5b3853

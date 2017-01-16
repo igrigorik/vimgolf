@@ -4,7 +4,8 @@ Bundler::GemHelper.install_tasks
 require 'rspec/core/rake_task'
 
 desc "Run all RSpec tests"
-RSpec::Core::RakeTask.new(:spec)
+# rspec-core <3.5 bug overrides pattern given in .rspec
+RSpec::Core::RakeTask.new(:spec).pattern = 'spec/lib/**/*_spec.rb'
 
 task :default => :spec
 task :test => [:spec]

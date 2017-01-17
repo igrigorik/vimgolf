@@ -1,3 +1,5 @@
+# encoding: UTF-8
+# Ruby 1.9 doesn't like our fancy string literals without this.
 require "cli_helper"
 
 include VimGolf
@@ -24,8 +26,11 @@ describe VimGolf::Keylog do
 
   it "should be resilient to encoding mismatches" do
     text = "Здравствуйте ¡Olé! おはよう \x80\xfdQ\x80\xfeX".force_encoding("UTF-8")
-    bytes = text.b
-
+    # .force_encoding CHANGES THE ORIGINAL STRING!
+    bytes = text.dup.force_encoding(Encoding::ASCII_8BIT)
+     
+    # Sanity check. Different rubies conspiring to mess up the test encodings.
+    expect(bytes.encoding).not_to eql(text.encoding)
     # Not testing the actual output, just checking whether encoding matters
     expect(Keylog.new(text).convert).to eql(Keylog.new(bytes).convert)
   end

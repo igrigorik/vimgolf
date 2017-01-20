@@ -30,4 +30,6 @@ group :test, :development do
   gem "codeclimate-test-reporter", "~> 1.0.0"
   gem "capybara"
   gem "pry-byebug"
+  gem 'poltergeist'
+  gem 'phantomjs', :require => 'phantomjs/poltergeist'
 end

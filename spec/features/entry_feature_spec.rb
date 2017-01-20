@@ -15,46 +15,51 @@ feature "Entries for Challenges" do
     )
   end
 
-  context '#create' do
+  context 'Entry exists on a Challenge' do
     before(:example) do
-
-      c = Challenge.new({
+      challenge = Challenge.new(
         :title => :test,
         :description => :test,
         :input => :a,
         :output => :b,
         :diff => :c
-      })
-
-      c.user = User.first
-      c.save
+      )
+      challenge.user = User.first
 
       entry = Entry.new(
-                :script => 'ddZZ',
-                :score => VimGolf::Keylog.new('ddZZ').score
-                )
+        :script => 'ddZZ',
+        :score => VimGolf::Keylog.new('ddZZ').score
+      )
       entry.created_at = Time.now.utc
       entry.user = User.last
 
-      c.entries << entry
-
-      c.save
+      challenge.entries << entry
+      challenge.save
     end
 
-    scenario 'can comment on an entry', js: true do
-      visit root_path
-      click_link "Sign in with Twitter"
-      click_link 'test'
-      click_link 'Comment'
-      fill_in 'comment_text', with: 'test comment'
-      click_button 'Comment'
-      expect(page).to have_css '.comment', text: 'the science guy: test comment'
-      expect(page).to have_text '1 comment'
+    context '#comment' do
+      scenario 'can comment on an entry', js: true do
+        visit root_path
+        click_link "Sign in with Twitter"
+        click_link 'test'
+        click_link 'Comment'
+        fill_in 'comment_text', with: 'test comment'
+        expect{ click_button 'Comment' }.to change{ Challenge.first.entries.first.comments.count }.from(0).to(1)
+        expect(page).to have_css '.comment', text: 'the science guy: test comment'
+        expect(page).to have_text '1 comment'
+      end
     end
-  end
 
-  scenario 'can delete an entry' do
-
+    context '#delete' do
+      scenario 'can delete an entry', js: true do
+        visit root_path
+        click_link "Sign in with Twitter"
+        click_link 'test'
+        click_link 'Comment / Edit'
+        expect{ click_link 'Delete Entry' }.to change{ Challenge.first.entries.count }.from(1).to(0)
+        expect(page).to have_text '0 entries'
+      end
+    end
   end
 
   scenario 'can create an entry for a challenge' do

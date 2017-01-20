@@ -13,18 +13,21 @@ feature "Entries for Challenges" do
       image: "foo.jpg",
       uid: 123545
     )
+
+    challenge = Challenge.new(
+      :title => :test,
+      :description => :test,
+      :input => :a,
+      :output => :b,
+      :diff => :c
+    )
+    challenge.user = User.first
+    challenge.save
   end
 
   context 'Entry exists on a Challenge' do
     before(:example) do
-      challenge = Challenge.new(
-        :title => :test,
-        :description => :test,
-        :input => :a,
-        :output => :b,
-        :diff => :c
-      )
-      challenge.user = User.first
+      challenge = Challenge.first
 
       entry = Entry.new(
         :script => 'ddZZ',
@@ -50,7 +53,7 @@ feature "Entries for Challenges" do
       end
     end
 
-    context '#delete' do
+    context '#destroy' do
       scenario 'can delete an entry', js: true do
         visit root_path
         click_link "Sign in with Twitter"
@@ -61,9 +64,4 @@ feature "Entries for Challenges" do
       end
     end
   end
-
-  scenario 'can create an entry for a challenge' do
-
-  end
-
 end

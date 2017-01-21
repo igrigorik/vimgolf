@@ -8,7 +8,7 @@ class EntryController < ApplicationController
       @entry.comments.push Comment.new(:comment => params[:comment][:text], :nickname => current_user.nickname)
       @challenge.save
     end
-  rescue Exception
+  rescue
 
   ensure
     redirect_to challenge_path(params[:challenge])
@@ -55,7 +55,7 @@ class EntryController < ApplicationController
     end
 
     redirect_to challenge_path(params[:challenge])
-  rescue Exception
+  rescue
     redirect_to root_path
   end
 
@@ -65,7 +65,7 @@ class EntryController < ApplicationController
       @challenge = Challenge.find(params[:challenge])
       @entry = @challenge.entries.find(params[:entry])
 
-    rescue Exception
+    rescue
       respond_to do |format|
         format.json {
           render :json => {'status' => 'failed'}, :status => 400

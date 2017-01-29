@@ -4,16 +4,14 @@ class EntryController < ApplicationController
   before_filter :load_entry, :only => [:comment]
 
   def comment
-    begin
-      if @challenge.participator?(current_user) && params[:comment] && params[:comment][:text].size > 0
-        @entry.comments.push Comment.new(:comment => params[:comment][:text], :nickname => current_user.nickname)
-        @challenge.save
-      end
-
-    rescue Exception => e
-    ensure
-      redirect_to challenge_path(params[:challenge])
+    if @challenge.participator?(current_user) && params[:comment] && params[:comment][:text].size > 0
+      @entry.comments.push Comment.new(:comment => params[:comment][:text], :nickname => current_user.nickname)
+      @challenge.save
     end
+  rescue
+
+  ensure
+    redirect_to challenge_path(params[:challenge])
   end
 
   def create
@@ -46,38 +44,33 @@ class EntryController < ApplicationController
   end
 
   def destroy
-    begin
-      challenge = Challenge.find(params[:challenge])
-      entry = challenge.entries.find(params[:entry])
+    challenge = Challenge.find(params[:challenge])
+    entry = challenge.entries.find(params[:entry])
 
-      if challenge.owner?(current_user) || entry.owner?(current_user)
-        entry.destroy
-        challenge.save
+    if challenge.owner?(current_user) || entry.owner?(current_user)
+      entry.destroy
+      challenge.save
 
-        flash[:notice] = "Deleted entry"
-      end
-
-      redirect_to challenge_path(params[:challenge])
-    rescue Exception => e
-      redirect_to root_path
+      flash[:notice] = "Deleted entry"
     end
+
+    redirect_to challenge_path(params[:challenge])
+  rescue
+    redirect_to root_path
   end
 
   private
 
     def load_entry
-      begin
-        @challenge = Challenge.find(params[:challenge])
-        @entry = @challenge.entries.find(params[:entry])
+      @challenge = Challenge.find(params[:challenge])
+      @entry = @challenge.entries.find(params[:entry])
 
-      rescue Exception => e
-        respond_to do |format|
-          format.json {
-            render :json => {'status' => 'failed'}, :status => 400
-          }
-          format.html { redirect_to root_path }
-        end
+    rescue
+      respond_to do |format|
+        format.json {
+          render :json => {'status' => 'failed'}, :status => 400
+        }
+        format.html { redirect_to root_path }
       end
     end
-
 end

@@ -107,6 +107,7 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    cliver (0.3.2)
     codeclimate-test-reporter (1.0.4)
       simplecov
     coderay (1.1.1)
@@ -151,6 +152,11 @@ GEM
     omniauth-twitter (1.2.1)
       json (~> 1.3)
       omniauth-oauth (~> 1.1)
+    phantomjs (2.1.1.0)
+    poltergeist (1.12.0)
+      capybara (~> 2.1)
+      cliver (~> 0.3.1)
+      websocket-driver (>= 0.2.0)
     polyglot (0.3.5)
     power_assert (0.4.1)
     pry (0.10.4)
@@ -204,6 +210,9 @@ GEM
     unicorn (5.2.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
+    websocket-driver (0.6.4)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.2)
     will_paginate (3.1.5)
     xpath (2.0.0)
       nokogiri (~> 1.3)
@@ -225,6 +234,8 @@ DEPENDENCIES
   newrelic_rpm
   omniauth
   omniauth-twitter
+  phantomjs
+  poltergeist
   pry-byebug
   rack-timeout
   rails (= 3.0.19)

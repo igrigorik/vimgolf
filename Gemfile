@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 ruby '2.1.5'
 
-gem 'rails', '3.0.19'
+gem 'rails', '3.1.0'
 gem 'mongo', '1.1.5'
 gem 'bson', '1.1.5'
 gem 'bson_ext', '1.1.5'
@@ -19,6 +19,17 @@ gem 'rails3_serve_static_assets', github: 'heroku/rails3_serve_static_assets'
 gem 'test-unit'
 
 gem 'vimgolf', path: 'lib/vimgolf'
+#
+# Needed for the new asset pipeline
+group :assets do
+  # Leaving them out for now until we start using asset pipeline
+  #gem 'sass-rails',   '~> 3.1.7'
+  #gem 'uglifier',     '>= 1.0.3'
+end
+
+# jQuery is the default JavaScript library in Rails 3.1
+# Leaving this out for now until we start using asset pipeline
+#gem 'jquery-rails'
 
 group :test, :development do
   %w[rspec rspec-core rspec-expectations rspec-mocks rspec-support rspec-rails].each do |lib|

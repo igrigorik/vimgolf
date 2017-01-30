@@ -14,13 +14,10 @@ class ChallengesController < ApplicationController
   end
 
   def destroy
-    begin
-      @challenge = Challenge.find(params['id'])
-      @challenge.destroy if @challenge.owner?(current_user)
-    rescue Exception => e
-    ensure
-      redirect_to root_path
-    end
+    @challenge = Challenge.find(params['id'])
+    @challenge.destroy if @challenge.owner?(current_user)
+  ensure
+    redirect_to root_path and return
   end
 
   def create

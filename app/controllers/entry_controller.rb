@@ -8,10 +8,8 @@ class EntryController < ApplicationController
       @entry.comments.push Comment.new(:comment => params[:comment][:text], :nickname => current_user.nickname)
       @challenge.save
     end
-  rescue
-
   ensure
-    redirect_to challenge_path(params[:challenge])
+    redirect_to challenge_path(params[:challenge]) and return
   end
 
   def create

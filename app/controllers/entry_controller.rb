@@ -4,12 +4,11 @@ class EntryController < ApplicationController
   before_filter :load_entry, :only => [:comment]
 
   def comment
-    if @challenge.participator?(current_user) && params[:comment] && params[:comment][:text].size > 0
+    if @challenge.participator?(current_user) && @entry && params[:comment].try(:[], :text).try(:present?)
       @entry.comments.push Comment.new(:comment => params[:comment][:text], :nickname => current_user.nickname)
       @challenge.save
     end
-  ensure
-    redirect_to challenge_path(params[:challenge]) and return
+    redirect_to challenge_path(params[:challenge])
   end
 
   def create

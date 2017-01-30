@@ -16,8 +16,7 @@ class ChallengesController < ApplicationController
   def destroy
     @challenge = Challenge.find(params['id'])
     @challenge.destroy if @challenge.owner?(current_user)
-  ensure
-    redirect_to root_path and return
+    redirect_to root_path
   end
 
   def create

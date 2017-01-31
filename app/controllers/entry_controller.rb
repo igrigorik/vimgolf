@@ -1,13 +1,14 @@
 class EntryController < ApplicationController
 
   before_filter :login, :only => [:comment]
-  before_filter :load_entry, :only => [:comment]
+  before_filter :load_entry, :only => [:comment, :destroy]
 
   def comment
-    if @challenge.participator?(current_user) && @entry && params[:comment].try(:[], :text).try(:present?)
+    if @challenge.participator?(current_user) && @entry && params.fetch(:comment, {})[:text].present?
       @entry.comments.push Comment.new(:comment => params[:comment][:text], :nickname => current_user.nickname)
       @challenge.save
     end
+
     redirect_to challenge_path(params[:challenge])
   end
 
@@ -41,33 +42,25 @@ class EntryController < ApplicationController
   end
 
   def destroy
-    challenge = Challenge.find(params[:challenge])
-    entry = challenge.entries.find(params[:entry])
-
-    if challenge.owner?(current_user) || entry.owner?(current_user)
-      entry.destroy
-      challenge.save
-
-      flash[:notice] = "Deleted entry"
+    if @entry && (@challenge.owner?(current_user) || @entry.owner?(current_user))
+      @entry.destroy
+      @challenge.save
     end
 
     redirect_to challenge_path(params[:challenge])
-  rescue
-    redirect_to root_path
   end
 
   private
 
-    def load_entry
-      @challenge = Challenge.find(params[:challenge])
-      @entry = @challenge.entries.find(params[:entry])
-
-    rescue
-      respond_to do |format|
-        format.json {
-          render :json => {'status' => 'failed'}, :status => 400
-        }
-        format.html { redirect_to root_path }
-      end
+  def load_entry
+    @challenge = Challenge.find(params[:challenge])
+    @entry = @challenge.entries.find(params[:entry])
+  rescue
+    respond_to do |format|
+      format.json {
+        render :json => {'status' => 'failed'}, :status => 400
+      }
+      format.html { redirect_to root_path }
     end
+  end
 end

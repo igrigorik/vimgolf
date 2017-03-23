@@ -22,6 +22,13 @@ $> vimgolf setup
 $> vimgolf put [challenge ID]
 ```
 
+# Playing from other editors
+
+## Emacs
+
+There's a lightly maintained interface to play VimGolf challenges in Emacs
+over at [vimgolf.el](https://github.com/timvisher/vimgolf.el)
+
 # VimGolf.com web app
 
 

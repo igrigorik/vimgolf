@@ -3,14 +3,14 @@ require 'spec_helper'
 describe Challenge do
 
   describe 'Validations' do
-    it { should have_fields(:title, :description, :input, :output, :diff) }
+    it { is_expected.to have_fields(:title, :description, :input, :output, :diff) }
 
-    it { should validate_presence_of(:title) }
-    it { should validate_presence_of(:description) }
+    it { is_expected.to validate_presence_of(:title) }
+    it { is_expected.to validate_presence_of(:description) }
 
-    it { should validate_length_of(:input) }
-    it { should validate_length_of(:output) }
-    it { should validate_length_of(:diff) }
+    it { is_expected.to validate_length_of(:input) }
+    it { is_expected.to validate_length_of(:output) }
+    it { is_expected.to validate_length_of(:diff) }
   end
 
   describe '#participator?' do

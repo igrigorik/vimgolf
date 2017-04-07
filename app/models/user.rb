@@ -4,15 +4,15 @@ class User
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  field :provider, :type => String
-  field :uid, :type => String
+  field :provider, type: String
+  field :uid, type: String
 
-  field :nickname, :type => String
-  field :name, :type => String
-  field :location, :type => String
-  field :image, :type => String
-  field :description, :type => String
-  field :key, :type => String
+  field :nickname, type: String
+  field :name, type: String
+  field :location, type: String
+  field :image, type: String
+  field :description, type: String
+  field :key, type: String
 
   validates_presence_of :provider
   validates_presence_of :nickname
@@ -20,13 +20,13 @@ class User
   validates_presence_of :image
   validates_numericality_of :uid
 
-  references_many :challenges, :dependent => :destroy
-  references_many :entries, :dependent => :destroy
+  references_many :challenges, dependent: :destroy
+  references_many :entries, dependent: :destroy
 
   before_create :create_key
 
   def admin?
-    ADMINS.include? self.nickname.downcase
+    ADMINS.include? nickname.downcase
   end
 
   protected

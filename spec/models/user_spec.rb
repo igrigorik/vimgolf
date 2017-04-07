@@ -1,27 +1,77 @@
 require 'spec_helper'
 
 describe User do
-  @fields = [:provider, :uid, :nickname, :name, :location, :image, :description, :key]
+  describe 'Validations' do
+    it do
+      fields = [
+        :provider,
+        :uid,
+        :nickname,
+        :name,
+        :location,
+        :image,
+        :description,
+        :key
+      ]
 
-  it { is_expected.to have_fields(*@fields) }
-  it { is_expected.to validate_numericality_of(:uid) }
+      should have_fields(*fields)
+    end
 
-  (@fields - [:uid, :key, :location, :description]).each do |field|
-    it { is_expected.to validate_presence_of(field) }
+    it { should validate_numericality_of(:uid) }
+
+    it { should validate_presence_of(:provider) }
+    it { should validate_presence_of(:nickname) }
+    it { should validate_presence_of(:image) }
+    it { should validate_presence_of(:name) }
   end
 
-  it "should create an API key on save" do
-    u = User.create({
-                   :provider => :fake,
-                   :uid => 1,
-                   :nickname => :test,
-                   :name => 'Test User',
-                   :image => 'fake',
-                   :description => 'fake',
-                   :location => 'fake'
-    })
+  describe 'Callbacks' do
+    context 'on before_save' do
+      it 'should create an API key on save' do
+        user = User.create(
+          provider: :fake,
+          uid: 1,
+          nickname: :test,
+          name: 'Test User',
+          image: :fake,
+          description: :fake,
+          location: :fake
+        )
 
-    expect(u.key.size).to eq(32)
+        expect(user.key).not_to be nil
+      end
+    end
   end
 
+  describe 'Associations' do
+    it 'references many challenges' do
+      association = described_class.reflect_on_association(:challenges)
+
+      expect(association.macro).to eq :references_many
+    end
+
+    it 'references many challenges' do
+      association = described_class.reflect_on_association(:entries)
+
+      expect(association.macro).to eq :references_many
+    end
+  end
+
+  describe '#admin?' do
+    context 'when user is included in the admin list' do
+      it 'return true' do
+        user = User.new(nickname: 'igrigorik')
+
+        expect(user.admin?).to be true
+      end
+    end
+
+    context 'when user is not included in the admin list' do
+      it 'return false' do
+        user = User.new(nickname: 'nelsonsar')
+
+        expect(user.admin?).to be false
+      end
+    end
+  end
 end

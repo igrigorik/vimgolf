@@ -21,9 +21,9 @@ gem 'test-unit'
 gem 'vimgolf', path: 'lib/vimgolf'
 
 group :test, :development do
-	%w[rspec rspec-core rspec-expectations rspec-mocks rspec-support rspec-rails].each do |lib|
-	  gem lib, git: "git://github.com/rspec/#{lib}.git"
-	end
+  %w[rspec rspec-core rspec-expectations rspec-mocks rspec-support rspec-rails].each do |lib|
+    gem lib, git: "git://github.com/rspec/#{lib}.git"
+  end
   gem "shoulda-matchers"
   gem "database_cleaner", "1.5.1"
   gem 'simplecov', :require => false
@@ -32,4 +32,7 @@ group :test, :development do
   gem "pry-byebug"
   gem 'poltergeist'
   gem 'phantomjs', :require => 'phantomjs/poltergeist'
+  gem 'factory_girl', '~> 4.0'
+  gem 'faker'
 end
+

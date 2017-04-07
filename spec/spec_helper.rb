@@ -32,4 +32,10 @@ RSpec.configure do |config|
       example.run
     end
   end
+
+  config.include FactoryGirl::Syntax::Methods
+
+  config.before(:suite) do
+    FactoryGirl.find_definitions
+  end
 end

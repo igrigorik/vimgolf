@@ -1,40 +1,60 @@
 require 'spec_helper'
 
 describe Entry do
+  let(:user) { create(:user) }
 
-  it { is_expected.to have_fields(:script) }
-  it { is_expected.to validate_length_of(:script) }
+  describe 'Associations' do
+    it 'is referenced by one user' do
+      association = described_class.reflect_on_association(:user)
 
-  let(:c) do
-    User.create(
-      name: "Bill Nye",
-      nickname: "The Science Guy",
-      provider: "foo",
-      image: "bar",
-      uid: 12345
-    )
-    c = Challenge.new({
-                        :title => :test,
-                        :description => :test,
-                        :input => :a,
-                        :output => :b,
-                        :diff => :c
-    })
-    c.user = User.first
-    c.save
-    c
+      expect(association.macro).to eq :referenced_in
+    end
+
+    it 'is has many comments' do
+      association = described_class.reflect_on_association(:comments)
+
+      expect(association.macro).to eq :embeds_many
+    end
+
+    it 'is embedded in challenge' do
+      association = described_class.reflect_on_association(:challenge)
+
+      expect(association.macro).to eq :embedded_in
+    end
   end
 
-  it "should be embedded inside of Challenge" do
-    e1 = Entry.new(:script => :a, :created_at => Time.now, :user => c.user)
-    e2 = Entry.new(:script => :b, :created_at => Time.now, :user => c.user)
+  describe '#owned_by?' do
+    context 'entry was created by given user' do
+      it 'return true' do
+        entry = build(:entry, user: user)
 
-    c.entries << e1
-    c.entries << e2
-    expect(c.save).to be true
+        expect(entry.owned_by?(user)).to be true
+      end
+    end
 
-    expect(c.entries.size).to eq(2)
-    expect(c.entries.first.created_at).not_to be_nil
-    expect(c.entries.first.user).to eq(User.first)
+    context 'entry was created by another user' do
+      it 'return false' do
+        entry = build(:entry, user: build(:user))
+
+        expect(entry.owned_by?(user)).to be false
+      end
+    end
+  end
+
+  describe 'Validations' do
+    it { should have_fields(:script) }
+
+    it 'is not valid without script' do
+      entry = build(:entry, script: nil)
+
+      expect(entry).to_not be_valid
+    end
+
+    it 'is not valid if script size is too long' do
+      script = 'a' * (MAX_FILESIZE + 1)
+      entry = build(:entry, script: script)
+
+      expect(entry).to_not be_valid
+    end
   end
 end

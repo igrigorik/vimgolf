@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-gem 'rails', '3.1.0'
+gem 'rails', '3.1.12'
 gem 'mongo', '1.1.5'
 gem 'bson', '1.1.5'
 gem 'bson_ext', '1.1.5'
@@ -15,7 +15,7 @@ gem 'tweet-button'
 gem 'newrelic_rpm'
 gem 'unicorn'
 gem 'rack-timeout'
-gem 'rails3_serve_static_assets', github: 'heroku/rails3_serve_static_assets'
+gem 'rails3_serve_static_assets', git: 'https://github.com/heroku/rails3_serve_static_assets.git'
 gem 'test-unit'
 
 gem 'vimgolf', path: 'lib/vimgolf'

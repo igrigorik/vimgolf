@@ -1,59 +1,8 @@
 GIT
-  remote: git://github.com/heroku/rails3_serve_static_assets.git
+  remote: https://github.com/heroku/rails3_serve_static_assets.git
   revision: 84910ceb4ca2851d650e66d3b22f5008acf253f8
   specs:
     rails3_serve_static_assets (0.0.1)
-
-GIT
-  remote: git://github.com/rspec/rspec-core.git
-  revision: 98429a80a7187de797a9dcdc0ec84d38d0815af4
-  specs:
-    rspec-core (3.6.0.beta2)
-      rspec-support (= 3.6.0.beta2)
-
-GIT
-  remote: git://github.com/rspec/rspec-expectations.git
-  revision: 6d86a38f23e103c8839c0d5d7a06dc4b3b043d26
-  specs:
-    rspec-expectations (3.6.0.beta2)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (= 3.6.0.beta2)
-
-GIT
-  remote: git://github.com/rspec/rspec-mocks.git
-  revision: 67ba5477847c9dc02709b4b54b209e2670357430
-  specs:
-    rspec-mocks (3.6.0.beta2)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (= 3.6.0.beta2)
-
-GIT
-  remote: git://github.com/rspec/rspec-rails.git
-  revision: a0997675c004e5155c499205087833c85809cd18
-  specs:
-    rspec-rails (3.6.0.beta2)
-      actionpack (>= 3.0)
-      activesupport (>= 3.0)
-      railties (>= 3.0)
-      rspec-core (= 3.6.0.beta2)
-      rspec-expectations (= 3.6.0.beta2)
-      rspec-mocks (= 3.6.0.beta2)
-      rspec-support (= 3.6.0.beta2)
-
-GIT
-  remote: git://github.com/rspec/rspec-support.git
-  revision: 436adb4b6d9b256fe8bb721a8d44080bd0701df9
-  specs:
-    rspec-support (3.6.0.beta2)
-
-GIT
-  remote: git://github.com/rspec/rspec.git
-  revision: bb618dac1400efa55ea76f8fd2875fc58741936b
-  specs:
-    rspec (3.6.0.beta2)
-      rspec-core (= 3.6.0.beta2)
-      rspec-expectations (= 3.6.0.beta2)
-      rspec-mocks (= 3.6.0.beta2)
 
 PATH
   remote: lib/vimgolf
@@ -64,41 +13,39 @@ PATH
       thor (>= 0.14.6)
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
-    actionmailer (3.1.0)
-      actionpack (= 3.1.0)
-      mail (~> 2.3.0)
-    actionpack (3.1.0)
-      activemodel (= 3.1.0)
-      activesupport (= 3.1.0)
+    actionmailer (3.1.12)
+      actionpack (= 3.1.12)
+      mail (~> 2.4.4)
+    actionpack (3.1.12)
+      activemodel (= 3.1.12)
+      activesupport (= 3.1.12)
       builder (~> 3.0.0)
       erubis (~> 2.7.0)
       i18n (~> 0.6)
-      rack (~> 1.3.2)
-      rack-cache (~> 1.0.3)
+      rack (~> 1.3.6)
+      rack-cache (~> 1.2)
       rack-mount (~> 0.8.2)
       rack-test (~> 0.6.1)
-      sprockets (~> 2.0.0)
-    activemodel (3.1.0)
-      activesupport (= 3.1.0)
-      bcrypt-ruby (~> 3.0.0)
+      sprockets (~> 2.0.4)
+    activemodel (3.1.12)
+      activesupport (= 3.1.12)
       builder (~> 3.0.0)
       i18n (~> 0.6)
-    activerecord (3.1.0)
-      activemodel (= 3.1.0)
-      activesupport (= 3.1.0)
-      arel (~> 2.2.1)
+    activerecord (3.1.12)
+      activemodel (= 3.1.12)
+      activesupport (= 3.1.12)
+      arel (~> 2.2.3)
       tzinfo (~> 0.3.29)
-    activeresource (3.1.0)
-      activemodel (= 3.1.0)
-      activesupport (= 3.1.0)
-    activesupport (3.1.0)
+    activeresource (3.1.12)
+      activemodel (= 3.1.12)
+      activesupport (= 3.1.12)
+    activesupport (3.1.12)
       multi_json (~> 1.0)
     addressable (2.5.0)
       public_suffix (~> 2.0, >= 2.0.2)
     arel (2.2.3)
-    bcrypt-ruby (3.0.1)
     bson (1.1.5)
     bson_ext (1.1.5)
     builder (3.0.4)
@@ -116,7 +63,7 @@ GEM
     coderay (1.1.1)
     dalli (2.7.6)
     database_cleaner (1.5.1)
-    diff-lcs (1.2.5)
+    diff-lcs (1.3)
     docile (1.1.5)
     erubis (2.7.0)
     factory_girl (4.8.0)
@@ -126,11 +73,11 @@ GEM
     hashie (3.4.6)
     highline (1.7.8)
     hike (1.2.3)
-    i18n (0.7.0)
+    i18n (0.8.1)
     json (1.8.2)
     json_pure (2.0.2)
     kgio (2.11.0)
-    mail (2.3.3)
+    mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -175,7 +122,7 @@ GEM
       pry (~> 0.10)
     public_suffix (2.0.5)
     rack (1.3.10)
-    rack-cache (1.0.3)
+    rack-cache (1.7.0)
       rack (>= 0.4)
     rack-mount (0.8.3)
       rack (>= 1.0.0)
@@ -184,17 +131,17 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     rack-timeout (0.4.2)
-    rails (3.1.0)
-      actionmailer (= 3.1.0)
-      actionpack (= 3.1.0)
-      activerecord (= 3.1.0)
-      activeresource (= 3.1.0)
-      activesupport (= 3.1.0)
+    rails (3.1.12)
+      actionmailer (= 3.1.12)
+      actionpack (= 3.1.12)
+      activerecord (= 3.1.12)
+      activeresource (= 3.1.12)
+      activesupport (= 3.1.12)
       bundler (~> 1.0)
-      railties (= 3.1.0)
-    railties (3.1.0)
-      actionpack (= 3.1.0)
-      activesupport (= 3.1.0)
+      railties (= 3.1.12)
+    railties (3.1.12)
+      actionpack (= 3.1.12)
+      activesupport (= 3.1.12)
       rack-ssl (~> 1.3.2)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
@@ -203,6 +150,23 @@ GEM
     rake (12.0.0)
     rdoc (3.12.2)
       json (~> 1.4)
+    rspec-core (3.5.4)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-mocks (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-rails (3.5.2)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
     shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
     simplecov (0.12.0)
@@ -223,7 +187,7 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tweet-button (0.1.0)
-    tzinfo (0.3.52)
+    tzinfo (0.3.53)
     unicorn (5.2.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
@@ -257,14 +221,9 @@ DEPENDENCIES
   poltergeist
   pry-byebug
   rack-timeout
-  rails (= 3.1.0)
+  rails (= 3.1.12)
   rails3_serve_static_assets!
-  rspec!
-  rspec-core!
-  rspec-expectations!
-  rspec-mocks!
-  rspec-rails!
-  rspec-support!
+  rspec-rails (= 3.5.2)
   shoulda-matchers
   simplecov
   test-unit

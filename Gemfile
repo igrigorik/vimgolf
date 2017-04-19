@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 ruby '2.1.5'
 
 gem 'rails', '3.1.0'
@@ -32,9 +32,7 @@ end
 #gem 'jquery-rails'
 
 group :test, :development do
-  %w[rspec rspec-core rspec-expectations rspec-mocks rspec-support rspec-rails].each do |lib|
-    gem lib, git: "git://github.com/rspec/#{lib}.git"
-  end
+  gem "rspec-rails", "3.5.2"
   gem "shoulda-matchers"
   gem "database_cleaner", "1.5.1"
   gem 'simplecov', :require => false

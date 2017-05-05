@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-gem 'rails', '3.1.12'
+gem 'rails', '3.2.22.5'
 
 gem 'mongo', '1.3.1'
 gem 'bson', '1.3.1'
@@ -25,8 +25,10 @@ gem 'vimgolf', path: 'lib/vimgolf'
 # Needed for the new asset pipeline
 group :assets do
   # Leaving them out for now until we start using asset pipeline
-  #gem 'sass-rails',   '~> 3.1.7'
-  #gem 'uglifier',     '>= 1.0.3'
+  #gem 'sass-rails', "~> 3.2.3"
+  #gem 'coffee-rails', "~> 3.2.1"
+  #gem 'uglifier', '>= 1.0.3'
+
 end
 
 # jQuery is the default JavaScript library in Rails 3.1

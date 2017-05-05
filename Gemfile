@@ -2,10 +2,12 @@ source 'https://rubygems.org'
 ruby '2.1.5'
 
 gem 'rails', '3.1.12'
-gem 'mongo', '1.1.5'
-gem 'bson', '1.1.5'
-gem 'bson_ext', '1.1.5'
-gem 'mongoid', '2.0.0.beta.20'
+
+gem 'mongo', '1.3.1'
+gem 'bson', '1.3.1'
+gem 'bson_ext', '1.3.1'
+gem 'mongoid', '2.2.1'
+
 gem 'json', '1.8.2'
 gem 'memcachier'
 gem 'dalli'

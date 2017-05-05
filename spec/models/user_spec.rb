@@ -49,12 +49,6 @@ describe User do
 
       expect(association.macro).to eq :references_many
     end
-
-    it 'references many challenges' do
-      association = described_class.reflect_on_association(:entries)
-
-      expect(association.macro).to eq :references_many
-    end
   end
 
   describe '#admin?' do

@@ -21,9 +21,9 @@ class User
   validates_numericality_of :uid
 
   references_many :challenges, dependent: :destroy
-  references_many :entries, dependent: :destroy
 
   before_create :create_key
+  before_destroy :destroy_entries
 
   def admin?
     ADMINS.include? nickname.downcase
@@ -32,5 +32,13 @@ class User
   protected
     def create_key
       self.key = Digest::MD5.hexdigest(id.to_s)
+    end
+
+    def destroy_entries
+      Challenge.
+        all.
+        flat_map(&:entries).
+        select { |entry| entry.user_id == id }.
+        each(&:destroy)
     end
 end

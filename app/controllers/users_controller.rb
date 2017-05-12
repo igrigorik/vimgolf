@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 
   def show
-    @user = User.find(:conditions => {:nickname => params[:username]}).first
+    @user = User.where(nickname: params[:username]).first
     return redirect_to root_path if @user.nil?
 
     @contributed  = Challenge.where('user_id' => @user.id)

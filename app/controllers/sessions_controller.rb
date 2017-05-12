@@ -1,8 +1,6 @@
 class SessionsController < ApplicationController
   def create
-    user = User.first(:conditions => {
-      :uid => request.env['omniauth.auth']['uid']
-    })
+    user = User.where(uid: request.env['omniauth.auth']['uid']).first
 
     if user.nil?
       user = User.create(request.env['omniauth.auth']['info'].merge({

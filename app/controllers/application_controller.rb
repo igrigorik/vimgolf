@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    @current_user ||= User.first(:conditions => {:uid => session[:user]}) if session[:user]
+    @current_user ||= User.where(uid: session[:user]).first if session[:user]
     @current_user
   end
 

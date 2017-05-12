@@ -18,7 +18,7 @@ class EntryController < ApplicationController
 
     elsif params['challenge_id'] && !params['apikey'].empty? && !params['apikey'].nil?
       @challenge = Challenge.find(params['challenge_id']) rescue nil
-      @user = User.first(:conditions => {:key => params['apikey']}) rescue nil
+      @user = User.where(key: params['apikey']).first
 
       if @challenge && @user
         @entry = Entry.new(

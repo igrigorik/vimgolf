@@ -3,10 +3,10 @@ ruby '2.1.5'
 
 gem 'rails', '3.2.22.5'
 
-gem 'mongo', '1.3.1'
-gem 'bson', '1.3.1'
-gem 'bson_ext', '1.3.1'
-gem 'mongoid', '2.2.1'
+gem 'mongo', '1.7.1'
+gem 'bson', '1.7.1'
+gem 'bson_ext', '1.7.1'
+gem 'mongoid', '2.6.0'
 
 gem 'json', '1.8.2'
 gem 'memcachier'

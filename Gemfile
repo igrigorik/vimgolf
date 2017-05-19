@@ -1,12 +1,11 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-gem 'rails', '3.2.22.5'
+gem 'rails', '4.0.13'
 
-gem 'mongo', '1.7.1'
-gem 'bson', '1.7.1'
-gem 'bson_ext', '1.7.1'
-gem 'mongoid', '2.6.0'
+gem 'mongo', '2.1.2'
+gem 'bson', '3.1.1'
+gem 'mongoid', '5.0.0'
 
 gem 'json', '1.8.2'
 gem 'memcachier'
@@ -18,7 +17,6 @@ gem 'newrelic_rpm'
 gem 'unicorn'
 gem 'rack-timeout'
 gem 'rails3_serve_static_assets', git: 'https://github.com/heroku/rails3_serve_static_assets.git'
-gem 'test-unit'
 
 gem 'vimgolf', path: 'lib/vimgolf'
 #
@@ -36,13 +34,14 @@ end
 #gem 'jquery-rails'
 
 group :test, :development do
-  gem "rspec-rails", "3.5.2"
+  gem "rspec-rails", "3.6.0"
   gem "shoulda-matchers"
   gem "database_cleaner", "1.5.1"
   gem 'simplecov', :require => false
   gem "codeclimate-test-reporter", "~> 1.0.0"
   gem "capybara"
   gem "pry-byebug"
+  gem "pry-stack_explorer"
   gem 'poltergeist'
   gem 'phantomjs', :require => 'phantomjs/poltergeist'
   gem 'factory_girl', '~> 4.0'

@@ -11,7 +11,7 @@ class Challenge
   field :output, type: String
   field :output_type, type: String
 
-  referenced_in :user
+  belongs_to :user
   embeds_many :entries
 
   validates_presence_of :title
@@ -25,7 +25,7 @@ class Challenge
     map =     "function() { if (this.entries) { emit(this._id, this.entries.length) }}"
     reduce =  "function(k, values) { return values[0]; }"
 
-    collection.mapreduce(map, reduce, { out: "count_entries" }).find()
+    map_reduce(map, reduce).out(replace: "count_entries").find()
   end
 
   def top_entries

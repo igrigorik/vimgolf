@@ -47,7 +47,7 @@ describe User do
     it 'references many challenges' do
       association = described_class.reflect_on_association(:challenges)
 
-      expect(association.macro).to eq :references_many
+      expect(association.macro).to eq :has_many
     end
   end
 

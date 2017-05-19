@@ -20,7 +20,7 @@ class User
   validates_presence_of :image
   validates_numericality_of :uid
 
-  references_many :challenges, dependent: :destroy
+  has_many :challenges, dependent: :destroy
 
   before_create :create_key
   before_destroy :destroy_entries

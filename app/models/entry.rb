@@ -2,12 +2,12 @@ class Entry
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  field :script, type: Binary
+  field :script, type: BSON::Binary
   field :score, type: Integer
 
   embeds_many :comments
   embedded_in :challenge, inverse_of: :entries
-  referenced_in :user
+  belongs_to :user
 
   validates_length_of :script, minimum: 1, maximum: MAX_FILESIZE
 

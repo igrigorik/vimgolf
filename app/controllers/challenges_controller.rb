@@ -20,7 +20,7 @@ class ChallengesController < ApplicationController
   end
 
   def create
-    challenge = params[:challenge]
+    challenge = challenge_params
 
     challenge[:diff] = challenge.delete(:diff).read rescue nil
 
@@ -72,5 +72,11 @@ class ChallengesController < ApplicationController
 
       format.html
     end
+  end
+
+  private
+
+  def challenge_params
+    params.require(:challenge).permit!
   end
 end

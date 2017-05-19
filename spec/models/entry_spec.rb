@@ -7,7 +7,7 @@ describe Entry do
     it 'is referenced by one user' do
       association = described_class.reflect_on_association(:user)
 
-      expect(association.macro).to eq :referenced_in
+      expect(association.macro).to eq :belongs_to
     end
 
     it 'is has many comments' do

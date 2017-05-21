@@ -133,3 +133,12 @@ test:
         read:
           mode: :primary
         max_pool_size: 1
+production:
+  clients:
+    default:
+      database: <%= ENV['DATABASE_NAME'] %>
+      hosts:
+        - <%= "#{ENV['DATABASE_HOST'] || "localhost"}:#{ENV['DATABASE_PORT'] || 27017}" %>
+      options:
+        user: <%= ENV['DATABASE_USERNAME'] %>
+        password: <%= ENV['DATABASE_PASSWORD'] %>

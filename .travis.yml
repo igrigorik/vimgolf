@@ -9,7 +9,8 @@ matrix:
     - rvm: 2.3
       gemfile: lib/vimgolf/Gemfile
 
-services: mongodb
+services:
+  - mongodb
 before_install:
     - ls -l /home/travis/.rvm/gems # Future reference, targets for quick build
     - cd `dirname $BUNDLE_GEMFILE`
@@ -17,6 +18,9 @@ before_install:
     - gem update bundler # Travis's Bundler 1.7.6 is causing problems
 script: bundle exec rake
 addons:
+  apt:
+    sources:
+      - mongodb-2.6-precise
   code_climate:
     repo_token: 87b58d792ac24c87c9eb7957aa3fe7e05f72f800619452853270ed6a8f5b3853
 after_success:

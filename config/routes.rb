@@ -1,24 +1,23 @@
 Vimgolf::Application.routes.draw do
 
-  match "/auth/twitter/callback" => "sessions#create"
-  match "/signout" => "sessions#destroy", :as => :signout
+  match "/auth/twitter/callback",to: "sessions#create", via: [:get, :post]
+  get "/signout", to: "sessions#destroy", as: :signout
 
-  match "/entry" => "entry#create"
-  match "/entry/:challenge/delete/:entry" => "entry#destroy",
-    :as => :delete_entry
-  match "/entry/:challenge/comment/:entry" => "entry#comment",
-    :as => :comment_entry
+  post "/entry", to: "entry#create"
+
+  get "/entry/:challenge/delete/:entry",to: "entry#destroy", as: :delete_entry
+  post "/entry/:challenge/comment/:entry", to: "entry#comment", as: :comment_entry
 
   resources :challenges
 
-  match "/feed" => "main#feed", :defaults => {:format => "rss"}
-  match "/about" => "main#about"
+  get "/feed", to: "main#feed", defaults: {format: "rss"}
+  get "/about", to: "main#about"
 
-  # match "/top" => "users#top", :as => :top
-  # match "/:username" => "users#show", :as => :profile
-  match "*unmatched_route", :to => redirect('/about', status: 302)
+  # match "/top" => "users#top", as: :top
+  # match "/:username" => "users#show", as: :profile
+  match "*unmatched_route", to: redirect('/about', status: 302), via: [:get, :post]
 
-  root :to => "main#index"
+  root to: "main#index"
 
   # Sample resource route within a namespace:
   #   namespace :admin do

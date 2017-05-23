@@ -25,6 +25,6 @@ class SessionsController < ApplicationController
   def user_params
     ActionController::Parameters.new(
       request.env['omniauth.auth']
-    ).required("info").permit!
+    ).required('info').permit!
   end
 end

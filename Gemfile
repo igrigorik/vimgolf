@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-gem 'rails', '4.1.16'
+gem 'rails', '4.2.8'
 
 gem 'mongo', '2.1.2'
 gem 'bson', '3.1.1'
@@ -40,6 +40,7 @@ group :test, :development do
   gem 'simplecov', :require => false
   gem "codeclimate-test-reporter", "~> 1.0.0"
   gem "capybara"
+  gem "launchy"
   gem "pry-byebug"
   gem "pry-stack_explorer"
   gem 'poltergeist'

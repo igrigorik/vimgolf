@@ -2,24 +2,22 @@
 # Ruby 1.9 doesn't like our fancy string literals without this.
 require "cli_helper"
 
-include VimGolf
-
 describe VimGolf::Keylog do
 
   Dir[File.join(File.dirname(__FILE__), 'fixtures', '*')].each do |f|
     it "should parse #{File.basename(f)} logfile" do
-      expect { Keylog.new(IO.read(f)).convert }.not_to raise_error
+      expect { VimGolf::Keylog.new(IO.read(f)).convert }.not_to raise_error
     end
 
     it "should score #{File.basename(f)} logfile" do
-      expect { Keylog.new(IO.read(f)).convert }.not_to raise_error
+      expect { VimGolf::Keylog.new(IO.read(f)).convert }.not_to raise_error
     end
   end
 
   it "should correctly parse and count a variety of keycodes" do
     input = "\x01\x09\x1a\x1b\x1c\x1e !09\\\"'()Aa~\x7f\x80KC\x80kd\x80\xffXZZ"
     output = "<C-A><Tab><C-Z><Esc><C-\\><C-^> !09\\\"'()Aa~<C-?><k0><Down><C-@>ZZ"
-    log = Keylog.new(input)
+    log = VimGolf::Keylog.new(input)
     expect(log.convert).to eql(output)
     expect(log.score).to eql(24)
   end
@@ -32,7 +30,7 @@ describe VimGolf::Keylog do
     # Sanity check. Different rubies conspiring to mess up the test encodings.
     expect(bytes.encoding).not_to eql(text.encoding)
     # Not testing the actual output, just checking whether encoding matters
-    expect(Keylog.new(text).convert).to eql(Keylog.new(bytes).convert)
+    expect(VimGolf::Keylog.new(text).convert).to eql(VimGolf::Keylog.new(bytes).convert)
   end
 
   it "should treat newline characters literally" do
@@ -40,7 +38,7 @@ describe VimGolf::Keylog do
     input = "a\ra\na\r\na\n\r\n"
     output = "a<CR>a<NL>a<CR><NL>a<NL><CR><NL>"
 
-    log = Keylog.new(input)
+    log = VimGolf::Keylog.new(input)
     expect(log.convert).to eql(output)
   end
 
@@ -48,7 +46,7 @@ describe VimGolf::Keylog do
     input = "\x80\xfd\x35\x80\xfdbhello\x80\xfd\x61\x80\xfd\x62 world"
     output = "hello world"
 
-    log = Keylog.new(input)
+    log = VimGolf::Keylog.new(input)
     expect(log.convert).to eql(output)
     expect(log.score).to eql(11)
   end
@@ -57,7 +55,7 @@ describe VimGolf::Keylog do
     input = "\x80  hello"
     output = "<20-20>hello"
 
-    log = Keylog.new(input)
+    log = VimGolf::Keylog.new(input)
     expect(log.convert).to eql(output)
   end
   
@@ -66,7 +64,7 @@ describe VimGolf::Keylog do
     late   = "\x80\xfd\x54\x80\xfd\x55\x80\xfd\x56\x80\xfd\x57\x80\xfd\x2c"
     output = "<C-Left><C-Right><C-Home><C-End><LeftMouse>"
 
-    expect(Keylog.new(early, Time.utc(2016, 3)).convert).to eql(output)
-    expect(Keylog.new(late, Time.utc(2016, 5)).convert).to eql(output)
+    expect(VimGolf::Keylog.new(early, Time.utc(2016, 3)).convert).to eql(output)
+    expect(VimGolf::Keylog.new(late, Time.utc(2016, 5)).convert).to eql(output)
   end
 end

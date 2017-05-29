@@ -35,4 +35,6 @@ Vimgolf::Application.configure do
   config.static_cache_control = "public, max-age=3600"
 
   config.assets.allow_debugging = true
+
+  config.eager_load = false
 end

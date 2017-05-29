@@ -7,3 +7,4 @@
 
 secret = ENV.fetch('SECRET_TOKEN', SecureRandom.hex)
 Vimgolf::Application.config.secret_token = secret
+Vimgolf::Application.config.secret_key_base = secret

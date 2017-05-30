@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-gem 'rails', '4.0.13'
+gem 'rails', '4.1.16'
 
 gem 'mongo', '2.1.2'
 gem 'bson', '3.1.1'

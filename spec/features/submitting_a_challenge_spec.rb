@@ -18,9 +18,9 @@ feature "Submitting a challenge" do
 
     expect(page).to have_text "Title can't be blank"
     expect(page).to have_text "Description can't be blank"
-    expect(page).to have_text "Input is too short (minimum is 1 characters)"
-    expect(page).to have_text "Output is too short (minimum is 1 characters)"
-    expect(page).to have_text "Diff is too short (minimum is 1 characters)"
+    expect(page).to have_text "Input is too short (minimum is 1 character)"
+    expect(page).to have_text "Output is too short (minimum is 1 character)"
+    expect(page).to have_text "Diff is too short (minimum is 1 character)"
   end
 
   scenario "with properly filled out fields" do

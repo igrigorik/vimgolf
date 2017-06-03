@@ -1,9 +1,3 @@
-GIT
-  remote: https://github.com/heroku/rails3_serve_static_assets.git
-  revision: 84910ceb4ca2851d650e66d3b22f5008acf253f8
-  specs:
-    rails3_serve_static_assets (0.0.1)
-
 PATH
   remote: lib/vimgolf
   specs:
@@ -251,7 +245,6 @@ DEPENDENCIES
   pry-stack_explorer
   rack-timeout
   rails (= 4.2.8)
-  rails3_serve_static_assets!
   rspec-rails (= 3.6.0)
   sass-rails (~> 4.0.5)
   shoulda-matchers

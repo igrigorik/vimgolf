@@ -16,7 +16,6 @@ gem 'tweet-button'
 gem 'newrelic_rpm'
 gem 'unicorn'
 gem 'rack-timeout'
-gem 'rails3_serve_static_assets', git: 'https://github.com/heroku/rails3_serve_static_assets.git'
 gem "sprockets-rails", "~> 2.0"
 gem "sass-rails", "~> 4.0.5"
 gem "uglifier", ">= 1.0.3"

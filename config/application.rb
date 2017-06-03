@@ -57,7 +57,7 @@ module Vimgolf
                     }
 
     # Disable the asset pipeline for now
-    config.assets.enabled = false
+    config.assets.enabled = true
     config.assets.version = "1.0"
   end
 end

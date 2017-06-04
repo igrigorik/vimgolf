@@ -27,8 +27,8 @@ Vimgolf::Application.configure do
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
 
-  # Disable Rails's static asset server
-  # In production, Apache or nginx will already do this
+  # Enable Rails's static asset server
+  # We don't have Apache or nginx doing this
   config.serve_static_files = true
 
   # Enable serving of images, stylesheets, and javascripts from an asset server

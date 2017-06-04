@@ -22,10 +22,6 @@ gem "uglifier", ">= 1.0.3"
 
 gem 'vimgolf', path: 'lib/vimgolf'
 
-# jQuery is the default JavaScript library in Rails 3.1
-# Leaving this out for now until we start using asset pipeline
-#gem 'jquery-rails'
-
 group :test, :development do
   gem "rspec-rails", "3.6.0"
   gem "shoulda-matchers"

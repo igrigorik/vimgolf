@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.5'
+ruby '2.4.1'
 
 gem 'rails', '4.2.8'
 
@@ -7,11 +7,11 @@ gem 'mongo', '2.1.2'
 gem 'bson', '3.1.1'
 gem 'mongoid', '5.0.0'
 
-gem 'json', '1.8.2'
+gem 'json', '~> 2.0.0'
 gem 'memcachier'
 gem 'dalli'
 gem 'omniauth'
-gem 'omniauth-twitter'
+gem 'omniauth-twitter', '~> 1.3.0'
 gem 'tweet-button'
 gem 'newrelic_rpm'
 gem 'unicorn'

@@ -59,7 +59,7 @@ describe Challenge do
       end
 
       it 'return most recent entry with best score per user' do
-        expect(challenge.top_entries).to eq [another_entry, best_entry]
+        expect(challenge.top_entries).to match_array [another_entry, best_entry]
       end
     end
   end
@@ -84,19 +84,28 @@ describe Challenge do
 
     context 'when user is admin' do
       it 'can see all top entries' do
-        expect(challenge.allowed_entries(user)).to eq [[another_entry, best_entry, not_so_good_entry], 0]
+        allowed_entries = challenge.allowed_entries(user)
+
+        expect(allowed_entries[0]).to match_array [another_entry, best_entry, not_so_good_entry]
+        expect(allowed_entries[1]).to eq 0
       end
     end
 
     context 'when user is a competitor' do
       it 'can see all entries below her' do
-        expect(challenge.allowed_entries(another_participant)).to eq [[another_entry, best_entry, not_so_good_entry], 0]
+        allowed_entries = challenge.allowed_entries(another_participant)
+
+        expect(allowed_entries[0]).to match_array [another_entry, best_entry, not_so_good_entry]
+        expect(allowed_entries[1]).to eq 0
       end
     end
 
     context 'when user is not a competitor' do
       it 'can see all entries bottom 20%' do
-        expect(challenge.allowed_entries(non_competitor)).to eq [[not_so_good_entry], 2]
+        allowed_entries = challenge.allowed_entries(non_competitor)
+
+        expect(allowed_entries[0]).to match_array [not_so_good_entry]
+        expect(allowed_entries[1]).to eq 2
       end
     end
   end

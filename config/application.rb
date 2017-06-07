@@ -56,8 +56,7 @@ module Vimgolf
                       :socket_failure_delay => 0.2
                     }
 
-    # Disable the asset pipeline for now
-    config.assets.enabled = false
+    config.assets.enabled = true
     config.assets.version = "1.0"
   end
 end

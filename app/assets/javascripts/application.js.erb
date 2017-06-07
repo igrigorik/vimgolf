@@ -1,0 +1,12 @@
+//= require jquery.min
+//= require jquery-ui.min
+//= require prettify/prettify
+//= require_tree .
+//= require_tree ./prettify
+//= require_self
+
+$(document).ready(function() {
+  $(function() {
+    $("input:submit, .action").button();
+  });
+});

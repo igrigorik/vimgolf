@@ -16,22 +16,11 @@ gem 'tweet-button'
 gem 'newrelic_rpm'
 gem 'unicorn'
 gem 'rack-timeout'
-gem 'rails3_serve_static_assets', git: 'https://github.com/heroku/rails3_serve_static_assets.git'
+gem "sprockets-rails", "~> 2.0"
+gem "sass-rails", "~> 4.0.5"
+gem "uglifier", ">= 1.0.3"
 
 gem 'vimgolf', path: 'lib/vimgolf'
-#
-# Needed for the new asset pipeline
-group :assets do
-  # Leaving them out for now until we start using asset pipeline
-  #gem 'sass-rails', "~> 3.2.3"
-  #gem 'coffee-rails', "~> 3.2.1"
-  #gem 'uglifier', '>= 1.0.3'
-
-end
-
-# jQuery is the default JavaScript library in Rails 3.1
-# Leaving this out for now until we start using asset pipeline
-#gem 'jquery-rails'
 
 group :test, :development do
   gem "rspec-rails", "3.6.0"

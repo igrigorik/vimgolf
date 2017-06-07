@@ -1,11 +1,11 @@
 source 'https://rubygems.org'
 ruby '2.4.1'
 
-gem 'rails', '4.2.8'
+gem 'rails', '5.0.3'
 
-gem 'mongo', '2.1.2'
-gem 'bson', '3.1.1'
-gem 'mongoid', '5.0.0'
+gem 'mongo', '2.3.1'
+gem 'bson', '4.1.1'
+gem 'mongoid', '6.0.0'
 
 gem 'json', '~> 2.0.0'
 gem 'memcachier'
@@ -17,7 +17,7 @@ gem 'newrelic_rpm'
 gem 'unicorn'
 gem 'rack-timeout'
 gem "sprockets-rails", "~> 2.0"
-gem "sass-rails", "~> 4.0.5"
+gem "sass-rails", "~> 5.0.5"
 gem "uglifier", ">= 1.0.3"
 
 gem 'vimgolf', path: 'lib/vimgolf'

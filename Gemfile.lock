@@ -256,7 +256,7 @@ DEPENDENCIES
   vimgolf!
 
 RUBY VERSION
-   ruby 2.2.7p470
+   ruby 2.4.1p111
 
 BUNDLED WITH
    1.15.1

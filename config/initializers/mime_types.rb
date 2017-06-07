@@ -4,4 +4,4 @@
 # Mime::Type.register "text/richtext", :rtf
 # Mime::Type.register_alias "text/html", :iphone
 
-ActionDispatch::ParamsParser::DEFAULT_PARSERS.delete(Mime::XML)
+Mime::Type.unregister(:xml)

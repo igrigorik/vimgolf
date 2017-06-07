@@ -10,7 +10,8 @@ describe ChallengesController do
   end
 
   it "should allow download of challenge without login" do
-    Challenge.create!(
+    create(
+      :challenge,
       title: "foo",
       description: "bar",
       input: "baz",

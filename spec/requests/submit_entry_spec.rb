@@ -2,7 +2,8 @@ require "spec_helper"
 
 describe "POST /entry" do
   it "creates an entry with a valid api key and valid challenge id" do
-    challenge = Challenge.create!(
+    challenge = create(
+      :challenge,
       title: "foo",
       description: "bar",
       input: "aa",
@@ -31,7 +32,8 @@ describe "POST /entry" do
   end
 
   it "fails for an invalid challenge id" do
-    challenge = Challenge.create!(
+    challenge = create(
+      :challenge,
       title: "foo",
       description: "bar",
       input: "aa",
@@ -48,7 +50,8 @@ describe "POST /entry" do
   end
 
   it "fails with an invalid api key" do
-    challenge = Challenge.create!(
+    challenge = create(
+      :challenge,
       title: "foo",
       description: "bar",
       input: "aa",

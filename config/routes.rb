@@ -15,7 +15,7 @@ Vimgolf::Application.routes.draw do
 
   # match "/top" => "users#top", as: :top
   # match "/:username" => "users#show", as: :profile
-  match "*unmatched_route", to: redirect('/about', status: 302), via: [:get, :post]
+  # match "*unmatched_route", to: redirect('/about', status: 302), via: [:get, :post]
 
   root to: "main#index"
 

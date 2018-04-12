@@ -1,7 +1,6 @@
 class MainController < ApplicationController
 
   def index
-    start = Time.now
     @challenges = Challenge.only(:title, :description, :created_at)
                            .order_by(:created_at.desc)
     @entry_counts = Challenge.count_entries.to_a.inject({}) do |h,v|

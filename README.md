@@ -43,4 +43,166 @@ $> git push heroku web:master
 
 ## Run tests
 
-Go to the root folder and run `rake`.
+Go to the root folder and run `bundle exec rake`.
+
+# How to contribute
+
+This part is for people not familliar with ruby ecosystem
+
+## Installation
+
+You need :
+- ruby
+- gem bundler
+- mongodb
+- Seed database
+
+### ruby
+
+You need a ruby version, same as .ruby-version
+
+I recommend using rbenv, see https://github.com/rbenv/rbenv to install and manage ruby version.
+
+```
+cd $VIMGOLF_PATH
+rbenv install
+```
+
+### bundler
+
+Bundler is a gem that aim to manage gem per project.
+
+```
+gem install bundler
+```
+
+Then you need all gems for the apps
+
+```
+bundle install
+```
+
+### mongo-db
+
+It is possible to get a fully functionnal mongodb instance through docker, see http://pierrepironin.fr/docker-et-mongodb/ for help.
+
+```
+docker pull mongo
+
+# Database will stay here. So we can stop/delete docker instance
+sudo mkdir -p /opt/mongodb/db
+
+# Start container
+docker run -p 27017:27017 -v /opt/mongodb/db:/data/db --name my-mongo-dev -d mongo mongod --auth
+
+# connect to database
+docker exec -it my-mongo-dev mongo
+
+# create admin user
+use admin
+db.createUser({
+  user: "userAdmin",
+  pwd: "password",
+  roles: [{role: "userAdminAnyDatabase", db: "admin"}]
+})
+# exit
+
+# connect to database
+docker exec -it my-mongo-dev mongo 127.0.0.1/vimgolf_development -u userAdmin -p password --authenticationDatabase admin
+
+# create vimgolf_development user
+use vimgolf_development
+db.createUser({
+  user: "vimgolf_development",
+  pwd: "vimgolf_development",
+  roles: ["dbOwner"]
+})
+
+# create vimgolf_test user
+use vimgolf_test
+db.createUser({
+  user: "vimgolf_test",
+  pwd: "vimgolf_test",
+  roles: ["dbOwner"]
+})
+# exit
+
+# test connection
+docker exec -it my-mongo-dev mongo 127.0.0.1/vimgolf_development -u vimgolf_development -p vimgolf_development --authenticationDatabase vimgolf_development
+# we are connected, we can exit
+```
+
+### Seed database
+
+Read db/seeds.rb to understand params
+
+```
+# make the index page works - create collection "challenges"
+bundle exec rake db:drop db:setup
+
+# or add many challenges users and entries
+bundle exec rake db:drop db:setup challenges=40 users=30 entries=20
+```
+
+## Run the app
+
+Start mongo-db this way if you are using the docker installation :
+
+```
+docker run -p 27017:27017 -v /opt/mongodb/db:/data/db --name my-mongo-dev -d mongo mongod --auth
+# if you see:
+# docker: Error response from daemon: Conflict. The container name "/my-mongo-dev" is already in use by container "a9
+# then you have to remove the container
+docker rm my-mongo-dev
+```
+
+Start the server
+
+```
+bundle exec unicorn -c config/unicorn.rb -E development
+```
+
+open your browser to http://localhost:8080/
+
+If you need more logs, you can
+
+```
+docker logs -f my-mongo-dev
+tail -f log/development.log
+```
+
+## Troubleshooting
+
+### Cannot sign in with twitter
+
+When click on 'sign in with twitter' and you get
+
+```
+OAuth::Unauthorized
+401 Authorization Required
+```
+
+As a workaround, you can edit
+
+```
+# app/controllers/ApplicationController.rb`
+# replace
+    @current_user ||= User.where(uid: session[:user]).first if session[:user]
+# with
+    @current_user ||= User.first
+```
+
+### Cannot run tests
+
+If you installed mongodb through this tutorial, you created a database 'vimgolf_test' with user and password
+set to 'vimgolf_test'.
+You need to update config/mongoid.yml with the credentials :
+
+```yaml
+test:
+  clients:
+    default:
+      options:
+        user: 'vimgolf_test'
+        password: 'vimgolf_test'
+```

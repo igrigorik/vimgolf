@@ -18,24 +18,15 @@ RSpec.configure do |config|
 
   config.include Mongoid::Matchers
 
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean_with(:truncation)
-  end
-
   config.before(:each) do
+    DatabaseHelper.empty_collections
     OmniAuth.config.mock_auth[:twitter] = nil
-  end
-
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
   end
 
   config.include FactoryGirl::Syntax::Methods
 
   config.before(:suite) do
+    DatabaseHelper.create_collections
     FactoryGirl.find_definitions
   end
 end

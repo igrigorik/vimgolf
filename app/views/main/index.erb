@@ -8,9 +8,9 @@
 <% @challenges.each do |c| %>
     <div>
         <h5 class="challenge">
-            <%= link_to c.title, challenge_path(c) %> - <%= @entry_counts[c.id] || 0 %> entries
+          <%= link_to c['title'], challenge_path(c['_id']) %> - <%= c['count_entries'] %> entries
         </h5>
-        <p><%= c.description %></p>
+        <p><%= c['description'] %></p>
     </div>
 <% end %>
 

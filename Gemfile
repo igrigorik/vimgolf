@@ -26,6 +26,7 @@ gem 'vimgolf', path: 'lib/vimgolf'
 
 group :test, :development do
   gem "rspec-rails", "3.6.0"
+  gem 'rails-controller-testing'
   gem "shoulda-matchers"
   gem 'simplecov', :require => false
   gem "codeclimate-test-reporter", "~> 1.0.0"

@@ -84,6 +84,18 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.0.4)
     json_pure (2.0.2)
+    kaminari (1.1.1)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.1.1)
+      kaminari-activerecord (= 1.1.1)
+      kaminari-core (= 1.1.1)
+    kaminari-actionview (1.1.1)
+      actionview
+      kaminari-core (= 1.1.1)
+    kaminari-activerecord (1.1.1)
+      activerecord
+      kaminari-core (= 1.1.1)
+    kaminari-core (1.1.1)
     kgio (2.11.0)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -229,6 +241,7 @@ DEPENDENCIES
   factory_girl (~> 4.0)
   faker
   json (~> 2.0.0)
+  kaminari
   launchy
   memcachier
   mongo

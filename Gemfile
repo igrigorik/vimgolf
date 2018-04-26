@@ -20,6 +20,8 @@ gem "sprockets-rails", "~> 2.0"
 gem "sass-rails", "~> 5.0.5"
 gem "uglifier", ">= 1.0.3"
 
+gem 'kaminari'
+
 gem 'vimgolf', path: 'lib/vimgolf'
 
 group :test, :development do

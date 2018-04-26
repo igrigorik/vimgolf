@@ -15,8 +15,8 @@ module RepositoryChallenge
     result ? result['count_entries'] : 0
   end
 
-  def self.home_page
-    Challenge.collection.aggregate([
+  def self.score_query
+    [
       {
         "$project" => {
           "_id" => 1,
@@ -39,7 +39,24 @@ module RepositoryChallenge
         }
       },
       { "$sort" => { 'score' => -1 } },
-    ])
+    ]
+  end
+
+  def self.paginate(per_page:, page:)
+    [
+      { "$skip" => (per_page * (page-1))  },
+      { "$limit" => per_page },
+    ]
+  end
+
+  def self.paginate_home_page(per_page:, page:)
+    Challenge.collection.aggregate(
+      score_query.concat(paginate(
+          per_page: per_page,
+          page: page
+        )
+      )
+    )
   end
 
 end

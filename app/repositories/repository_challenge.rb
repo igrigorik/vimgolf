@@ -4,7 +4,11 @@ module RepositoryChallenge
     Challenge.collection.aggregate([{
       "$group" => {
         "_id" => nil,
-        "count_entries" => { "$sum" => { "$size" => "$entries" }},
+        "count_entries" => {
+          "$sum" => {
+            "$size" =>  { "$ifNull": [ "$entries", [] ] }
+          },
+        },
       },
     }])
   end
@@ -23,7 +27,9 @@ module RepositoryChallenge
           "title" => 1,
           "description" => 1,
           "created_at" => 1,
-          "count_entries" => { "$size" => "$entries" }
+          "count_entries" => {
+            "$size" =>  { "$ifNull": [ "$entries", [] ] }
+          }
         },
       },
       {
@@ -51,7 +57,8 @@ module RepositoryChallenge
 
   def self.paginate_home_page(per_page:, page:)
     Challenge.collection.aggregate(
-      score_query.concat(paginate(
+      score_query.concat(
+        paginate(
           per_page: per_page,
           page: page
         )

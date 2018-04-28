@@ -1,7 +1,11 @@
 module RepositoryChallenge
 
+  def self.collection_aggregate(*args)
+    Challenge.collection.aggregate(args.flatten)
+  end
+
   def self.count_entries_query
-    Challenge.collection.aggregate([{
+    collection_aggregate({
       "$group" => {
         "_id" => nil,
         "count_entries" => {
@@ -10,7 +14,7 @@ module RepositoryChallenge
           },
         },
       },
-    }])
+    })
   end
 
   def self.count_entries
@@ -56,13 +60,9 @@ module RepositoryChallenge
   end
 
   def self.paginate_home_page(per_page:, page:)
-    Challenge.collection.aggregate(
-      score_query.concat(
-        paginate(
-          per_page: per_page,
-          page: page
-        )
-      )
+    collection_aggregate(
+      score_query,
+      paginate(per_page: per_page, page: page)
     )
   end
 

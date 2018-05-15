@@ -49,28 +49,19 @@ class ChallengesController < ApplicationController
   end
 
   def show
-    @challenge = Challenge.find(params['id']) rescue nil
+    # Limit to id to avoid downloading uneccessary entries
+    @challenge = Challenge.only(:id).find(params['id']) rescue nil
     return redirect_to root_path if @challenge.nil?
 
-    # TODO, there is a better way to do this...
-    users = @challenge.entries.map {|e| e.user_id }.uniq
-    @users = User.where(:_id.in => users).inject({}) {|h,u| h[u.id] = u; h}
-
     respond_to do |format|
-      format.json {
-        render :json => {
-          'in' => {
-            'data' => @challenge.input,
-            'type' => @challenge.input_type
-          },
-          'out' => {
-            'data' => @challenge.output,
-            'type' => @challenge.output_type
-          },
-          'client' => Vimgolf::VERSION
-      }}
+      format.json { render :json => json_show(params['id']) }
 
-      format.html
+      format.html {
+        # TODO, there is a better way to do this...
+        @challenge = Challenge.find(params['id'])
+        users = @challenge.entries.map {|e| e.user_id }.uniq
+        @users = User.where(:_id.in => users).inject({}) {|h,u| h[u.id] = u; h}
+      }
     end
   end
 
@@ -79,4 +70,23 @@ class ChallengesController < ApplicationController
   def challenge_params
     params.require(:challenge).permit!
   end
+
+  def json_show(challenge_id)
+    challenge = Challenge
+      .only(:input, :input_type, :output, :output_type)
+      .find(challenge_id)
+
+    {
+      'in' => {
+        'data' => challenge.input,
+        'type' => challenge.input_type
+      },
+      'out' => {
+        'data' => challenge.output,
+        'type' => challenge.output_type
+      },
+      'client' => Vimgolf::VERSION
+    }
+  end
+
 end

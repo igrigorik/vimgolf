@@ -66,23 +66,25 @@
         </div>
     <% end %>
 
-    <% if @challenge.entries.size.zero? %>
+    <% if @leaderboard.count.zero? %>
         <h5>No competitors yet.. <em>be the first!</em></h5>
 
     <% else %>
         <h5>Leaderboard <em>(lowest score wins):</em></h5>
-        <% @challenge.top_entries.each_with_index do |entry, idx| %>
-            <% user = @users[entry.user_id] %>
+        <% @leaderboard.each do |entry| %>
+            <% user = @users[entry[:user_id]] %>
 
             <div class="notice clearfix">
                 <%= twitter_avatar user.nickname %>
-                <div style="float:right; text-align:center;font-size:2.4em"><b><%= entry.score %></b></div>
+                <div style="float:right; text-align:center;font-size:2.4em"><b><%= entry[:min_score] %></b></div>
 
                 <h6 style="margin-bottom:0">
-                    <a class="anchor" href="#<%= entry.id %>"><b>#<%= idx+1 %></b></a> - <%= user.name %> / <%= user.nickname %>
+                    <a class="anchor" href="#<%= entry[:entry_id] %>"><b>#<%= entry[:position] %></b></a> - <%= user.name %> / <%= user.nickname %>
                 </h6>
-                <p style="margin-bottom:0"><em><%= entry.created_at.strftime("%m/%d/%Y at %I:%M%p") %></em></p>
+                <p style="margin-bottom:0"><em><%= entry[:created_at].strftime("%m/%d/%Y at %I:%M%p") %></em></p>
             </div>
         <% end %>
+
+        <%= paginate @paginatable_leaderboard, inner_window: 20, param_name: :leaderboard_page %>
     <% end %>
 </div>

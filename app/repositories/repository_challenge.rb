@@ -146,4 +146,45 @@ module RepositoryChallenge
     )
   end
 
+  def self.best_score_per_user(challenge_id)
+    [
+      { "$match" => { "_id" => challenge_id } },
+      { "$unwind": "$entries" },
+      { '$replaceRoot': { newRoot: "$entries" } },
+      # sort needed so { "$first" => '$created_at' }
+      # can return the right created_at
+      { "$sort" => { "score" => 1, "created_at" => 1 } },
+      {
+        '$group': {
+          "_id" => '$user_id',
+          "entry_id" => { "$first" => '$_id' },
+          "user_id" => { "$first" => '$user_id' },
+          "created_at" => { "$first" => '$created_at' },
+          "min_score" => { "$min" => '$score'}
+        }
+      },
+      { "$sort" => { "min_score" => 1, "created_at" => 1 } },
+    ]
+  end
+
+  def self.paginate_leaderboard(challenge_id:, per_page:, page:)
+    collection_aggregate(
+      best_score_per_user(challenge_id),
+      paginate(per_page: per_page, page: page)
+    )
+  end
+
+  def self.uniq_users(challenge_id)
+    collection_aggregate(
+      { "$match" => { "_id" => challenge_id } },
+      { "$unwind": "$entries" },
+      { '$replaceRoot': { newRoot: "$entries" } },
+      {
+        '$group': {
+          "_id" => '$user_id',
+        }
+      },
+    )
+  end
+
 end

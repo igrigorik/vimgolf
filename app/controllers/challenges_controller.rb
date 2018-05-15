@@ -1,3 +1,5 @@
+require_relative '../repositories/repository_challenge'
+
 class ChallengesController < ApplicationController
 
   before_action :login, :only => [:create, :new, :destroy]
@@ -50,17 +52,26 @@ class ChallengesController < ApplicationController
 
   def show
     # Limit to id to avoid downloading uneccessary entries
-    @challenge = Challenge.only(:id).find(params['id']) rescue nil
-    return redirect_to root_path if @challenge.nil?
+    challenge_id = params['id']
+    challenge = Challenge.only(:id).find(challenge_id) rescue nil
+    return redirect_to root_path if challenge.nil?
 
     respond_to do |format|
-      format.json { render :json => json_show(params['id']) }
+      format.json { render :json => json_show(challenge_id) }
 
       format.html {
         # TODO, there is a better way to do this...
-        @challenge = Challenge.find(params['id'])
-        users = @challenge.entries.map {|e| e.user_id }.uniq
-        @users = User.where(:_id.in => users).inject({}) {|h,u| h[u.id] = u; h}
+        @challenge = Challenge.find(challenge_id)
+        user_ids = RepositoryChallenge.uniq_users(challenge.id).map {|c| c[:_id] }
+        @users = User.where(:_id.in => user_ids).inject({}) {|h,u| h[u.id] = u; h}
+
+        per_page = 30
+        leaderboard = RepositoryChallenge.paginate_leaderboard(challenge_id: challenge.id, per_page: per_page, page: leaderboard_param_page)
+        @leaderboard = add_position(leaderboard: leaderboard, per_page: per_page, page: leaderboard_param_page)
+        @paginatable_leaderboard = Kaminari
+          .paginate_array([], total_count: user_ids.count)
+          .page(leaderboard_param_page)
+          .per(per_page)
       }
     end
   end
@@ -89,4 +100,13 @@ class ChallengesController < ApplicationController
     }
   end
 
+  def leaderboard_param_page
+    (params['leaderboard_page'] || 1).to_i
+  end
+
+  def add_position(leaderboard:, per_page:, page:)
+    leaderboard.each_with_index.map do |entry, idx|
+      entry.merge(position: per_page * (page-1) + idx + 1)
+    end
+  end
 end

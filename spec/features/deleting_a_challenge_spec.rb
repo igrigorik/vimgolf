@@ -1,6 +1,6 @@
 require "spec_helper"
 
-feature "Deleting a challenege" do
+feature "Deleting a challenge" do
   include OmniAuthHelper
 
   before(:each) do

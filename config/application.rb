@@ -60,6 +60,3 @@ module Vimgolf
     config.assets.version = "1.0"
   end
 end
-
-# http://stackoverflow.com/questions/17754425/how-to-run-ruby-on-rails-3-with-ruby-2-0
-ActionController::Base.config.relative_url_root = ''

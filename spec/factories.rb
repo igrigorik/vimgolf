@@ -23,4 +23,3 @@ FactoryGirl.define do
     provider 'Github'
   end
 end
-

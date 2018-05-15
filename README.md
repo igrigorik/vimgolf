@@ -206,3 +206,11 @@ test:
         user: 'vimgolf_test'
         password: 'vimgolf_test'
 ```
+
+## Find documentation
+
+It use gem mongoid which is a wrapper for the mongo driver
+
+Mongodb ruby driver : http://api.mongodb.com/ruby/current/Mongo.html
+
+Mongoid: https://docs.mongodb.com/mongoid/master

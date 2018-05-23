@@ -14,7 +14,7 @@ feature "Sign In" do
 
     expect(current_path).to eq(root_path)
     expect(page).to have_text "Welcome the science guy"
-  end 
+  end
 
   scenario "as an existing user" do
     user = User.create!(

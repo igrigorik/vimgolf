@@ -1,25 +1,23 @@
+require_relative '../repositories/repository_challenge'
+
 class MainController < ApplicationController
 
   def index
-    start = Time.now
-    @challenges = Challenge.only(:title, :description, :created_at)
-                           .order_by(:created_at.desc)
-    @entry_counts = Challenge.count_entries.to_a.inject({}) do |h,v|
-      h[v['_id']] = v['value'].to_i
-      h
-    end
-
-    @entry_counts.default = 0
-    @challenges = @challenges.sort_by do |e|
-      (@entry_counts[e['_id']] + 1).to_f / (Time.now.to_i - e['created_at'].to_i)
-    end.reverse
+    challenge_count = Challenge.count
+    per_page = 50
 
     @stats = {
-      :users => User.count,
-      :challenges => @challenges.size,
-      :entries => @entry_counts.values.inject(:+)
+      users: User.count,
+      challenges: challenge_count,
+      entries: RepositoryChallenge.count_entries,
     }
 
+    @challenges = RepositoryChallenge.paginate_home_page(per_page: per_page, page: param_page)
+
+    @paginatable_array = Kaminari
+      .paginate_array([], total_count: challenge_count)
+      .page(param_page)
+      .per(per_page)
     # if users = Rails.cache.read(:top_users)
     #   @top_users = User.find(users).sort_by {|u| users.index(u._id) }
     # end
@@ -27,12 +25,18 @@ class MainController < ApplicationController
 
   def feed
     @challenges = Challenge.only(:title, :description, :created_at)
-                           .limit(15)
-                           .order_by(:created_at.desc)
+      .limit(15)
+      .order_by(:created_at.desc)
 
     respond_to do |format|
       format.rss { render :layout => false }
     end
+  end
+
+  private
+
+  def param_page
+    (params['page'] || 1).to_i
   end
 
 end

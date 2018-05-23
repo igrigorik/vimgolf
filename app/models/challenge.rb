@@ -21,13 +21,6 @@ class Challenge
   validates_length_of :output, minimum: 1, maximum: MAX_FILESIZE
   validates_length_of :diff, minimum: 1, maximum: MAX_FILESIZE
 
-  def self.count_entries
-    map =     "function() { if (this.entries) { emit(this._id, this.entries.length) }}"
-    reduce =  "function(k, values) { return values[0]; }"
-
-    map_reduce(map, reduce).out(replace: "count_entries").find()
-  end
-
   def top_entries
     entries.top_by_user
   end

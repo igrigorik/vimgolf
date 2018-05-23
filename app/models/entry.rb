@@ -9,8 +9,6 @@ class Entry
   embedded_in :challenge, inverse_of: :entries
   belongs_to :user
 
-  validates_length_of :script, minimum: 1, maximum: MAX_FILESIZE
-
   # Returns true if the given user sent an entry
   def self.any_owned_by?(current_user)
     criteria.where(user_id: current_user.id).count > 0 if current_user.present?

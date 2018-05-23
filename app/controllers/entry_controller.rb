@@ -22,7 +22,7 @@ class EntryController < ApplicationController
 
       if @challenge && @user
         @entry = Entry.new(
-                  :script => params[:entry],
+                  :script => BSON::Binary.new(params[:entry]),
                   :score => VimGolf::Keylog.new(params[:entry]).score
                  )
         @entry.created_at = Time.now.utc

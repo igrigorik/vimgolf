@@ -29,7 +29,7 @@ Vimgolf::Application.configure do
 
   # Enable Rails's static asset server
   # We don't have Apache or nginx doing this
-  config.serve_static_files = true
+  config.public_file_server.enabled = true
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -51,7 +51,7 @@ Vimgolf::Application.configure do
   config.assets.compress = true
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
-  config.assets.compile = false
+  config.assets.compile = true
 
   # Generate digests for asset URLs
   config.assets.digest = true

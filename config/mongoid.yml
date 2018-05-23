@@ -5,11 +5,11 @@ development:
     default:
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: vimgolf_development
+      database: <%= ENV['DATABASE_NAME'] || 'vimgolf_development' %>
       # Provides the hosts the default client can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:
-        - localhost:27017
+        - <%= "#{ENV['DATABASE_HOST'] || 'localhost'}:#{ENV['DATABASE_PORT'] || 27017}" %>
       options:
         # Change the default write concern. (default = { w: 1 })
         # write:
@@ -22,10 +22,10 @@ development:
         #   mode: :secondary_preferred
 
         # The name of the user for authentication.
-        user: 'vimgolf_development'
+        user: <%= ENV['DATABASE_USERNAME'] || 'vimgolf_development' %>
 
         # The password of the user for authentication.
-        password: 'vimgolf_development'
+        password: <%= ENV['DATABASE_PASSWORD'] || 'vimgolf_development' %>
 
         # The user's database roles.
         # roles:
@@ -140,7 +140,7 @@ production:
     default:
       database: <%= ENV['DATABASE_NAME'] %>
       hosts:
-        - <%= "#{ENV['DATABASE_HOST'] || "localhost"}:#{ENV['DATABASE_PORT'] || 27017}" %>
+        - <%= "#{ENV['DATABASE_HOST'] || 'localhost'}:#{ENV['DATABASE_PORT'] || 27017}" %>
       options:
         user: <%= ENV['DATABASE_USERNAME'] %>
         password: <%= ENV['DATABASE_PASSWORD'] %>

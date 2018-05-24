@@ -9,7 +9,7 @@ FactoryGirl.define do
   end
 
   factory :entry do
-    script :a
+    script 'abc'
     created_at Time.now.utc
     user
     score Faker::Number.between(1, 20)

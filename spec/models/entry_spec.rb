@@ -44,13 +44,13 @@ describe Entry do
   describe 'Validations' do
     it { should have_fields(:script) }
 
-    pending 'is not valid without script' do
+    it 'is not valid without script' do
       entry = build(:entry, script: nil)
 
       expect(entry).to_not be_valid
     end
 
-    pending 'is not valid if script size is too long' do
+    it 'is not valid if script size is too long' do
       script = 'a' * (MAX_FILESIZE + 1)
       entry = build(:entry, script: script)
 

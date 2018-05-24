@@ -1,3 +1,11 @@
+class EntryValidator < ActiveModel::Validator
+  def validate(entry)
+    e = VimGolf::Keylog.new(entry.script || '').convert
+    entry.errors[:entry] << "Entry cannot be empty" if e.empty?
+    entry.errors[:entry] << "Entry is too large" if e.length > MAX_FILESIZE
+  end
+end
+
 class Entry
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -8,6 +16,8 @@ class Entry
   embeds_many :comments
   embedded_in :challenge, inverse_of: :entries
   belongs_to :user
+
+  validates_with EntryValidator, fields: [:script]
 
   # Returns true if the given user sent an entry
   def self.any_owned_by?(current_user)

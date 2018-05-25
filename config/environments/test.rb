@@ -31,8 +31,9 @@ Vimgolf::Application.configure do
   config.active_support.deprecation = :stderr
 
   # Configure static asset server for tests with Cache-Control for performance
-  config.serve_static_files = true
-  config.static_cache_control = "public, max-age=3600"
+  config.public_file_server.enabled = true
+  config.public_file_server.headers =
+    { 'Cache-Control' => 'public, max-age=3600' }
 
   config.assets.allow_debugging = true
 

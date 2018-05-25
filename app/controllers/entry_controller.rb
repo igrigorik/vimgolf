@@ -1,7 +1,7 @@
 class EntryController < ApplicationController
 
-  before_filter :login, :only => [:comment]
-  before_filter :load_entry, :only => [:comment, :destroy]
+  before_action :login, :only => [:comment]
+  before_action :load_entry, :only => [:comment, :destroy]
 
   def comment
     if @challenge.participator?(current_user) && @entry && params.fetch(:comment, {})[:text].present?

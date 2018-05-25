@@ -11,8 +11,8 @@ module ApplicationHelper
     "<img src='https://avatars.io/twitter/#{user}/small' class='user'>".html_safe
   end
 
-  def current_url(overwrite={})
-    url_for :only_path => false, :params => params.merge(overwrite)
+  def current_url
+    url_for :only_path => false
   end
 
   def challenge_id(challenge)

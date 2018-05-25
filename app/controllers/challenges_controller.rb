@@ -1,6 +1,6 @@
 class ChallengesController < ApplicationController
 
-  before_filter :login, :only => [:create, :new, :destroy]
+  before_action :login, :only => [:create, :new, :destroy]
 
   def index
     redirect_to root_path

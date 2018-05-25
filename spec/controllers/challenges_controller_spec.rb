@@ -19,7 +19,7 @@ describe ChallengesController do
       diff: "hoge"
     )
     request.accept = 'application/json'
-    get "show", :id => Challenge.first.id.to_s, :format => :json
+    get "show", params: { :id => Challenge.first.id.to_s, :format => :json }
 
     expect(response.status).to eq(200)
   end

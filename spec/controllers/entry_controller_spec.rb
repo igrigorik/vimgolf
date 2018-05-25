@@ -22,7 +22,7 @@ describe EntryController do
     c.save
 
     request.accept = 'application/json'
-    post "create", {
+    post "create", params: {
       :format => :json,
       :challenge_id => c.id.to_s,
       :entry => 'a'*50,

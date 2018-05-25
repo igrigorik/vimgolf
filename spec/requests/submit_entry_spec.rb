@@ -25,7 +25,7 @@ describe "POST /entry" do
     expect(response).to have_http_status(200)
     expect(json_response[:status]).to eq("ok")
     expect(entries.count).to eq(1)
-    expect(entries.first.script).to eq("aa")
+    expect(entries.first.script.data).to eq("aa")
     expect(entries.first.score).to eq(2)
     expect(entries.first.created_at).not_to be nil
     expect(entries.first.user).to eq(user)

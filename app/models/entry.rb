@@ -1,8 +1,8 @@
 class EntryValidator < ActiveModel::Validator
   def validate(entry)
-    e = VimGolf::Keylog.new(entry.script || '').convert
-    entry.errors[:entry] << "Entry cannot be empty" if e.empty?
-    entry.errors[:entry] << "Entry is too large" if e.length > MAX_FILESIZE
+    k = VimGolf::Keylog.parse(entry.script).convert
+    entry.errors[:entry] << "Entry cannot be empty" if k.empty?
+    entry.errors[:entry] << "Entry is too large" if k.length > MAX_FILESIZE
   end
 end
 

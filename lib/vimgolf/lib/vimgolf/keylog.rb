@@ -8,7 +8,6 @@ module VimGolf
     def initialize(input, time=Time.now.utc)
       # Force encoding of solution text. Must match string literals.
       # .force_encoding CHANGES THE ORIGINAL STRING!
-      input = input.data if input.is_a? BSON::Binary
       @input = input.force_encoding(Encoding::ASCII_8BIT)
       @time = time
     end

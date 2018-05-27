@@ -57,4 +57,12 @@ Vimgolf::Application.configure do
   config.assets.digest = true
 
   config.eager_load = true
+
+  # Per https://github.com/heroku/rails_12factor#migrating-to-rails-5
+  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  if ENV["RAILS_LOG_TO_STDOUT"].present?
+    logger           = ActiveSupport::Logger.new(STDOUT)
+    logger.formatter = config.log_formatter
+    config.logger = ActiveSupport::TaggedLogging.new(logger)
+  end
 end

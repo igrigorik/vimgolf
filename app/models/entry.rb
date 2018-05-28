@@ -31,6 +31,6 @@ class Entry
 
   # Returns true is an entry was created by given user
   def owned_by?(current_user)
-    user == current_user
+    current_user && user_id == current_user.id
   end
 end

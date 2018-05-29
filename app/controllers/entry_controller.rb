@@ -42,7 +42,7 @@ class EntryController < ApplicationController
   end
 
   def destroy
-    if @entry && (@challenge.owner?(current_user) || @entry.owner?(current_user))
+    if @entry && (@challenge.owner?(current_user) || @entry.owned_by?(current_user))
       @entry.destroy
       @challenge.save
     end

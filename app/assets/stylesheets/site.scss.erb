@@ -24,17 +24,12 @@ h5.challenge {
   margin:0;
 }
 
-pre.diff {
+pre#diff {
   display: none;
 }
 
 b.stat {
   color: #529000;
-}
-
-.action, a.action {
-  color: #990000;
-  font-weight:bold;
 }
 
 a.anchor {
@@ -47,4 +42,44 @@ a:visited {
 
 .comment {
   padding:0.5em 0 0 0; margin:0;
+}
+
+.action {
+  background: #f6f6f6;
+  border-radius: 4px;
+  border: 1px solid #cccccc;
+  color: #1c94c4;
+  cursor: pointer;
+  font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-right: .1em;
+  zoom: 1;
+  padding: .4em 1em;
+}
+
+.action:hover {
+  border: 1px solid #fbcb09;
+  background: #fdf5ce;
+  text-decoration: none;
+}
+
+.action.delete {
+  color: #990000;
+}
+
+.action.comment-button:hover {
+  color: #c77405;
+}
+
+.comments{
+  display: none;
+}
+
+.comments .delete{
+  float: right;
+}
+
+.comments .comment-button{
+  float: left;
 }

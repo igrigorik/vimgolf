@@ -10,8 +10,8 @@
     <h5>End file</h5>
     <pre class="prettyprint"><%= @challenge.output %></pre>
 
-    <h4><a href="#" onclick="$('.diff').toggle(); return false;">View Diff</a></h4>
-    <pre class="prettyprint diff"><%= @challenge.diff %></pre>
+    <h4><a href="#" onclick="toggle('diff'); return false;">View Diff</a></h4>
+    <pre class="prettyprint" id="diff"><%= @challenge.diff %></pre>
 
     <h3>Solutions</h3>
     <p><b>The best way to learn is to practice</b>. Below, you will find some of the solutions other golfers have entered. To unlock higher ranked solutions, submit your own entry which does as well or better than the solutions you can currently see - climb the ladder!</p>
@@ -62,7 +62,7 @@
 
     <% if @challenge.owner?(current_user) %>
         <div class="error clearfix">
-            <%= button_to "Delete Challenge", @challenge, :method => :delete, :class => 'action' %>
+            <%= button_to "Delete Challenge", @challenge, :method => :delete, :class => 'delete action' %>
         </div>
     <% end %>
 

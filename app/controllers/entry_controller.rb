@@ -44,7 +44,6 @@ class EntryController < ApplicationController
   def destroy
     if @entry && (@challenge.owner?(current_user) || @entry.owner?(current_user))
       @entry.destroy
-      @challenge.save
     end
 
     redirect_to challenge_path(params[:challenge])

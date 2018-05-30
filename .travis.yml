@@ -4,8 +4,6 @@ matrix:
     - rvm: 2.4.1 # Test web AND cli with specific version
       gemfile: Gemfile
     # Otherwise test only the cli
-    - rvm: 1.9
-      gemfile: lib/vimgolf/Gemfile
     - rvm: 2.3
       gemfile: lib/vimgolf/Gemfile
 

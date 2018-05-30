@@ -109,7 +109,10 @@ module VimGolf
         # -u vimrc   - load vimgolf .vimrc to level the playing field
         # -U NONE    - don't load .gvimrc
         # -W logfile - keylog file (overwrites if already exists)
-        vimcmd = GOLFVIM.shellsplit + %W{-Z -n --noplugin --nofork -i NONE +0 -u #{challenge.vimrc_path} -U NONE -W #{challenge.log_path} #{challenge.work_path}}
+        vimcmd = GOLFVIM.shellsplit + %W{-Z -n --noplugin -i NONE +0 -u #{challenge.vimrc_path} -U NONE -W #{challenge.log_path} #{challenge.work_path}}
+        if GOLFVIM == "gvim"
+          vimcmd += %W{ --nofork}
+        end
         debug(vimcmd)
         system(*vimcmd) # assembled as an array, bypasses the shell
 

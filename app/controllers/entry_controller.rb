@@ -33,7 +33,7 @@ class EntryController < ApplicationController
     end
 
     respond_to do |format|
-      if !@cheat && @user && @challenge && @challenge.save
+      if !@cheat && @user && @challenge
         format.json { render :json => {'status' => 'ok'} }
       else
         format.json { render :json => {'status' => 'failed'}, :status => 400 }

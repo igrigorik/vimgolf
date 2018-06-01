@@ -6,7 +6,6 @@ class EntryController < ApplicationController
   def comment
     if @challenge.participator?(current_user) && @entry && params.fetch(:comment, {})[:text].present?
       @entry.comments.push Comment.new(:comment => params[:comment][:text], :nickname => current_user.nickname)
-      @challenge.save
     end
 
     redirect_to challenge_path(params[:challenge])

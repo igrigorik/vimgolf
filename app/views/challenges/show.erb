@@ -18,27 +18,20 @@
 
     <p>Check out <a href="/about#resources"> these helpful resources</a> to improve your Vim skills... <em>Game on.</em></p>
 
-<%
-    allowed, offset = @challenge.allowed_entries(current_user)
-    offset ||= 0
-    allowed ||= []
-%>
-
 <% if !current_user %>
-    <div class="note clearfix">Unlock <b><%= offset %></b> remaining solutions by <b><%= link_to "signing in", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></b> and submitting your own entry</div>
-<% elsif !offset.zero? %>
-    <div class="note clearfix">Unlock <b><%= offset %></b> remaining solutions by submitting a higher ranked entry</div>
+    <div class="note clearfix">Unlock <b><%= @offset %></b> remaining solutions by <b><%= link_to "signing in", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></b> and submitting your own entry</div>
+<% elsif !@offset.zero? %>
+    <div class="note clearfix">Unlock <b><%= @offset %></b> remaining solutions by submitting a higher ranked entry</div>
 <% end %>
 
-<% allowed.each do |entry| %>
+<% @allowed.each_with_index do |entry, index| %>
      <%=  render :partial => "shared/entry", :locals => {
             :user => @users[entry.user_id],
             :entry => entry,
             :challenge => @challenge,
-            :offset => offset
+            :offset => @offset + index
         }
       %>
-      <% offset += 1 %>
 <% end %>
 
 </div>

@@ -65,6 +65,10 @@ class ChallengesController < ApplicationController
         user_ids = RepositoryChallenge.uniq_users(challenge.id).map {|c| c[:_id] }
         @users = User.where(:_id.in => user_ids).inject({}) {|h,u| h[u.id] = u; h}
 
+        @allowed, @offset = @challenge.allowed_entries(current_user)
+        @offset ||= 0
+        @allowed ||= []
+
         per_page = 30
         leaderboard = RepositoryChallenge.paginate_leaderboard(challenge_id: challenge.id, per_page: per_page, page: leaderboard_param_page)
         @leaderboard = add_position(leaderboard: leaderboard, per_page: per_page, page: leaderboard_param_page)

@@ -1,12 +1,13 @@
-//= require jquery.min
-//= require jquery-ui.min
 //= require prettify/prettify
-//= require_tree .
 //= require_tree ./prettify
 //= require_self
 
-$(document).ready(function() {
-  $(function() {
-    $("input:submit, .action").button();
-  });
-});
+function toggle(id) {
+  var el = document.getElementById(id)
+
+  if (el.style.display === 'block') {
+    el.style.display = 'none'
+  } else {
+    el.style.display = 'block'
+  }
+}

@@ -1,3 +1,4 @@
+require_relative '../services/leaderboard'
 require_relative '../repositories/repository_challenge'
 
 class ChallengesController < ApplicationController
@@ -69,13 +70,7 @@ class ChallengesController < ApplicationController
         @offset ||= 0
         @allowed ||= []
 
-        per_page = 30
-        leaderboard = RepositoryChallenge.paginate_leaderboard(challenge_id: challenge.id, per_page: per_page, page: leaderboard_param_page)
-        @leaderboard = add_position(leaderboard: leaderboard, per_page: per_page, page: leaderboard_param_page)
-        @paginatable_leaderboard = Kaminari
-          .paginate_array([], total_count: user_ids.count)
-          .page(leaderboard_param_page)
-          .per(per_page)
+        @leaderboard = Leaderboard.new(challenge, params['leaderboard_page'])
       }
     end
   end
@@ -104,13 +99,4 @@ class ChallengesController < ApplicationController
     }
   end
 
-  def leaderboard_param_page
-    (params['leaderboard_page'] || 1).to_i
-  end
-
-  def add_position(leaderboard:, per_page:, page:)
-    leaderboard.each_with_index.map do |entry, idx|
-      entry.merge(position: per_page * (page-1) + idx + 1)
-    end
-  end
 end

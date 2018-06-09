@@ -1,5 +1,5 @@
+require_relative '../services/show_challenge'
 require_relative '../services/leaderboard'
-require_relative '../repositories/repository_challenge'
 
 class ChallengesController < ApplicationController
 
@@ -61,15 +61,7 @@ class ChallengesController < ApplicationController
       format.json { render :json => json_show(challenge_id) }
 
       format.html {
-        # TODO, there is a better way to do this...
-        @challenge = Challenge.find(challenge_id)
-        user_ids = RepositoryChallenge.uniq_users(challenge.id).map {|c| c[:_id] }
-        @users = User.where(:_id.in => user_ids).inject({}) {|h,u| h[u.id] = u; h}
-
-        @allowed, @offset = @challenge.allowed_entries(current_user)
-        @offset ||= 0
-        @allowed ||= []
-
+        @show_challenge = ShowChallenge.new(challenge.id)
         @leaderboard = Leaderboard.new(challenge, params['leaderboard_page'])
       }
     end

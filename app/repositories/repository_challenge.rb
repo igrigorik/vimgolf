@@ -174,16 +174,60 @@ module RepositoryChallenge
     )
   end
 
-  def self.uniq_users(challenge_id)
+  # Count number of uniq user per challenge
+  #
+  # bad practice to use distinct + length on big collection because
+  # it loads a big array:
+  # Challenge.collection.distinct('entries.user_id').length
+  #
+  # Example:
+  # RepositoryChallenge.count_uniq_users(challenge_id).to_a
+  # => [{"_id"=>1, "count_users"=>1266}]
+  def self.count_uniq_users(challenge_id)
     collection_aggregate(
       { "$match" => { "_id" => challenge_id } },
       { "$unwind": "$entries" },
-      { '$replaceRoot': { newRoot: "$entries" } },
+      { '$group': { "_id" => '$entries.user_id' } },
       {
         '$group': {
-          "_id" => '$user_id',
+          "_id" => 1,
+          "count_users" => { "$sum" => 1 },
         }
       },
+    )
+  end
+
+  # Load specific fields for page 'show' without loading ALL entries
+  #
+  # Example:
+  # RepositoryChallenge.show_challenge(challenge_id).to_a
+  # => [{"_id"=>BSON::ObjectId('5b1c53666e9552257783d43f'),
+  # "title"=>"a title",
+  # "description"=>"a description",
+  # "diff"=>"diff",
+  # "input"=>"input",
+  # "output"=>"output",
+  # "user_id"=>BSON::ObjectId('5b1c53656e9552257783c146'),
+  # "count_entries"=>2000}]
+  def self.show_challenge(challenge_id)
+    collection_aggregate(
+      [
+        { "$match" => { "_id" => challenge_id } },
+        {
+          '$project': {
+            "_id" => 1,
+            "user_id" => 1,
+            "title" => 1,
+            "description" => 1,
+            "input" => 1,
+            "output" => 1,
+            "diff" => 1,
+            "count_entries" => {
+              "$size" =>  { "$ifNull": [ "$entries", [] ] }
+            },
+          }
+        },
+      ]
     )
   end
 

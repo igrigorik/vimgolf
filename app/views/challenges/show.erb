@@ -24,15 +24,7 @@
     <div class="note clearfix">Unlock <b><%= @show_challenge.count_remaining_solution %></b> remaining solutions by submitting a higher ranked entry</div>
 <% end %>
 
-<% [].each_with_index do |entry, index| %>
-     <%=  render :partial => "shared/entry", :locals => {
-            :user => @users[entry.user_id],
-            :entry => entry,
-            :challenge => @challenge,
-            :offset => @offset + index
-        }
-      %>
-<% end %>
+  <%= render :partial => "shared/entries", :locals => { solutions: @solutions } %>
 
 </div>
 

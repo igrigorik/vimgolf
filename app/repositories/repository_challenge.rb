@@ -174,6 +174,35 @@ module RepositoryChallenge
     )
   end
 
+  def self.best_solution_per_user(challenge_id)
+    [
+      { "$match" => { "_id" => challenge_id } },
+      { "$unwind": "$entries" },
+      { '$replaceRoot': { newRoot: "$entries" } },
+      # sort needed so { "$first" => '$created_at' }
+      # can return the right created_at
+      { "$sort" => { "score" => 1, "created_at" => 1 } },
+      {
+        '$group': {
+          "_id" => '$user_id',
+          "entry_id" => { "$first" => '$_id' },
+          "user_id" => { "$first" => '$user_id' },
+          "created_at" => { "$first" => '$created_at' },
+          "script" => { "$first" => '$script' },
+          "comments" => { "$first" => '$comments' },
+          "score" => { "$first" => '$score'}
+        }
+      },
+      { "$sort" => { "score" => 1, "created_at" => 1 } },
+    ]
+  end
+
+  def self.solutions(challenge_id:)
+    collection_aggregate(
+      best_solution_per_user(challenge_id),
+    )
+  end
+
   # Count number of uniq user per challenge
   #
   # bad practice to use distinct + length on big collection because

@@ -35,7 +35,8 @@ class Leaderboard
   end
 
   def count_uniq_user
-    Challenge.where(id: challenge.id).distinct('entries.user_id').count
+    result = RepositoryChallenge.count_uniq_users(challenge.id).to_a.first || { count_users: 0 }
+    result[:count_users]
   end
 
 end

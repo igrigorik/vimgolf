@@ -63,7 +63,7 @@ class ChallengesController < ApplicationController
 
       format.html {
         @show_challenge = ShowChallenge.new(challenge.id)
-        @solutions = Solutions.new(current_user, challenge.id)
+        @solutions = Solutions.new(current_user, challenge.id, params['solutions_page'])
         @leaderboard = Leaderboard.new(challenge, params['leaderboard_page'])
       }
     end

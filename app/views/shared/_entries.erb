@@ -2,7 +2,7 @@
   <div class="<%= solution.owner?(current_user) ? "note" : "success" %> clearfix">
 
   <h6 style="margin-bottom:0.5em">
-        <a class="anchor" href="#<%= solution.id %>" name="<%= solution.id %>"><b>#<%= solution.offset %></b></a>
+        <a class="anchor" href="#<%= solution.id %>" name="<%= solution.id %>"><b>#<%= solution.position %></b></a>
         <%= solution.user.name %> / <%= solution.user.nickname %> -
         <b>Score: <%= solution.score %></b> -
         <span style="font-size:0.9em"><%= solution.created_at.strftime("%m/%d/%y @ %H:%M") %></span>
@@ -38,3 +38,5 @@
 
   </div>
 <% end %>
+
+<%= paginate solutions.paginated, inner_window: 20, param_name: :solutions_page %>

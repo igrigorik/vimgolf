@@ -1,11 +1,11 @@
 class Solution
 
-  def initialize(solution, users, index)
+  def initialize(solution, users, position)
     @solution = solution
     @users = users
-    @index = index
+    @position = position
   end
-  attr_reader :solution, :index
+  attr_reader :solution, :position
 
   def id
     solution[:entry_id]
@@ -29,10 +29,6 @@ class Solution
 
   def owner?(player)
     player && player.id === solution[:user_id]
-  end
-
-  def offset
-    index + 1
   end
 
   def user

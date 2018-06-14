@@ -197,9 +197,10 @@ module RepositoryChallenge
     ]
   end
 
-  def self.solutions(challenge_id:)
+  def self.solutions(challenge_id:, per_page:, page:)
     collection_aggregate(
       best_solution_per_user(challenge_id),
+      paginate(per_page: per_page, page: page)
     )
   end
 

@@ -11,7 +11,7 @@ class ShowChallenge
   end
 
   def raw_challenge
-    @raw_challenge ||= RepositoryChallenge.show_challenge(@challenge_id).to_a.first
+    @raw_challenge ||= RepositoryChallenge.show_challenge(@challenge_id).first
   end
 
   def challenge
@@ -34,7 +34,7 @@ class ShowChallenge
   end
 
   def uniq_users_size
-    result = RepositoryChallenge.count_uniq_users(@challenge_id).to_a.first || { count_users: 0 }
+    result = RepositoryChallenge.count_uniq_users(@challenge_id).first || { count_users: 0 }
     result[:count_users]
   end
 

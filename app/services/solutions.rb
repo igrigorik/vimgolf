@@ -57,7 +57,7 @@ class Solutions
   end
 
   def count_uniq_user
-    result = RepositoryChallenge.count_uniq_users(challenge_id).to_a.first || { count_users: 0 }
+    result = RepositoryChallenge.count_uniq_users(challenge_id).first || { count_users: 0 }
     result[:count_users]
   end
 end

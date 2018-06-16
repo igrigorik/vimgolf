@@ -35,7 +35,7 @@ class Leaderboard
   end
 
   def count_uniq_user
-    result = RepositoryChallenge.count_uniq_users(challenge.id).to_a.first || { count_users: 0 }
+    result = RepositoryChallenge.count_uniq_users(challenge.id).first || { count_users: 0 }
     result[:count_users]
   end
 

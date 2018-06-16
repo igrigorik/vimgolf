@@ -38,9 +38,4 @@ class ShowChallenge
     result[:count_users]
   end
 
-  # TODO ; implement  this
-  def count_remaining_solution
-    1000
-  end
-
 end

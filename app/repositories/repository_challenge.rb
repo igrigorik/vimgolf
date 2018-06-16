@@ -174,11 +174,12 @@ module RepositoryChallenge
     )
   end
 
-  def self.best_solution_per_user(challenge_id)
+  def self.best_solution_per_user(challenge_id, min_score)
     [
       { "$match" => { "_id" => challenge_id } },
       { "$unwind": "$entries" },
       { '$replaceRoot': { newRoot: "$entries" } },
+      { "$match" => { "score" => { "$gte" => min_score } } },
       # sort needed so { "$first" => '$created_at' }
       # can return the right created_at
       { "$sort" => { "score" => 1, "created_at" => 1 } },
@@ -197,9 +198,44 @@ module RepositoryChallenge
     ]
   end
 
-  def self.solutions(challenge_id:, per_page:, page:)
+  def self.worst_score(challenge_id)
+    result = collection_aggregate(
+      { "$match" => { "_id" => challenge_id } },
+      { "$unwind": "$entries" },
+      { '$group': { "_id" => '$entries.score', } },
+      { "$sort" => { "_id" => -1 } },
+      { "$limit" => 1 },
+    ).first
+    result && result['_id']
+  end
+
+  def self.bellow_score(challenge_id, score)
+    result = collection_aggregate(
+      { "$match" => { "_id" => challenge_id } },
+      { "$unwind": "$entries" },
+      { '$group': { "_id" => '$entries.score', } },
+      { "$match" => { "_id" => { '$lt' => score } } },
+      { "$sort" => { "_id" => -1 } },
+      { "$limit" => 1 },
+    ).first
+    result && result['_id']
+  end
+
+  def self.best_player_score(challenge_id, player_id)
+    result = collection_aggregate(
+      { "$match" => { "_id" => challenge_id } },
+      { "$unwind": "$entries" },
+      { "$match" => { "entries.user_id" => player_id } },
+      { '$group': { "_id" => '$entries.score', } },
+      { "$sort" => { "_id" => 1 } },
+      { "$limit" => 1 },
+    ).first
+    result && result['_id']
+  end
+
+  def self.solutions(challenge_id:, min_score:, per_page:, page:)
     collection_aggregate(
-      best_solution_per_user(challenge_id),
+      best_solution_per_user(challenge_id, min_score),
       paginate(per_page: per_page, page: page)
     )
   end

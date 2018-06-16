@@ -31,7 +31,37 @@ class Solutions
   end
 
   def solutions
-    @solutions ||= RepositoryChallenge.solutions(challenge_id: challenge_id, per_page: PER_PAGE, page: page)
+    @solutions ||= RepositoryChallenge.solutions(
+      challenge_id: challenge_id,
+      min_score: reveal_score,
+      per_page: PER_PAGE,
+      page: page
+    )
+  end
+
+  def reveal_score
+    @reveal_score ||= if !player
+                        worst_score
+                      elsif player.admin? || creator?
+                        0
+                      else
+                        bellow_player_score
+                      end
+  end
+
+  def worst_score
+    RepositoryChallenge.worst_score(challenge_id)
+  end
+
+  def bellow_player_score
+    score = RepositoryChallenge.best_player_score(challenge_id, player.id)
+    if score
+      # if it is the best score, bellow_score is nil, so need to return 0
+      RepositoryChallenge.bellow_score(challenge_id, score) || 0
+    else
+      # worst_score in case player has never played
+      worst_score
+    end
   end
 
   def user_id
@@ -60,4 +90,9 @@ class Solutions
     result = RepositoryChallenge.count_uniq_users(challenge_id).first || { count_users: 0 }
     result[:count_users]
   end
+
+  def count_remaining
+    return 9999999
+  end
+
 end

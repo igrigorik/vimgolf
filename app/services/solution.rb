@@ -12,7 +12,7 @@ class Solution
   end
 
   def score
-    solution[:score]
+    solution[:min_score]
   end
 
   def script

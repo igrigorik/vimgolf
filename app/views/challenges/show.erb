@@ -42,7 +42,7 @@
     </h5>
 
     <h2 style="padding-bottom:1em; border-bottom: 1px dotted;">
-        <b class="stat"><%= @show_challenge.uniq_users_size %></b> active golfers, <b class="stat"><%= @show_challenge.count_entries %></b> entries
+        <b class="stat"><%= @show_challenge.count_uniq_users %></b> active golfers, <b class="stat"><%= @show_challenge.count_entries %></b> entries
     </h2>
 
     <% if @show_challenge.owner?(current_user) %>

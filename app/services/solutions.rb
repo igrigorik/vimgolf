@@ -15,7 +15,7 @@ class Solutions
   attr_reader :page
 
   def each
-    position = PER_PAGE * (page-1) + 1
+    position = PER_PAGE * (page-1) + count_remaining + 1
 
     solutions.each_with_index do |s, i|
       yield Solution.new(s, users, position + i)
@@ -33,35 +33,34 @@ class Solutions
   def solutions
     @solutions ||= RepositoryChallenge.solutions(
       challenge_id: challenge_id,
-      min_score: reveal_score,
+      min_score: visible_score,
       per_page: PER_PAGE,
       page: page
     )
   end
 
-  def reveal_score
-    @reveal_score ||= if !player
-                        worst_score
-                      elsif player.admin? || creator?
-                        0
-                      else
-                        bellow_player_score
-                      end
-  end
-
-  def worst_score
-    RepositoryChallenge.worst_score(challenge_id)
+  def visible_score
+    @visible_score ||= if !player
+                         worst_score
+                       elsif player.admin? || creator?
+                         0
+                       else
+                         bellow_player_score
+                       end
   end
 
   def bellow_player_score
     score = RepositoryChallenge.best_player_score(challenge_id, player.id)
     if score
-      # if it is the best score, bellow_score is nil, so need to return 0
-      RepositoryChallenge.bellow_score(challenge_id, score) || 0
+      RepositoryChallenge.bellow_score(challenge_id, score)
     else
       # worst_score in case player has never played
       worst_score
     end
+  end
+
+  def worst_score
+    @worst_score ||= RepositoryChallenge.worst_score(challenge_id)
   end
 
   def user_id
@@ -74,25 +73,28 @@ class Solutions
 
   def player_can_edit?(solution)
     player && (
-       player.admin? || creator? || solution.owner?(player)
+      player.admin? || creator? || solution.owner?(player)
     )
   end
   alias :player_can_delete? :player_can_edit?
 
   def paginated
     Kaminari
-      .paginate_array([], total_count: count_uniq_user)
+      .paginate_array([], total_count: count_displayed)
       .page(page)
       .per(PER_PAGE)
   end
 
-  def count_uniq_user
-    result = RepositoryChallenge.count_uniq_users(challenge_id).first || { count_users: 0 }
-    result[:count_users]
+  def count_uniq_users
+    RepositoryChallenge.count_uniq_users(challenge_id)
   end
 
   def count_remaining
-    return 9999999
+    @count_remaining ||= RepositoryChallenge.count_remaining_solutions(challenge_id, visible_score)
+  end
+
+  def count_displayed
+    @count_displayed ||= RepositoryChallenge.count_displayed_solutions(challenge_id, visible_score)
   end
 
 end

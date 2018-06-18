@@ -29,14 +29,9 @@ class Leaderboard
 
   def paginated
     Kaminari
-      .paginate_array([], total_count: count_uniq_user)
+      .paginate_array([], total_count: RepositoryChallenge.count_uniq_users(challenge.id))
       .page(page)
       .per(PER_PAGE)
-  end
-
-  def count_uniq_user
-    result = RepositoryChallenge.count_uniq_users(challenge.id).first || { count_users: 0 }
-    result[:count_users]
   end
 
 end

@@ -15,9 +15,7 @@ class ShowChallenge
   end
 
   def challenge
-    @challenge ||= Challenge.new(raw_challenge.reject { |k, v|
-      ['count_entries'].include?(k)
-    })
+    @challenge ||= Challenge.new(raw_challenge.reject { |k, _v| k == 'count_entries' })
   end
 
   def_delegators :challenge, :id

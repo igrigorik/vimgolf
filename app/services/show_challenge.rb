@@ -11,7 +11,7 @@ class ShowChallenge
   end
 
   def raw_challenge
-    @raw_challenge ||= RepositoryChallenge.show_challenge(@challenge_id).first
+    @raw_challenge ||= RepositoryChallenge.show_challenge(@challenge_id)
   end
 
   def challenge

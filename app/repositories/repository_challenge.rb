@@ -201,7 +201,7 @@ module RepositoryChallenge
   # Still need to group by user in case a user has a worst score,
   # but not visible solution.
   #
-  # When it is the best score bellow_score return 0
+  # Return nil when no entries
   def self.worst_score(challenge_id)
     result = collection_aggregate(
       best_score_per_user(challenge_id),
@@ -294,9 +294,10 @@ module RepositoryChallenge
           },
         }
       }
-    )
+    ).first
   end
 
+  # Return number of solution that are less than visible_score
   def self.count_remaining_solutions(challenge_id, visible_score)
     sum_lines(
       best_score_per_user(challenge_id),
@@ -304,6 +305,7 @@ module RepositoryChallenge
     ) || 0
   end
 
+  # Return number of solution that are greater or equal than visible_score
   def self.count_displayed_solutions(challenge_id, visible_score)
     sum_lines(
       best_score_per_user(challenge_id),

@@ -1,7 +1,7 @@
 require_relative '../repositories/repository_challenge'
 require_relative './solution'
 
-class Solutions
+class Submissions
 
   PER_PAGE = 100
 
@@ -17,7 +17,7 @@ class Solutions
   def each
     position = PER_PAGE * (page-1) + count_remaining + 1
 
-    solutions.each_with_index do |s, i|
+    submissions.each_with_index do |s, i|
       yield Solution.new(s, users, position + i)
     end
   end
@@ -27,11 +27,11 @@ class Solutions
   end
 
   def user_ids
-    solutions.map {|c| c[:user_id] }
+    submissions.map {|c| c[:user_id] }
   end
 
-  def solutions
-    @solutions ||= RepositoryChallenge.solutions(
+  def submissions
+    @submissions ||= RepositoryChallenge.submissions(
       challenge_id: challenge_id,
       min_score: visible_score,
       per_page: PER_PAGE,

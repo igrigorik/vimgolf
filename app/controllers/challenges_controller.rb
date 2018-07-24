@@ -1,6 +1,6 @@
 require_relative '../services/show_challenge'
 require_relative '../services/leaderboard'
-require_relative '../services/solutions'
+require_relative '../services/submissions'
 
 class ChallengesController < ApplicationController
 
@@ -63,7 +63,7 @@ class ChallengesController < ApplicationController
 
       format.html {
         @show_challenge = ShowChallenge.new(challenge.id)
-        @solutions = Solutions.new(current_user, challenge.id, params['solutions_page'])
+        @submissions = Submissions.new(current_user, challenge.id, params['submissions_page'])
         @leaderboard = Leaderboard.new(challenge, params['leaderboard_page'])
       }
     end

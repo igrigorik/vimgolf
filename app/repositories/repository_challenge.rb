@@ -247,7 +247,7 @@ module RepositoryChallenge
     result && result['min_score']
   end
 
-  def self.solutions(challenge_id:, min_score:, per_page:, page:)
+  def self.submissions(challenge_id:, min_score:, per_page:, page:)
     collection_aggregate(
       best_score_per_user(challenge_id),
       { "$match": { "min_score": { "$gte": min_score } } },

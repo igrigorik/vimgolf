@@ -19,12 +19,12 @@
     <p>Check out <a href="/about#resources"> these helpful resources</a> to improve your Vim skills... <em>Game on.</em></p>
 
 <% if !current_user %>
-    <div class="note clearfix">Unlock <b><%= @solutions.count_remaining %></b> remaining solutions by <b><%= link_to "signing in", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></b> and submitting your own entry</div>
-  <% elsif @solutions.count_remaining > 0 %>
-    <div class="note clearfix">Unlock <b><%= @solutions.count_remaining %></b> remaining solutions by submitting a higher ranked entry</div>
+    <div class="note clearfix">Unlock <b><%= @submissions.count_remaining %></b> remaining solutions by <b><%= link_to "signing in", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></b> and submitting your own entry</div>
+  <% elsif @submissions.count_remaining > 0 %>
+    <div class="note clearfix">Unlock <b><%= @submissions.count_remaining %></b> remaining solutions by submitting a higher ranked entry</div>
 <% end %>
 
-  <%= render :partial => "shared/entries", :locals => { solutions: @solutions } %>
+  <%= render :partial => "shared/submissions", :locals => { submissions: @submissions } %>
 
 </div>
 

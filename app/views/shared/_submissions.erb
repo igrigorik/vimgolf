@@ -1,4 +1,4 @@
-<% @solutions.each do |solution, user, position| %>
+<% submissions.each do |solution, user, position| %>
   <div class="<%= solution.owner?(current_user) ? "note" : "success" %> clearfix">
 
   <h6 style="margin-bottom:0.5em">
@@ -20,18 +20,18 @@
   <b><%= pluralize solution.comments.size, 'comment' %></b>
   <% if current_user %>
     - <a href="" onclick="toggle('comments-<%= solution.id %>'); return false">
-    Comment <% if solutions.player_can_edit?(solution) %> / Edit <% end %>
+    Comment <% if submissions.player_can_edit?(solution) %> / Edit <% end %>
     </a>
   <% end %>
 </p>
 
 <div id="comments-<%= solution.id %>" class="comments">
-  <%= form_for :comment, :url => comment_entry_path(solutions.challenge_id, solution.id) do |f| %>
+  <%= form_for :comment, :url => comment_entry_path(submissions.challenge_id, solution.id) do |f| %>
     <%= f.text_area "text", :rows => 2, :class => :text, :style => 'width:98%' %><br/>
     <%= f.submit "Comment", class: 'action comment-button' %>
 
-    <% if solutions.player_can_delete?(solution) %>
-      <%= link_to "Delete Entry", delete_entry_path(solutions.challenge_id, solution.id), :class => 'action delete' %>
+    <% if submissions.player_can_delete?(solution) %>
+      <%= link_to "Delete Entry", delete_entry_path(submissions.challenge_id, solution.id), :class => 'action delete' %>
     <% end %>
   <% end %>
 </div>
@@ -39,4 +39,4 @@
   </div>
 <% end %>
 
-<%= paginate solutions.paginated, inner_window: 20, param_name: :solutions_page %>
+<%= paginate submissions.paginated, inner_window: 20, param_name: :submissions_page %>

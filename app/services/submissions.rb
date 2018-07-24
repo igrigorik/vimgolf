@@ -40,13 +40,15 @@ class Submissions
   end
 
   def visible_score
-    @visible_score ||= if !player
-                         worst_score
-                       elsif player.admin? || creator?
-                         0
-                       else
-                         bellow_player_score
-                       end
+    return @visible_score if defined?(@visible_score)
+
+    if !player
+      @visible_score = worst_score
+    elsif player.admin? || creator?
+      @visible_score = 0
+    else
+      @visible_score = bellow_player_score
+    end
   end
 
   def bellow_player_score

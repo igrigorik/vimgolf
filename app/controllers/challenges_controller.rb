@@ -1,4 +1,6 @@
-require_relative '../repositories/repository_challenge'
+require_relative '../services/show_challenge'
+require_relative '../services/leaderboard'
+require_relative '../services/submissions'
 
 class ChallengesController < ApplicationController
 
@@ -60,18 +62,9 @@ class ChallengesController < ApplicationController
       format.json { render :json => json_show(challenge_id) }
 
       format.html {
-        # TODO, there is a better way to do this...
-        @challenge = Challenge.find(challenge_id)
-        user_ids = RepositoryChallenge.uniq_users(challenge.id).map {|c| c[:_id] }
-        @users = User.where(:_id.in => user_ids).inject({}) {|h,u| h[u.id] = u; h}
-
-        per_page = 30
-        leaderboard = RepositoryChallenge.paginate_leaderboard(challenge_id: challenge.id, per_page: per_page, page: leaderboard_param_page)
-        @leaderboard = add_position(leaderboard: leaderboard, per_page: per_page, page: leaderboard_param_page)
-        @paginatable_leaderboard = Kaminari
-          .paginate_array([], total_count: user_ids.count)
-          .page(leaderboard_param_page)
-          .per(per_page)
+        @show_challenge = ShowChallenge.new(challenge.id)
+        @submissions = Submissions.new(current_user, challenge.id, params['submissions_page'])
+        @leaderboard = Leaderboard.new(challenge, params['leaderboard_page'])
       }
     end
   end
@@ -100,13 +93,4 @@ class ChallengesController < ApplicationController
     }
   end
 
-  def leaderboard_param_page
-    (params['leaderboard_page'] || 1).to_i
-  end
-
-  def add_position(leaderboard:, per_page:, page:)
-    leaderboard.each_with_index.map do |entry, idx|
-      entry.merge(position: per_page * (page-1) + idx + 1)
-    end
-  end
 end

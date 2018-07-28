@@ -171,12 +171,12 @@ describe RepositoryChallenge do
     end
   end
 
-  describe '.uniq_users(challenge_id)' do
+  describe '.count_uniq_users(challenge_id)' do
     context 'when there is no entries in challenge' do
       let(:challenge) { create(:challenge) }
 
-      it 'return empty array' do
-        expect(RepositoryChallenge.uniq_users(challenge.id).to_a).to eq([])
+      it 'return 0' do
+        expect(RepositoryChallenge.count_uniq_users(challenge.id)).to eq(0)
       end
     end
 
@@ -191,13 +191,210 @@ describe RepositoryChallenge do
         challenge.entries << other_entry
       end
 
-      it 'return one score' do
-        result = RepositoryChallenge.uniq_users(challenge.id).to_a
-        expect(result.length).to eq(1)
-        expect(result.first[:_id]).to eq(user.id)
+      it 'return number of distinct users' do
+        result = RepositoryChallenge.count_uniq_users(challenge.id)
+        expect(result).to eq(1)
       end
     end
 
   end
 
+  describe '.sum_lines(*args)' do
+    context 'when there is no results' do
+      it 'return nil' do
+        query = { "$match": { "_id": "xxx" } }
+        expect(RepositoryChallenge.sum_lines(query)).to eq(nil)
+      end
+    end
+
+    context 'when there is some result' do
+      before do
+        10.times do
+          create(:challenge)
+        end
+      end
+
+      it 'return sum of result' do
+        query = { "$project": { "_id": 1 } }
+        expect(RepositoryChallenge.sum_lines(query)).to eq(10)
+      end
+    end
+
+  end
+
+  describe '.worst_score(challenge_id)' do
+    context 'when there is no entries in challenge' do
+      let(:challenge) { create(:challenge) }
+
+      it 'return nil' do
+        expect(RepositoryChallenge.worst_score(challenge.id)).to eq(nil)
+      end
+    end
+
+    context 'when there is entries in challenge' do
+      let(:user) { create(:user) }
+      let(:challenge) { create(:challenge) }
+
+      before do
+        challenge.entries <<  build(:entry, user: user, score: 8, created_at: Time.new(2018,03,28))
+        challenge.entries <<  build(:entry, user: user, score: 11, created_at: Time.new(2018,04,30))
+      end
+
+      it 'return the worst VISIBLE score (here, 11 will never be visible)' do
+        result = RepositoryChallenge.worst_score(challenge.id)
+        expect(result).to eq(8)
+      end
+    end
+
+  end
+
+  describe '.bellow_score(challenge_id, score)' do
+    context 'when there is no entries in challenge' do
+      let(:challenge) { create(:challenge) }
+
+      it 'return 0' do
+        expect(RepositoryChallenge.bellow_score(challenge.id, 100)).to eq(0)
+      end
+    end
+
+    context 'when there is entries in challenge' do
+      let(:userA) { create(:user) }
+      let(:userB) { create(:user) }
+      let(:userC) { create(:user) }
+      let(:challenge) { create(:challenge) }
+
+      before do
+        challenge.entries <<  build(:entry, user: userA, score: 1, created_at: Time.new(2018,03,28))
+        challenge.entries <<  build(:entry, user: userA, score: 2, created_at: Time.new(2018,04,30))
+
+        challenge.entries <<  build(:entry, user: userB, score: 2, created_at: Time.new(2018,03,28))
+        challenge.entries <<  build(:entry, user: userB, score: 9, created_at: Time.new(2018,04,30))
+
+        challenge.entries <<  build(:entry, user: userC, score: 10, created_at: Time.new(2018,03,28))
+      end
+
+      it 'return the next VISIBLE score' do
+        result = RepositoryChallenge.bellow_score(challenge.id, 10)
+        expect(result).to eq(2)
+      end
+    end
+
+  end
+
+  describe '.best_player_score(challenge_id, user_id)' do
+    context 'when there is no entries in challenge' do
+      let(:challenge) { create(:challenge) }
+      let(:user) { create(:user) }
+
+      it 'return nil' do
+        expect(RepositoryChallenge.best_player_score(challenge.id, user.id)).to eq(nil)
+      end
+    end
+
+    context 'when there is entries in challenge' do
+      let(:user) { create(:user) }
+      let(:challenge) { create(:challenge) }
+
+      before do
+        challenge.entries <<  build(:entry, user: user, score: 2, created_at: Time.new(2018,03,28))
+        challenge.entries <<  build(:entry, user: user, score: 9, created_at: Time.new(2018,04,30))
+      end
+
+      it 'return the next VISIBLE score' do
+        result = RepositoryChallenge.best_player_score(challenge.id, user.id)
+        expect(result).to eq(2)
+      end
+    end
+
+  end
+
+  describe '.show_challenge(challenge_id)' do
+    let(:challenge) { create(:challenge) }
+
+    it 'return special fields' do
+      result = RepositoryChallenge.show_challenge(challenge.id)
+      expect(result.keys.sort).to eq(["_id", "count_entries", "description", "diff", "input", "output", "title", "user_id"])
+      expect(result['count_entries']).to eq(0)
+    end
+
+    context 'when there is no entries in challenge' do
+      let(:challenge) { create(:challenge) }
+
+      it 'return count_entries at 0' do
+        result = RepositoryChallenge.show_challenge(challenge.id)
+        expect(result['count_entries']).to eq(0)
+      end
+    end
+
+    context 'when there is entries in challenge' do
+      let(:user) { create(:user) }
+      let(:challenge) { create(:challenge) }
+
+      before do
+        challenge.entries <<  build(:entry, user: user, score: 2, created_at: Time.new(2018,03,28))
+        challenge.entries <<  build(:entry, user: user, score: 9, created_at: Time.new(2018,04,30))
+      end
+
+      it 'count_entries sum ALL entries' do
+        result = RepositoryChallenge.show_challenge(challenge.id)
+        expect(result['count_entries']).to eq(2)
+      end
+    end
+  end
+
+  describe '.count_remaining_solutions(challenge_id, user_id)' do
+    context 'when there is no entries in challenge' do
+      let(:challenge) { create(:challenge) }
+
+      it 'return 0' do
+        expect(RepositoryChallenge.count_remaining_solutions(challenge.id, 40)).to eq(0)
+      end
+    end
+
+    context 'when there is entries in challenge' do
+      let(:user) { create(:user) }
+      let(:user2) { create(:user) }
+      let(:challenge) { create(:challenge) }
+
+      before do
+        challenge.entries <<  build(:entry, user: user, score: 2, created_at: Time.new(2018,03,28))
+        challenge.entries <<  build(:entry, user: user, score: 9, created_at: Time.new(2018,04,30))
+        challenge.entries <<  build(:entry, user: user2, score: 10, created_at: Time.new(2018,04,30))
+      end
+
+      it 'return the sum of VISIBLE solution, here "2" because it is grouped by user' do
+        result = RepositoryChallenge.count_remaining_solutions(challenge.id, 11)
+        expect(result).to eq(2)
+      end
+    end
+
+  end
+
+  describe '.count_displayed_solutions(challenge_id, user_id)' do
+    context 'when there is no entries in challenge' do
+      let(:challenge) { create(:challenge) }
+
+      it 'return 0' do
+        expect(RepositoryChallenge.count_displayed_solutions(challenge.id, 0)).to eq(0)
+      end
+    end
+
+    context 'when there is entries in challenge' do
+      let(:user) { create(:user) }
+      let(:user2) { create(:user) }
+      let(:challenge) { create(:challenge) }
+
+      before do
+        challenge.entries <<  build(:entry, user: user, score: 2, created_at: Time.new(2018,03,28))
+        challenge.entries <<  build(:entry, user: user, score: 9, created_at: Time.new(2018,04,30))
+        challenge.entries <<  build(:entry, user: user2, score: 10, created_at: Time.new(2018,04,30))
+      end
+
+      it 'return the sum of VISIBLE solution, here "2" because it is grouped by user' do
+        result = RepositoryChallenge.count_displayed_solutions(challenge.id, 2)
+        expect(result).to eq(2)
+      end
+    end
+
+  end
 end

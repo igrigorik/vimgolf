@@ -171,6 +171,18 @@ docker logs -f my-mongo-dev
 tail -f log/development.log
 ```
 
+To see mongodb query :
+```
+# log to database
+docker exec -it mongo-3.6 mongo 127.0.0.1/vimgolf_development -u vimgolf_development -p vimgolf_development --authenticationDatabase vimgolf_development
+
+# Change profile level
+db.setProfilingLevel(2)
+
+# Call this after any query to get the last query
+db.system.profile.find().pretty()
+```
+
 ## Troubleshooting
 
 ### Cannot sign in with twitter

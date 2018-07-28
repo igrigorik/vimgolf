@@ -15,7 +15,7 @@ module RepositoryChallenge
   # see http://api.mongodb.com/ruby/current/Mongo/Collection/View/Aggregation.html
   #
   # Example :
-  # RepositoryChallenge.collection_aggregate({"$count" => 'challenge_count'}).to_a
+  # RepositoryChallenge.collection_aggregate({"$count": 'challenge_count'}).to_a
   # => [{"challenge_count"=>102}]
   def self.collection_aggregate(*args)
     Challenge.collection.aggregate(args.flatten)
@@ -42,11 +42,11 @@ module RepositoryChallenge
   # => [{"_id"=>nil, "count_entries"=>45000}]
   def self.count_entries_query
     collection_aggregate({
-      "$group" => {
-        "_id" => nil,
-        "count_entries" => {
-          "$sum" => {
-            "$size" =>  { "$ifNull": [ "$entries", [] ] }
+      "$group": {
+        "_id": nil,
+        "count_entries": {
+          "$sum": {
+            "$size":  { "$ifNull": [ "$entries", [] ] }
           },
         },
       },
@@ -95,27 +95,27 @@ module RepositoryChallenge
   def self.score_query
     [
       {
-        "$project" => {
-          "_id" => 1,
-          "title" => 1,
-          "description" => 1,
-          "created_at" => 1,
-          "count_entries" => {
-            "$size" =>  { "$ifNull": [ "$entries", [] ] }
+        "$project": {
+          "_id": 1,
+          "title": 1,
+          "description": 1,
+          "created_at": 1,
+          "count_entries": {
+            "$size":  { "$ifNull": [ "$entries", [] ] }
           }
         },
       },
       {
-        "$addFields" => {
-          "score" => {
-            "$divide" => [
+        "$addFields": {
+          "score": {
+            "$divide": [
               "$count_entries",
-              { "$subtract" => [Time.now, "$created_at"] }
+              { "$subtract": [Time.now, "$created_at"] }
             ]
           }
         }
       },
-      { "$sort" => { 'score' => -1 } },
+      { "$sort": { "score": -1 } },
     ]
   end
 
@@ -134,8 +134,8 @@ module RepositoryChallenge
   # ]
   def self.paginate(per_page:, page:)
     [
-      { "$skip" => (per_page * (page-1))  },
-      { "$limit" => per_page },
+      { "$skip": (per_page * (page-1))  },
+      { "$limit": per_page },
     ]
   end
 
@@ -146,25 +146,48 @@ module RepositoryChallenge
     )
   end
 
+  # Reference query
   def self.best_score_per_user(challenge_id)
     [
-      { "$match" => { "_id" => challenge_id } },
+      { "$match": { "_id": challenge_id } },
       { "$unwind": "$entries" },
-      { '$replaceRoot': { newRoot: "$entries" } },
-      # sort needed so { "$first" => '$created_at' }
-      # can return the right created_at
-      { "$sort" => { "score" => 1, "created_at" => 1 } },
+      # sort needed so all { "$first": key }
+      # can return the right value associated to the min score
+      { "$sort": { "entries.score": 1, "entries.created_at": 1 } },
       {
         '$group': {
-          "_id" => '$user_id',
-          "entry_id" => { "$first" => '$_id' },
-          "user_id" => { "$first" => '$user_id' },
-          "created_at" => { "$first" => '$created_at' },
-          "min_score" => { "$min" => '$score'}
+          "_id": '$entries.user_id',
+          "entry_id": { "$first": '$entries._id' },
+          "user_id": { "$first": '$entries.user_id' },
+          "created_at": { "$first": '$entries.created_at' },
+          "script": { "$first": '$entries.script' },
+          "comments": { "$first": '$entries.comments' },
+          "min_score": { "$min": '$entries.score'}
         }
       },
-      { "$sort" => { "min_score" => 1, "created_at" => 1 } },
+      { "$sort": { "min_score": 1, "created_at": 1 } },
     ]
+  end
+
+  # For any given query, return the number of entries
+  # return nil when no entries
+  #
+  # Note: do not use distinct + length on big collection
+  # because it loads a big array. prefere 'sum'
+  # Example to avoid :
+  # Challenge.collection.distinct('entries.user_id').length
+  def self.sum_lines(*args)
+    result = collection_aggregate(
+      args.concat([
+        {
+          '$group': {
+            "_id": 1,
+            "sum_lines": { "$sum": 1 },
+          }
+        }
+      ]),
+    ).first
+    result && result['sum_lines']
   end
 
   def self.paginate_leaderboard(challenge_id:, per_page:, page:)
@@ -174,17 +197,120 @@ module RepositoryChallenge
     )
   end
 
-  def self.uniq_users(challenge_id)
+  # Return the worst score for a given challenge
+  # Still need to group by user in case a user has a worst score,
+  # but not visible solution.
+  #
+  # Return nil when no entries
+  def self.worst_score(challenge_id)
+    result = collection_aggregate(
+      best_score_per_user(challenge_id),
+      { "$sort": { "min_score": -1 } },
+      { "$limit": 1 },
+    ).first
+    result && result['min_score']
+  end
+
+  # Return the next lowest score bellow a given score
+  # Still need to group by user in case a user has a bellow
+  # score, but not visible solution.
+  #
+  # When it is the best score bellow_score return 0
+  #
+  # Example :
+  # Given list of scores per users(A, B, C)
+  # that looks likes A-1, A-2, B-2, B-9, C-10
+  # RepositoryChallenge.bellow_score(challenge_id, 10)
+  # => 2 # not 9, because the visible solution for B is 2
+  def self.bellow_score(challenge_id, score)
+    result = collection_aggregate(
+      best_score_per_user(challenge_id),
+      { "$match": { "min_score": { "$lt": score } } },
+      { "$sort": { "min_score": -1 } },
+      { "$limit": 1 },
+    ).first
+    result && result['min_score'] || 0
+  end
+
+  # Return the best score for a given user_id
+  # nil when player has never played
+  #
+  # Example:
+  # RepositoryChallenge.best_player_score(challenge_id, user_id).to_a
+  # => 123
+  def self.best_player_score(challenge_id, player_id)
+    result = collection_aggregate(
+      best_score_per_user(challenge_id),
+      { "$match": { "user_id": player_id } },
+      { "$limit": 1 },
+    ).first
+    result && result['min_score']
+  end
+
+  def self.submissions(challenge_id:, min_score:, per_page:, page:)
     collection_aggregate(
-      { "$match" => { "_id" => challenge_id } },
-      { "$unwind": "$entries" },
-      { '$replaceRoot': { newRoot: "$entries" } },
-      {
-        '$group': {
-          "_id" => '$user_id',
-        }
-      },
+      best_score_per_user(challenge_id),
+      { "$match": { "min_score": { "$gte": min_score } } },
+      { "$sort": { "min_score": 1, "created_at": 1 } },
+      paginate(per_page: per_page, page: page)
     )
+  end
+
+  # Count number of uniq user per challenge
+  #
+  # Example:
+  # RepositoryChallenge.count_uniq_users(challenge_id)
+  # => 1266
+  def self.count_uniq_users(challenge_id)
+    sum_lines(best_score_per_user(challenge_id)) || 0
+  end
+
+  # Load specific fields for page 'show' without loading ALL entries
+  #
+  # Example:
+  # RepositoryChallenge.show_challenge(challenge_id).to_a
+  # => [{"_id"=>BSON::ObjectId('5b1c53666e9552257783d43f'),
+  # "title"=>"a title",
+  # "description"=>"a description",
+  # "diff"=>"diff",
+  # "input"=>"input",
+  # "output"=>"output",
+  # "user_id"=>BSON::ObjectId('5b1c53656e9552257783c146'),
+  # "count_entries"=>2000}]
+  def self.show_challenge(challenge_id)
+    collection_aggregate(
+      { "$match": { "_id": challenge_id } },
+      {
+        '$project': {
+          "_id": 1,
+          "user_id": 1,
+          "title": 1,
+          "description": 1,
+          "input": 1,
+          "output": 1,
+          "diff": 1,
+          "count_entries": {
+            "$size":  { "$ifNull": [ "$entries", [] ] }
+          },
+        }
+      }
+    ).first
+  end
+
+  # Return number of solution that are less than visible_score
+  def self.count_remaining_solutions(challenge_id, visible_score)
+    sum_lines(
+      best_score_per_user(challenge_id),
+      { "$match": { "min_score": { "$lt": visible_score } } },
+    ) || 0
+  end
+
+  # Return number of solution that are greater or equal than visible_score
+  def self.count_displayed_solutions(challenge_id, visible_score)
+    sum_lines(
+      best_score_per_user(challenge_id),
+      { "$match": { "min_score": { "$gte": visible_score } } },
+    ) || 0
   end
 
 end

@@ -313,4 +313,20 @@ module RepositoryChallenge
     ) || 0
   end
 
+  def self.created_by(player_id)
+    collection_aggregate(
+      { "$match": { "user_id": player_id } },
+      {
+        "$project": {
+          "_id": 1,
+          "title": 1,
+          "description": 1,
+          "count_entries": {
+            "$size":  { "$ifNull": [ "$entries", [] ] }
+          }
+        },
+      }
+    )
+  end
+
 end

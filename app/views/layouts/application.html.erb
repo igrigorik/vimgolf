@@ -28,7 +28,7 @@
     <div id="navigation">
       <ul id="nav">
         <% if current_user %>
-            <li>Welcome <b><%= current_user.nickname %></b></li>
+            <li>Welcome <b><%= profile_link(current_user.nickname) %></b></li>
             <li><%= link_to "Submit challenge", new_challenge_path %></li>
             <li><%= link_to "Sign out", signout_path %></li>
         <% else %>

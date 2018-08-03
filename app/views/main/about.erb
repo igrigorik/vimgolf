@@ -1,7 +1,8 @@
 <div class="grid_7">
 
-    <h3><b>Changelog</b></h3>
+    <h3><b>Changelog</b> <a href="https://github.com/igrigorik/vimgolf/commits/master">(details)</a></h3>
     <ul>
+        <li><b>Jul 07, 2018</b>: site performance improvements: pagination/remove jquery</li>
         <li><b>Dec 28, 2016</b>: disabled user profile pages (<a href="https://github.com/igrigorik/vimgolf/issues/150">bug</a>)</li>
         <li><b>Jan 18, 2015</b>: shipped v0.4.8 with windows bugfix</li>
         <li><b>Jan 18, 2015</b>: shipped v0.4.7 with new "local" CLI mode</li>
@@ -87,7 +88,7 @@
  <h3>Moderators</h3>
  <ul>
     <% ADMINS.each do |user| %>
-        <li><%= user %></li>
+        <li><%= profile_link(user) %></li>
     <% end %>
  </ul>
 

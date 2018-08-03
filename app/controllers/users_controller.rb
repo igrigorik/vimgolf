@@ -1,17 +1,12 @@
+require_relative '../repositories/repository_challenge'
+
 class UsersController < ApplicationController
 
   def show
     @user = User.where(nickname: params[:username]).first
     return redirect_to root_path if @user.nil?
 
-    @contributed  = Challenge.where('user_id' => @user.id)
-          .only('entries.user_id', 'entries.score', :title).all.to_a
-    @participated = Challenge.where('entries.user_id' => @user.id)
-          .only('entries.user_id', 'entries.score', :title).all.to_a
-
-    @entries = @participated.map do |c|
-      c.top_entries.select {|c| c.user_id == @user.id }
-    end.flatten.compact.sort_by {|e| e.challenge.top_entries.index(e)}
+    @contributed = RepositoryChallenge.created_by(@user.id).to_a
 
     respond_to do |format|
       format.html

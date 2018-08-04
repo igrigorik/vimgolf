@@ -29,7 +29,7 @@
 </div>
 
 <div class="grid_5">
-    <h5>Created by: <%= @show_challenge.user.nickname %>
+    <h5>Created by: <%= profile_link(@show_challenge.user.nickname) %>
         <span style="float:right">
             <%= tweet_button({
             :via => "",
@@ -62,7 +62,7 @@
                 <div style="float:right; text-align:center;font-size:2.4em"><b><%= entry[:min_score] %></b></div>
 
                 <h6 style="margin-bottom:0">
-                    <a class="anchor" href="#<%= entry[:entry_id] %>"><b>#<%= position %></b></a> - <%= user.name %> / <%= user.nickname %>
+                    <a class="anchor" href="#<%= entry[:entry_id] %>"><b>#<%= position %></b></a> - <%= user.name %> / <%= profile_link(user.nickname) %>
                 </h6>
                 <p style="margin-bottom:0"><em><%= entry[:created_at].strftime("%m/%d/%Y at %I:%M%p") %></em></p>
             </div>

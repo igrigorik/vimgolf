@@ -13,7 +13,7 @@ feature "Sign In" do
     click_link "Sign in with Twitter"
 
     expect(current_path).to eq(root_path)
-    expect(page).to have_text "Welcome the science guy"
+    expect(page).to have_text "Welcome @the science guy"
   end
 
   scenario "as an existing user" do
@@ -29,7 +29,7 @@ feature "Sign In" do
 
     click_link "Sign in with Twitter"
 
-    expect(page).to have_text "Welcome the science guy"
+    expect(page).to have_text "Welcome @the science guy"
     expect(user.reload.name).to eq("bill nye")
   end
 end

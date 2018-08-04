@@ -1,21 +1,8 @@
 <div class="grid_7">
-    <h3><b>Top Entries</b></h3>
-    <% @entries.each do |entry| %>
-        <div>
-            <h5 class="challenge">
-                <%= link_to entry.challenge.title, challenge_path(entry.challenge) %> -
-                Rank: <b class="stat"><%= entry.challenge.top_entries.index(entry) + 1 %>/<%= entry.challenge.entries.size %></b>,
-                Score: <b><%= entry.score %></b>
-            </h5>
-            <p><%= entry.challenge.description %>
-        </div>
-    <% end %>
 
-    <% if !@contributed.empty? %>
+    <% if @contributed.present? %>
         <h3><b>Contributed Challenges</b></h3>
-        <% @contributed.each do |c| %>
-            <%= render :partial => "shared/challenge", :locals => { :challenge => c } %>
-        <% end %>
+        <%= render partial: "shared/challenge", collection: @contributed, as: :challenge %>
     <% end %>
 
 </div>
@@ -30,6 +17,5 @@
         <p style="margin-bottom:0"><em><%= @user.description || @user.location %></em></p>
     </div>
 
-    <h2 style="padding:0em;margin:1em 1.5em 0.5em 1.5em">entered into <b class="stat"><%= @entries.size %></b> challenges</h2>
     <h2 style="padding:0em;margin:0.5em 1.5em">contributed <b class="stat"><%= @contributed.size %></b> challenges</h2>
 </div>

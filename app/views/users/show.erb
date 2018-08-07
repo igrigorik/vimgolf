@@ -1,21 +1,34 @@
 <div class="grid_7">
 
-    <% if @contributed.present? %>
+  <h3><b>Played Challenges</b></h3>
+    <% @show_profile.tried_challenges.each do |player_challenge| %>
+        <div>
+            <%= render partial: "shared/challenge", locals: { challenge: player_challenge } %>
+            <ul>
+              <li>Best score: <b><%= player_challenge['best_score'] %></b></li>
+              <li>Best player score: <b><%= player_challenge['best_player_score'] %></b></li>
+              <li>Number of attempts: <b><%= player_challenge['attempts'] %></b></li>
+            </ul>
+        </div>
+    <% end %>
+
+    <% if @show_profile.contributed.present? %>
         <h3><b>Contributed Challenges</b></h3>
-        <%= render partial: "shared/challenge", collection: @contributed, as: :challenge %>
+        <%= render partial: "shared/challenge", collection: @show_profile.contributed, as: :challenge %>
     <% end %>
 
 </div>
 
 <div class="grid_5">
-    <div class="notice clearfix">
-        <%= twitter_avatar @user.nickname %>
+  <div class="notice clearfix">
+    <%= twitter_avatar @show_profile.nickname %>
 
-        <h6 style="margin-bottom:0">
-            <b><%= @user.name %></b><br/>Twitter: <%= twitter_profile(@user.nickname) %>
-        </h6>
-        <p style="margin-bottom:0"><em><%= @user.description || @user.location %></em></p>
-    </div>
+    <h6 style="margin-bottom:0">
+      <b><%= @show_profile.name %></b><br/>Twitter: <%= twitter_profile(@show_profile.nickname) %>
+    </h6>
+    <p style="margin-bottom:0"><em><%= @show_profile.description || @show_profile.location %></em></p>
+  </div>
 
-    <h2 style="padding:0em;margin:0.5em 1.5em">contributed <b class="stat"><%= @contributed.size %></b> challenges</h2>
+  <h2 style="padding:0em;margin:1em 1.5em 0.5em 1.5em">entered into <b class="stat"><%= @show_profile.tried_challenges.size %></b> challenges</h2>
+  <h2 style="padding:0em;margin:0.5em 1.5em">contributed <b class="stat"><%= @show_profile.contributed.size %></b> challenges</h2>
 </div>

@@ -162,7 +162,7 @@ module RepositoryChallenge
           "created_at": { "$first": '$entries.created_at' },
           "script": { "$first": '$entries.script' },
           "comments": { "$first": '$entries.comments' },
-          "min_score": { "$min": '$entries.score'}
+          "min_score": { "$first": '$entries.score'}
         }
       },
       { "$sort": { "min_score": 1, "created_at": 1 } },
@@ -324,6 +324,40 @@ module RepositoryChallenge
           "count_entries": {
             "$size":  { "$ifNull": [ "$entries", [] ] }
           }
+        },
+      }
+    )
+  end
+
+  def self.player_best_scores(player_id)
+    collection_aggregate(
+      { "$match": { "entries.user_id": player_id } },
+      {
+        "$project": {
+          "_id": 1,
+          "title": 1,
+          "description": 1,
+          "entries": 1,
+          "count_entries": {
+            "$size":  { "$ifNull": [ "$entries", [] ] }
+          },
+          "best_score": {
+            "$min": "$entries.score"
+          },
+        }
+      },
+      { "$unwind": "$entries" },
+      { "$match": { "entries.user_id": player_id } },
+      { "$sort": { "entries.score": 1 } },
+      {
+        "$group": {
+          "_id": '$_id',
+          "title": { "$first": '$title'},
+          "description": { "$first": '$description'},
+          "count_entries": { "$first": '$count_entries'},
+          "best_score": { "$first": '$best_score'},
+          "best_player_score": { "$first": '$entries.score'},
+          "attempts": { "$sum":  1 }
         },
       }
     )

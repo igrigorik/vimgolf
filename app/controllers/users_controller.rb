@@ -1,12 +1,12 @@
-require_relative '../repositories/repository_challenge'
+require_relative '../services/show_profile'
 
 class UsersController < ApplicationController
 
   def show
-    @user = User.where(nickname: params[:username]).first
-    return redirect_to root_path if @user.nil?
+    user = User.where(nickname: params[:username]).first
+    return redirect_to root_path unless user
 
-    @contributed = RepositoryChallenge.created_by(@user.id).to_a
+    @show_profile = ShowProfile.new(user)
 
     respond_to do |format|
       format.html

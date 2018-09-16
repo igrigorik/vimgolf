@@ -11,8 +11,9 @@ class Challenge
   field :output, type: String
   field :output_type, type: String
 
-  belongs_to :user
+  belongs_to :user, index: true
   embeds_many :entries
+  index "entries.user_id" => 1
 
   validates_presence_of :title
   validates_presence_of :description

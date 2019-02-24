@@ -46,9 +46,6 @@ module VimGolf
     KC_1BYTE[0x0a] = "<NL>"
     KC_1BYTE[0x09] = "<Tab>"
 
-    # After this date, assume KE_SNIFF is removed
-    SNIFF_DATE = Time.utc(2016, 4)
-
     KC_MBYTE = Hash.new do |_h,k|
       '<' + k.bytes.map {|b| "%02x" % b}.join('-') + '>' # For missing keycodes
     end.update({
@@ -196,10 +193,7 @@ module VimGolf
       #"\xfd\x36" => "KE_TAB",
       #"\xfd\x37" => "KE_S_TAB_OLD",
 
-      # Vim 7.4.1433 removed KE_SNIFF. Unfortunately, this changed the
-      # offset of every keycode after it. Keycodes after this point should be
-      # accurate BEFORE that change.
-      #"\xfd\x38" => "KE_SNIFF",
+      #"\xfd\x38" => "KE_SNIFF_UNUSED",
       #"\xfd\x39" => "KE_XF1",
       #"\xfd\x3a" => "KE_XF2",
       #"\xfd\x3b" => "KE_XF3",

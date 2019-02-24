@@ -28,6 +28,10 @@ module VimGolf
         n = c.ord
         if n == 0x80
           b2, b3 = scanner.get_byte, scanner.get_byte
+          if b2 == "\xfd" && b3 >= "\x38" && @time > SNIFF_DATE
+            # Should we account for KE_SNIFF removal?
+            b3 = (b3.ord + 1).chr
+          end
           code = KC_MBYTE[b2+b3]
           yield code if code # ignore "nil" keystrokes (like window focus)
         else

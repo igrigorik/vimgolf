@@ -28,7 +28,7 @@ module VimGolf
         n = c.ord
         if n == 0x80
           b2, b3 = scanner.get_byte, scanner.get_byte
-          if b2 == "\xfd" && b3 >= "\x38" && @time > SNIFF_DATE
+          if b2 == "\xfd" && b3 >= "\x38" && @time.between?(*NO_SNIFF_DATE_RANGE)
             # Should we account for KE_SNIFF removal?
             b3 = (b3.ord + 1).chr
           end
@@ -50,8 +50,8 @@ module VimGolf
     KC_1BYTE[0x0a] = "<NL>"
     KC_1BYTE[0x09] = "<Tab>"
 
-    # After this date, assume KE_SNIFF is removed
-    SNIFF_DATE = Time.utc(2016, 4)
+    # Between these dates, assume KE_SNIFF is removed.
+    NO_SNIFF_DATE_RANGE = [Time.utc(2016, 4), Time.utc(2017, 7)]
 
     KC_MBYTE = Hash.new do |_h,k|
       '<' + k.bytes.map {|b| "%02x" % b}.join('-') + '>' # For missing keycodes
@@ -201,8 +201,11 @@ module VimGolf
       #"\xfd\x37" => "KE_S_TAB_OLD",
 
       # Vim 7.4.1433 removed KE_SNIFF. Unfortunately, this changed the
-      # offset of every keycode after it. Keycodes after this point should be
-      # accurate BEFORE that change.
+      # offset of every keycode after it.
+      # Vim 8.0.0697 added back a KE_SNIFF_UNUSED to fill in for the
+      # removed KE_SNIFF.
+      # Keycodes after this point should be accurate for vim < 7.4.1433
+      # and vim > 8.0.0697.
       #"\xfd\x38" => "KE_SNIFF",
       #"\xfd\x39" => "KE_XF1",
       #"\xfd\x3a" => "KE_XF2",

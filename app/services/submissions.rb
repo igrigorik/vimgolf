@@ -66,7 +66,7 @@ class Submissions
   end
 
   def user_id
-    @user_id ||= Challenge.only(:user_id).find(challenge_id)
+    @user_id ||= Challenge.only(:user_id).find(challenge_id).user_id
   end
 
   def creator?

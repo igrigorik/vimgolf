@@ -197,7 +197,7 @@ OAuth::Unauthorized
 As a workaround, you can edit
 
 ```
-# app/controllers/ApplicationController.rb`
+# in app/controllers/application_controller.rb
 # replace
     @current_user ||= User.where(uid: session[:user]).first if session[:user]
 # with

@@ -4,7 +4,7 @@
   <h6 style="margin-bottom:0.5em">
         <a class="anchor" href="#<%= solution.id %>" name="<%= solution.id %>"><b>#<%= solution.position %></b></a>
         <%= solution.user.name %> / <%= profile_link(solution.user.nickname) %> -
-        <b>Score: <%= solution.score %></b> -
+        <b><%= link_to "Score: " + solution.score.to_s, user_challenge_path(submissions.challenge_id, solution.user.nickname) %></b>
         <span style="font-size:0.9em"><%= solution.created_at.strftime("%m/%d/%y @ %H:%M") %></span>
     </h6>
 

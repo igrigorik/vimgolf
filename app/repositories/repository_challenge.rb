@@ -169,6 +169,16 @@ module RepositoryChallenge
     ]
   end
 
+  def self.best_score_for_user(challenge_id, user)
+    [
+      { "$match": { "_id": challenge_id } },
+      { "$unwind": "$entries" },
+      { "$match": { "entries.user_id": user.id } },
+      { "$sort": { "entries.score": 1, "entries.created_at": 1 } },
+      { "$sort": { "min_score": 1, "created_at": 1 } },
+    ]
+  end
+
   # For any given query, return the number of entries
   # return nil when no entries
   #
@@ -253,6 +263,14 @@ module RepositoryChallenge
       { "$match": { "min_score": { "$gte": min_score } } },
       { "$sort": { "min_score": 1, "created_at": 1 } },
       paginate(per_page: per_page, page: page)
+    )
+  end
+
+  def self.submissions_per_user(challenge_id:, min_score:, user:)
+    collection_aggregate(
+      best_score_for_user(challenge_id, user),
+      { "$match": { "min_score": { "$gte": min_score } } },
+      { "$sort": { "min_score": 1, "created_at": 1 } },
     )
   end
 

@@ -79,7 +79,7 @@ class ChallengesController < ApplicationController
     return redirect_to root_path if !user
 
     @show_challenge = ShowChallenge.new(challenge.id)
-    @change_this = "140"
+    @submissionsUser = SubmissionsPerUser.new(current_user, challenge.id, user)
   end
 
   private

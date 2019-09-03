@@ -1,51 +1,53 @@
 <% challenge_id(@show_challenge) %>
 
 <div class="grid_7">
-    <h3><b><%= @show_challenge.title %></b></h3>
-    <p><%= @show_challenge.description%></p>
+  <h3><b><%= @show_challenge.title %></b></h3>
+  <p><%= @show_challenge.description%></p>
 
-    <h5>Start file</h5>
-    <pre class="prettyprint"><%= @show_challenge.input %></pre>
+  <h5>Start file</h5>
+  <pre class="prettyprint"><%= @show_challenge.input %></pre>
 
-    <h5>End file</h5>
-    <pre class="prettyprint"><%= @show_challenge.output %></pre>
+  <h5>End file</h5>
+  <pre class="prettyprint"><%= @show_challenge.output %></pre>
 
-    <h4><a href="#" onclick="toggle('diff'); return false;">View Diff</a></h4>
-    <pre class="prettyprint" id="diff"><%= @show_challenge.diff %></pre>
+  <h4><a href="#" onclick="toggle('diff'); return false;">View Diff</a></h4>
+  <pre class="prettyprint" id="diff"><%= @show_challenge.diff %></pre>
 
-    <h3>Solutions</h3>
-    <p><b>The best way to learn is to practice</b>. Below, you will find some of the solutions other golfers have entered. To unlock higher ranked solutions, submit your own entry which does as well or better than the solutions you can currently see - climb the ladder!</p>
+  <h3>Solutions</h3>
+  <p><b>The best way to learn is to practice</b>. Below, you will find some of the solutions other golfers have entered. To unlock higher ranked solutions, submit your own entry which does as well or better than the solutions you can currently see - climb the ladder!</p>
 
-    <p>Check out <a href="/about#resources"> these helpful resources</a> to improve your Vim skills... <em>Game on.</em></p>
+  <p>Check out <a href="/about#resources"> these helpful resources</a> to improve your Vim skills... <em>Game on.</em></p>
 
-<% if !current_user %>
-    <div class="note clearfix">Unlock <b><%= @change_this %></b> remaining solutions by <b><%= link_to "signing in", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></b> and submitting your own entry</div>
-<% end %>
+  <% if !current_user %>
+    <div class="note clearfix">Unlock remaining solutions by <b><%= link_to "signing in", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></b> and submitting your own entry</div>
+  <% end %>
+
+  <%= render :partial => "shared/submissions", :locals => { submissions: @submissionsUser } %>
 
 </div>
 
 <div class="grid_5">
-    <h5>Created by: <%= profile_link(@show_challenge.user.nickname) %>
-        <span style="float:right">
-            <%= tweet_button({
-            :via => "",
-            :url => current_url,
-            :text => "awesome VimGolf challenge: #{@show_challenge.title} @",
-            :related => ["vim", "learnvim"],
-            :count => "horizontal"
-            }) %>
-        </span>
-    </h5>
+  <h5>Created by: <%= profile_link(@show_challenge.user.nickname) %>
+  <span style="float:right">
+    <%= tweet_button({
+      :via => "",
+      :url => current_url,
+      :text => "awesome VimGolf challenge: #{@show_challenge.title} @",
+      :related => ["vim", "learnvim"],
+      :count => "horizontal"
+    }) %>
+  </span>
+  </h5>
 
-    <h2 style="padding-bottom:1em; border-bottom: 1px dotted;">
-        <b class="stat"><%= @show_challenge.count_uniq_users %></b> active golfers, <b class="stat"><%= @show_challenge.count_entries %></b> entries
-    </h2>
+  <h2 style="padding-bottom:1em; border-bottom: 1px dotted;">
+    <b class="stat"><%= @show_challenge.count_uniq_users %></b> active golfers, <b class="stat"><%= @show_challenge.count_entries %></b> entries
+  </h2>
 
-    <% if @show_challenge.owner?(current_user) %>
-        <div class="error clearfix">
-            <%= button_to "Delete Challenge", { :action => 'destroy', :id => @show_challenge.id }, :method => :delete, :class => 'delete action' %>
-        </div>
-    <% end %>
+  <% if @show_challenge.owner?(current_user) %>
+    <div class="error clearfix">
+      <%= button_to "Delete Challenge", { :action => 'destroy', :id => @show_challenge.id }, :method => :delete, :class => 'delete action' %>
+    </div>
+  <% end %>
 
-    <h5>No competitors when reading per user.</h5>
+  <h5>No competitors when reading per user.</h5>
 </div>

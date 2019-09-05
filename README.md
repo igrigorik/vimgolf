@@ -84,7 +84,7 @@ bundle install
 
 ### mongo-db
 
-It is possible to get a fully functionnal mongodb instance through docker, see http://pierrepironin.fr/docker-et-mongodb/ for help.
+It is possible to get a fully functionnal mongodb instance through docker.
 
 ```
 docker pull mongo

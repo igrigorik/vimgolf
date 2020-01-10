@@ -18,7 +18,7 @@ ADMINS = [
   'timvisher',
   'udioica',
   'braxler',
-  'sakigw'
+  'Sakigw'
 ]
 
 # Initialize the rails application

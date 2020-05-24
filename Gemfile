@@ -30,6 +30,8 @@ group :test, :development do
   gem 'simplecov', :require => false
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem 'capybara'
+  gem 'execjs'
+  gem 'mini_racer'
   gem 'launchy'
   gem 'pry-byebug'
   gem 'pry-stack_explorer'

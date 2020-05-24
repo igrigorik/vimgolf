@@ -138,9 +138,6 @@ test:
 production:
   clients:
     default:
-      database: <%= ENV['DATABASE_NAME'] %>
-      hosts:
-        - <%= "#{ENV['DATABASE_HOST'] || 'localhost'}:#{ENV['DATABASE_PORT'] || 27017}" %>
+      uri: <%= "mongodb+srv://#{ENV['DATABASE_USERNAME']}:#{ENV['DATABASE_PASSWORD']}@#{ENV['DATABASE_HOST']}/#{ENV['DATABASE_NAME']}?retryWrites=true&w=majority" %>
       options:
-        user: <%= ENV['DATABASE_USERNAME'] %>
-        password: <%= ENV['DATABASE_PASSWORD'] %>
+        server_selection_timeout: 5

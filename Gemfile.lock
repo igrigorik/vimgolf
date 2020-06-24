@@ -148,7 +148,7 @@ GEM
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
     public_suffix (3.0.2)
-    rack (2.0.8)
+    rack (2.2.3)
     rack-test (0.6.3)
       rack (>= 1.0)
     rack-timeout (0.5.0.1)

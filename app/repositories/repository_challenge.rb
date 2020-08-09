@@ -354,11 +354,14 @@ module RepositoryChallenge
         }
       },
       { "$unwind": "$entries" },
-      { "$match": { "entries.user_id": player_id } },
-      { "$sort": { "entries.score": 1 } },
+      { "$sort": { "entries.score": 1, "entries.created_at": 1 } },
       {
         "$group": {
-          "_id": '$_id',
+          "_id": {
+            "challenge_id": '$_id',
+            "user_id": '$entries.user_id'
+          },
+          "user_id": { "$first": '$entries.user_id'},
           "title": { "$first": '$title'},
           "description": { "$first": '$description'},
           "created_at": { "$first": '$created_at'},
@@ -368,7 +371,29 @@ module RepositoryChallenge
           "attempts": { "$sum":  1 }
         },
       },
-      { "$sort": { "created_at": -1 } },
+      { "$sort": { "best_player_score": 1, "created_at": 1 } },
+      {
+        "$group": {
+          "_id": "$_id.challenge_id",
+          "items": { "$push": "$$ROOT" },
+        }
+      },
+      { "$unwind": { "path": "$items", "includeArrayIndex": "items.position" }},
+      { "$match": { "items.user_id": player_id }},
+      { "$sort": { "items.created_at": -1 } },
+      {
+        "$project": {
+          "_id": 1,
+          "title": "$items.title",
+          "description": "$items.description",
+          "created_at": "$items.created_at",
+          "count_entries": "$items.count_entries",
+          "best_score": "$items.best_score",
+          "best_player_score": "$items.best_player_score",
+          "attempts": "$items.attempts",
+          "position": { "$add": ["$items.position", 1]}
+        }
+      },
     )
   end
 

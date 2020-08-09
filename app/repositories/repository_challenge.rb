@@ -1,3 +1,9 @@
+# This file only has encoded MongoDB queries, which can become quite long.
+# So let's disable the Rubocop warnings regarding length of the module,
+# since there's little point in breaking these down.
+#
+# rubocop:disable Metris/ModuleLength
+
 module RepositoryChallenge
 
   # Challenge.collection return a Mongo::Collection
@@ -363,6 +369,84 @@ module RepositoryChallenge
         },
       },
       { "$sort": { "created_at": -1 } },
+    )
+  end
+
+  def self.submissions_per_player(challenge_id, player_id)
+    # Expand the entries for a specific challenge.
+    #
+    # Then group by:
+    #   - the user id, for entries from users other than the selected player;
+    #   - the entry id (a unique id), for entries from the selected player.
+    #
+    # This grouping ensures we get all the entries for the selected player,
+    # ranked together with the best entry from all other users.
+    #
+    # When we rank entries, they will be offset, since we now have all the
+    # entries for the selected player mixed into the best entries per user
+    # for this challenge. But we can easily adjust the offset of entries
+    # other than the first one.
+    #
+    # Since the ranking is per user and not per entry, the resulting
+    # ranking position for the subsequent entries represent where this
+    # entry would have been ranked was it the best entry for that player.
+    #
+    # In the UI, we will represent those entries using #>n, rather than
+    # just #n, to indicate that this is not an actual ranking position, but
+    # simply a "what-if" ranking position.
+    collection_aggregate(
+      { "$match": { "_id": challenge_id } },
+      { "$unwind": "$entries" },
+      {
+        "$project": {
+          "_id": {
+            "$cond": [
+              { "$eq": [ "$entries.user_id", player_id ] },
+              "$entries._id",
+              "$entries.user_id",
+            ]
+          },
+          "entry_id": "$entries._id",
+          "user_id": "$entries.user_id",
+          "created_at": "$entries.created_at",
+          "script": "$entries.script",
+          "comments": "$entries.comments",
+          "score": "$entries.score",
+        }
+      },
+      { "$sort": { "score": 1, "created_at": 1 } },
+      {
+        "$group": {
+          "_id": "$_id",
+          "entry_id": { "$first": "$entry_id" },
+          "user_id": { "$first": "$user_id" },
+          "created_at": { "$first": "$created_at" },
+          "script": { "$first": "$script" },
+          "comments": { "$first": "$comments" },
+          "score": { "$first": "$score" },
+        }
+      },
+      { "$sort": { "score": 1, "created_at": 1 } },
+      {
+        "$group": {
+          "_id": 1,
+          "items": { "$push": "$$ROOT" },
+        }
+      },
+      { "$unwind": { "path": "$items", "includeArrayIndex": "items.position" } },
+      { "$match": { "items.user_id": player_id } },
+      {
+        "$project": {
+          "_id": "$items.entry_id",
+          "entry_id": "$items.entry_id",
+          "user_id": "$items.user_id",
+          "created_at": "$items.created_at",
+          "script": "$items.script",
+          "comments": "$items.comments",
+          "min_score": "$items.score",
+          "position": { "$add": ["$items.position", 1] },
+        }
+      }
     )
   end
 

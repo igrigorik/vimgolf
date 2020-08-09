@@ -2,16 +2,8 @@
 
 <div class="grid_7">
     <h3><b><%= @show_challenge.title %></b></h3>
-    <p><%= @show_challenge.description%></p>
 
-    <h5>Start file</h5>
-    <pre class="prettyprint"><%= @show_challenge.input %></pre>
-
-    <h5>End file</h5>
-    <pre class="prettyprint"><%= @show_challenge.output %></pre>
-
-    <h4><a href="#" onclick="toggle('diff'); return false;">View Diff</a></h4>
-    <pre class="prettyprint" id="diff"><%= @show_challenge.diff %></pre>
+  <%= render :partial => "shared/challenge_description", :locals => { show_challenge: @show_challenge } %>
 
     <h3>Solutions</h3>
     <p><b>The best way to learn is to practice</b>. Below, you will find some of the solutions other golfers have entered. To unlock higher ranked solutions, submit your own entry which does as well or better than the solutions you can currently see - climb the ladder!</p>
@@ -26,24 +18,12 @@
 
   <%= render :partial => "shared/submissions", :locals => { submissions: @submissions } %>
 
+<%= paginate @submissions.paginated, inner_window: 20, param_name: :submissions_page %>
+
 </div>
 
 <div class="grid_5">
-    <h5>Created by: <%= profile_link(@show_challenge.user.nickname) %>
-        <span style="float:right">
-            <%= tweet_button({
-            :via => "",
-            :url => current_url,
-            :text => "awesome VimGolf challenge: #{@show_challenge.title} @",
-            :related => ["vim", "learnvim"],
-            :count => "horizontal"
-            }) %>
-        </span>
-    </h5>
-
-    <h2 style="padding-bottom:1em; border-bottom: 1px dotted;">
-        <b class="stat"><%= @show_challenge.count_uniq_users %></b> active golfers, <b class="stat"><%= @show_challenge.count_entries %></b> entries
-    </h2>
+  <%= render :partial => "shared/challenge_credits", :locals => { show_challenge: @show_challenge } %>
 
     <% if @show_challenge.owner?(current_user) %>
         <div class="error clearfix">

@@ -1,0 +1,16 @@
+<h5>Created by: <%= profile_link(show_challenge.user.nickname) %>
+    <span style="float:right">
+        <%= tweet_button({
+        :via => "",
+        :url => current_url,
+        :text => "awesome VimGolf challenge: #{show_challenge.title} @",
+        :related => ["vim", "learnvim"],
+        :count => "horizontal"
+        }) %>
+    </span>
+</h5>
+
+<h2 style="padding-bottom:1em; border-bottom: 1px dotted;">
+    <b class="stat"><%= show_challenge.count_uniq_users %></b> active golfers, <b class="stat"><%= show_challenge.count_entries %></b> entries
+</h2>
+

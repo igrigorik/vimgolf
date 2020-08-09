@@ -1,0 +1,10 @@
+<p><%= show_challenge.description %></p>
+
+<h5>Start file</h5>
+<pre class="prettyprint"><%= show_challenge.input %></pre>
+
+<h5>End file</h5>
+<pre class="prettyprint"><%= show_challenge.output %></pre>
+
+<h4><a href="#" onclick="toggle('diff'); return false;">View Diff</a></h4>
+<pre class="prettyprint" id="diff"><%= show_challenge.diff %></pre>

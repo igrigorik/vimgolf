@@ -1,5 +1,5 @@
 <% submissions.each do |solution| %>
-  <div class="<%= solution.owner?(current_user) ? "note" : "success" %> clearfix">
+  <div class="<%= submissions.highlight_owner? && solution.owner?(current_user) ? "note" : "success" %> clearfix">
 
   <h6 style="margin-bottom:0.5em">
         <a class="anchor" href="#<%= solution.id %>" name="<%= solution.id %>"><b>#<%= solution.position %></b></a>

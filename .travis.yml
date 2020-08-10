@@ -13,7 +13,7 @@ before_install:
     - ls -l /home/travis/.rvm/gems # Future reference, targets for quick build
     - cd `dirname $BUNDLE_GEMFILE`
     - pwd # For debug info
-    - gem update bundler # Travis's Bundler 1.7.6 is causing problems
+    - gem install -v 1.16.2 bundler # Travis's Bundler 1.7.6 is causing problems
 script: bundle exec rake
 addons:
   apt:

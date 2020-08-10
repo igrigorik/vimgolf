@@ -39,7 +39,8 @@
         <% @leaderboard.each do |entry, user, position| %>
             <div class="notice clearfix">
                 <%= twitter_avatar user.nickname %>
-                <div style="float:right; text-align:center;font-size:2.4em"><b><%= entry[:min_score] %></b></div>
+                <div style="float:right; text-align:center;font-size:2.4em"><b><%= link_to entry[:min_score],
+                  user_challenge_path(@show_challenge.id, user.nickname) %></b></div>
 
                 <h6 style="margin-bottom:0">
                     <a class="anchor" href="#<%= entry[:entry_id] %>"><b>#<%= position %></b></a> - <%= user.name %> / <%= profile_link(user.nickname) %>

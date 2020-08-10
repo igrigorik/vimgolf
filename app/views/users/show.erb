@@ -7,7 +7,7 @@
             <ul>
               <li>Best score: <b><%= player_challenge['best_score'] %></b></li>
               <li>Best player score: <b><%= player_challenge['best_player_score'] %></b></li>
-              <li>Position: <b>#<%= player_challenge['position'] %></b></li>
+              <li>Position: <b>#<%= player_challenge['position'] %> / <%= player_challenge['count_golfers'] %></b></li>
               <li>Number of attempts: <b><%= link_to player_challenge['attempts'],
                 user_challenge_path(player_challenge['_id'], @show_profile.nickname) %></b></li>
             </ul>

@@ -376,6 +376,7 @@ module RepositoryChallenge
         "$group": {
           "_id": "$_id.challenge_id",
           "items": { "$push": "$$ROOT" },
+          "count_golfers": { "$sum": 1 },
         }
       },
       { "$unwind": { "path": "$items", "includeArrayIndex": "items.position" }},
@@ -391,7 +392,8 @@ module RepositoryChallenge
           "best_score": "$items.best_score",
           "best_player_score": "$items.best_player_score",
           "attempts": "$items.attempts",
-          "position": { "$add": ["$items.position", 1]}
+          "position": { "$add": ["$items.position", 1]},
+          "count_golfers": 1,
         }
       },
     )

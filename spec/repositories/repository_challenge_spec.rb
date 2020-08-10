@@ -461,6 +461,7 @@ describe RepositoryChallenge do
         expect(challenge['best_player_score']).to eq(14)
         expect(challenge['attempts']).to eq(1)
         expect(challenge['position']).to eq(1)
+        expect(challenge['count_golfers']).to eq(1)
 
         # And challenge1 is next.
         challenge = result[1]
@@ -472,6 +473,7 @@ describe RepositoryChallenge do
         expect(challenge['best_player_score']).to eq(12)
         expect(challenge['attempts']).to eq(2)
         expect(challenge['position']).to eq(2)
+        expect(challenge['count_golfers']).to eq(2)
       end
     end
 

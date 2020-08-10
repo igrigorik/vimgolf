@@ -8,7 +8,11 @@ Vimgolf::Application.routes.draw do
   get "/entry/:challenge/delete/:entry",to: "entry#destroy", as: :delete_entry
   post "/entry/:challenge/comment/:entry", to: "entry#comment", as: :comment_entry
 
-  resources :challenges
+  resources :challenges do
+    member do
+      get 'user/:username', to: "challenges#user", as: :user, :constraints => { :username => /[^\/]+/ }
+    end
+  end
 
   get "/feed", to: "main#feed", defaults: {format: "rss"}
   get "/about", to: "main#about"

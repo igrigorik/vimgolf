@@ -337,6 +337,7 @@ module RepositoryChallenge
           "_id": 1,
           "title": 1,
           "description": 1,
+          "created_at": 1,
           "entries": 1,
           "count_entries": {
             "$size":  { "$ifNull": [ "$entries", [] ] }
@@ -354,12 +355,14 @@ module RepositoryChallenge
           "_id": '$_id',
           "title": { "$first": '$title'},
           "description": { "$first": '$description'},
+          "created_at": { "$first": '$created_at'},
           "count_entries": { "$first": '$count_entries'},
           "best_score": { "$first": '$best_score'},
           "best_player_score": { "$first": '$entries.score'},
           "attempts": { "$sum":  1 }
         },
-      }
+      },
+      { "$sort": { "created_at": -1 } },
     )
   end
 

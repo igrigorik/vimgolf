@@ -397,4 +397,80 @@ describe RepositoryChallenge do
     end
 
   end
+
+  describe '.player_best_scores(user_id)' do
+    context 'when player has not submitted any entries anywhere' do
+      let(:user) { create(:user) }
+      let(:challenge) { create(:challenge) }
+
+      it 'return empty array' do
+        expect(RepositoryChallenge.player_best_scores(user.id).to_a).to eq([])
+      end
+    end
+
+    context 'when player has submitted two entries to a challenge' do
+      let(:user) { create(:user) }
+      let(:user2) { create(:user) }
+      let(:challenge1) { create(:challenge) }
+
+      before do
+        challenge1.entries <<  build(:entry, user: user, score: 15, created_at: Time.new(2018,03,28))
+        challenge1.entries <<  build(:entry, user: user, score: 12, created_at: Time.new(2018,04,15))
+        challenge1.entries <<  build(:entry, user: user2, score: 10, created_at: Time.new(2018,04,30))
+      end
+
+      it 'return expected user information about the user' do
+        result = RepositoryChallenge.player_best_scores(user.id).to_a
+        expect(result.length).to eq(1)
+        challenge = result.first
+        expect(challenge['_id']).to eq(challenge1.id)
+        expect(challenge['title']).to eq(challenge1.title)
+        expect(challenge['description']).to eq(challenge1.description)
+        expect(challenge['count_entries']).to eq(3)
+        expect(challenge['best_score']).to eq(10)
+        expect(challenge['best_player_score']).to eq(12)
+        expect(challenge['attempts']).to eq(2)
+      end
+    end
+
+    context 'when player has submitted entries to multiple challenges' do
+      let(:user) { create(:user) }
+      let(:user2) { create(:user) }
+      let(:challenge1) { create(:challenge, user: user, created_at: Time.new(2017)) }
+      let(:challenge2) { create(:challenge, user: user, created_at: Time.new(2018)) }
+
+      before do
+        challenge1.entries <<  build(:entry, user: user, score: 15, created_at: Time.new(2018,03,28))
+        challenge1.entries <<  build(:entry, user: user, score: 12, created_at: Time.new(2018,04,15))
+        challenge1.entries <<  build(:entry, user: user2, score: 10, created_at: Time.new(2018,04,30))
+        challenge2.entries <<  build(:entry, user: user, score: 14, created_at: Time.new(2018,03,28))
+      end
+
+      it 'return expected user information about the user' do
+        result = RepositoryChallenge.player_best_scores(user.id).to_a
+        expect(result.length).to eq(2)
+
+        # Ensure challenges are in chronological order, challenge2 is first.
+        challenge = result[0]
+        expect(challenge['_id']).to eq(challenge2.id)
+        expect(challenge['title']).to eq(challenge2.title)
+        expect(challenge['description']).to eq(challenge2.description)
+        expect(challenge['count_entries']).to eq(1)
+        expect(challenge['best_score']).to eq(14)
+        expect(challenge['best_player_score']).to eq(14)
+        expect(challenge['attempts']).to eq(1)
+
+        # And challenge1 is next.
+        challenge = result[1]
+        expect(challenge['_id']).to eq(challenge1.id)
+        expect(challenge['title']).to eq(challenge1.title)
+        expect(challenge['description']).to eq(challenge1.description)
+        expect(challenge['count_entries']).to eq(3)
+        expect(challenge['best_score']).to eq(10)
+        expect(challenge['best_player_score']).to eq(12)
+        expect(challenge['attempts']).to eq(2)
+      end
+    end
+
+  end
 end

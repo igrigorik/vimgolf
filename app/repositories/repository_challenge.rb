@@ -335,25 +335,28 @@ module RepositoryChallenge
     )
   end
 
-  def self.player_best_scores(player_id)
-    collection_aggregate(
+  def self.group_by_challenge(player_id)
+    [
       { "$match": { "entries.user_id": player_id } },
+      { "$sort": { "entries.score": 1 } },
       {
-        "$project": {
-          "_id": 1,
-          "title": 1,
-          "description": 1,
-          "created_at": 1,
-          "entries": 1,
-          "count_entries": {
-            "$size":  { "$ifNull": [ "$entries", [] ] }
-          },
-          "best_score": {
-            "$min": "$entries.score"
-          },
-        }
+        "$group": {
+          "_id": '$_id',
+          "title": { "$first": '$title'},
+          "description": { "$first": '$description'},
+          "created_at": { "$first": '$created_at'},
+          "count_entries": { "$first": '$count_entries'},
+          "best_score": { "$first": '$best_score'},
+          "best_player_score": { "$first": '$entries.score'},
+          "attempts": { "$sum":  1 }
+        },
       },
-      { "$unwind": "$entries" },
+      { "$sort": { "created_at": -1 } },
+    ]
+  end
+
+  def self.group_by_challenge_with_ranking(player_id)
+    [
       { "$sort": { "entries.score": 1, "entries.created_at": 1 } },
       {
         "$group": {
@@ -396,6 +399,33 @@ module RepositoryChallenge
           "count_golfers": 1,
         }
       },
+    ]
+  end
+
+  def self.player_best_scores(player_id, with_ranking = false)
+    collection_aggregate(
+      { "$match": { "entries.user_id": player_id } },
+      {
+        "$project": {
+          "_id": 1,
+          "title": 1,
+          "description": 1,
+          "created_at": 1,
+          "entries": 1,
+          "count_entries": {
+            "$size":  { "$ifNull": [ "$entries", [] ] }
+          },
+          "best_score": {
+            "$min": "$entries.score"
+          },
+        }
+      },
+      { "$unwind": "$entries" },
+      if with_ranking
+        group_by_challenge_with_ranking(player_id)
+      else
+        group_by_challenge(player_id)
+      end,
     )
   end
 

@@ -1,0 +1,46 @@
+<% challenge_id(@show_challenge) %>
+
+<div class="grid_7">
+    <h3><b><%= link_to(@show_challenge.title, challenge_path(@show_challenge.id)) %></b></h3>
+
+  <%= render :partial => "shared/challenge_description", :locals => { show_challenge: @show_challenge } %>
+
+  <% if @submissions.empty? %>
+    <h3>No solutions by <%= profile_link(@submissions.player.nickname) %> yet.</h3>
+
+  <% else %>
+    <h3>Solutions by <%= profile_link(@submissions.player.nickname) %>:</h3>
+  <% end %>
+
+  <%= render :partial => "shared/submissions", :locals => { submissions: @submissions } %>
+
+<% if !current_user %>
+    <div class="note clearfix">Unlock <b><%= @submissions.count_remaining %></b> remaining solutions by <b><%= link_to "signing in", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></b> and submitting your own entry</div>
+  <% elsif @submissions.count_remaining > 0 %>
+    <div class="note clearfix">Unlock <b><%= @submissions.count_remaining %></b> remaining solutions by submitting a higher ranked entry</div>
+<% end %>
+
+</div>
+
+<div class="grid_5">
+  <%= render :partial => "shared/challenge_credits", :locals => { show_challenge: @show_challenge } %>
+
+    <% if @submissions.empty? %>
+        <h5>No solutions by <%= profile_link(@submissions.player.nickname) %> yet.</h5>
+
+    <% else %>
+        <h5>Solutions by <%= profile_link(@submissions.player.nickname) %>:</h5>
+        <% @submissions.each_unfiltered do |solution| %>
+            <div class="notice clearfix">
+                <%= twitter_avatar solution.user.nickname %>
+                <div style="float:right; text-align:center;font-size:2.4em"><b><%= solution.score %></b></div>
+
+                <h6 style="margin-bottom:0">
+                    <a class="anchor" href="#<%= solution.id %>"><b>#<%= solution.position %></b></a> - <%= solution.user.name %> / <%= profile_link(solution.user.nickname) %>
+                </h6>
+                <p style="margin-bottom:0"><em><%= solution.created_at.strftime("%m/%d/%Y at %I:%M%p") %></em></p>
+            </div>
+        <% end %>
+    <% end %>
+
+</div>

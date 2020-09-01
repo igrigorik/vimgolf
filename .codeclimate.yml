@@ -10,8 +10,8 @@ engines:
     enabled: true
     config:
       languages:
-      - ruby
-      - javascript
+        ruby:
+        javascript:
   eslint:
     enabled: true
   fixme:
@@ -36,3 +36,4 @@ exclude_paths:
 - db/
 - script/
 - spec/
+- app/repositories/

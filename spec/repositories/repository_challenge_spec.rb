@@ -473,4 +473,54 @@ describe RepositoryChallenge do
     end
 
   end
+
+  describe '.submissions_per_player(challenge_id, player_id)' do
+    context 'when there are entries in challenge' do
+      let(:user1) { create(:user) }
+      let(:user2) { create(:user) }
+      let(:user3) { create(:user) }
+      let(:user4) { create(:user) }
+      let(:user5) { create(:user) }
+      let(:challenge) { create(:challenge) }
+
+      before do
+        challenge.entries <<  build(:entry, user: user1, score: 52, created_at: Time.new(2018,03,27))
+        challenge.entries <<  build(:entry, user: user5, score: 51, created_at: Time.new(2018,03,28))
+        challenge.entries <<  build(:entry, user: user2, score: 49, created_at: Time.new(2018,03,29))
+        challenge.entries <<  build(:entry, user: user3, score: 45, created_at: Time.new(2018,03,30))
+        challenge.entries <<  build(:entry, user: user1, score: 44, created_at: Time.new(2018,04,01))
+        challenge.entries <<  build(:entry, user: user4, score: 40, created_at: Time.new(2018,04,02))
+        challenge.entries <<  build(:entry, user: user2, score: 38, created_at: Time.new(2018,04,03))
+        challenge.entries <<  build(:entry, user: user2, score: 37, created_at: Time.new(2018,04,04))
+        challenge.entries <<  build(:entry, user: user3, score: 32, created_at: Time.new(2018,04,05))
+        challenge.entries <<  build(:entry, user: user1, score: 29, created_at: Time.new(2018,04,06))
+        challenge.entries <<  build(:entry, user: user4, score: 27, created_at: Time.new(2018,04,07))
+        challenge.entries <<  build(:entry, user: user3, score: 22, created_at: Time.new(2018,04,11))
+      end
+
+      it 'returns the three entries by the test user, with appropriate rankings' do
+        result = RepositoryChallenge.submissions_per_player(challenge.id, user1.id).to_a
+        expect(result.length).to eq(3)
+
+        entry = result[0]
+        expect(entry['user_id']).to eq(user1.id)
+        expect(entry['min_score']).to eq(29)
+        expect(entry['position']).to eq(3)
+        expect(entry['created_at']).to eq(Time.new(2018,04,06))
+
+        entry = result[1]
+        expect(entry['user_id']).to eq(user1.id)
+        expect(entry['min_score']).to eq(44)
+        expect(entry['position']).to eq(5) # >4
+        expect(entry['created_at']).to eq(Time.new(2018,04,01))
+
+        entry = result[2]
+        expect(entry['user_id']).to eq(user1.id)
+        expect(entry['min_score']).to eq(52)
+        expect(entry['position']).to eq(7) # >5
+        expect(entry['created_at']).to eq(Time.new(2018,03,27))
+      end
+    end
+
+  end
 end

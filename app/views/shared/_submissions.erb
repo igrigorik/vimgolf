@@ -1,5 +1,5 @@
-<% submissions.each do |solution, user, position| %>
-  <div class="<%= solution.owner?(current_user) ? "note" : "success" %> clearfix">
+<% submissions.each do |solution| %>
+  <div class="<%= submissions.highlight_owner? && solution.owner?(current_user) ? "note" : "success" %> clearfix">
 
   <h6 style="margin-bottom:0.5em">
         <a class="anchor" href="#<%= solution.id %>" name="<%= solution.id %>"><b>#<%= solution.position %></b></a>
@@ -38,5 +38,3 @@
 
   </div>
 <% end %>
-
-<%= paginate submissions.paginated, inner_window: 20, param_name: :submissions_page %>

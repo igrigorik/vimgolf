@@ -69,6 +69,19 @@ class ChallengesController < ApplicationController
     end
   end
 
+  def user
+    # Limit to id to avoid downloading uneccessary entries
+    challenge_id = params['id']
+    challenge = Challenge.only(:id).find(challenge_id) rescue nil
+    return redirect_to root_path if challenge.nil?
+
+    player = User.where(nickname: params[:username]).first rescue nil
+    return redirect_to root_path if player.nil?
+
+    @show_challenge = ShowChallenge.new(challenge.id)
+    @submissions = SubmissionsPerUser.new(current_user, challenge.id, player)
+  end
+
   private
 
   def challenge_params

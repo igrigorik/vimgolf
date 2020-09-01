@@ -69,6 +69,10 @@ class Submissions
     @user_id ||= Challenge.only(:user_id).find(challenge_id).user_id
   end
 
+  def highlight_owner?
+    true
+  end
+
   def creator?
     user_id == player.id
   end

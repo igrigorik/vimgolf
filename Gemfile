@@ -5,7 +5,7 @@ gem 'rails', '~> 5.2.0'
 
 gem 'mongo'
 gem 'bson'
-gem 'mongoid'
+gem 'mongoid', '~> 6.0'
 
 gem 'json'
 gem 'memcachier'

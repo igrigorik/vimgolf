@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
-ruby '2.4.1'
+ruby '2.6.6'
 
-gem 'rails', '5.0.3'
+gem 'rails', '~> 5.2.0'
 
 gem 'mongo'
 gem 'bson'
@@ -17,7 +17,7 @@ gem 'newrelic_rpm'
 gem 'unicorn'
 gem 'rack-timeout'
 gem 'sprockets-rails', '~> 2.0'
-gem 'sass-rails', '~> 5.0.5'
+gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.0.3'
 gem 'kaminari'
 

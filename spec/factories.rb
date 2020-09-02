@@ -12,14 +12,14 @@ FactoryGirl.define do
     script 'abc'
     created_at Time.now.utc
     user
-    score Faker::Number.between(1, 20)
+    score Faker::Number.between(from: 1, to: 20)
   end
 
   factory :user, aliases: [:owner] do
     name Faker::Name.name
     nickname Faker::Internet.user_name
     image Faker::Avatar.image
-    uid Faker::Number.number(5)
+    uid Faker::Number.number(digits: 5)
     provider 'Github'
   end
 end

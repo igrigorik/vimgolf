@@ -21,7 +21,7 @@ params[:users].times do |i|
     name: Faker::Name.name,
     nickname: "#{Faker::Internet.user_name}_#{i}",
     image: Faker::Avatar.image,
-    uid: Faker::Number.number(5),
+    uid: Faker::Number.number(digits: 5),
     provider: 'Github',
     created_at: Time.now,
     updated_at: Time.now,
@@ -39,7 +39,7 @@ params[:challenges].times do |i|
       created_at: Time.now,
       updated_at: Time.now,
       user_id: user_ids.sample,
-      score: Faker::Number.between(2, 200)
+      score: Faker::Number.between(from: 2, to: 200)
     ).as_document)
   end
 

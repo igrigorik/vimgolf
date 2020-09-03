@@ -78,7 +78,7 @@ GEM
     docile (1.1.5)
     erubi (1.10.0)
     execjs (2.7.0)
-    factory_girl (4.9.0)
+    factory_bot (4.11.1)
       activesupport (>= 3.0.0)
     faker (2.17.0)
       i18n (>= 1.6, < 2)
@@ -264,7 +264,7 @@ DEPENDENCIES
   codeclimate-test-reporter (~> 1.0.0)
   dalli
   execjs
-  factory_girl (~> 4.0)
+  factory_bot (~> 4.0)
   faker
   json
   kaminari

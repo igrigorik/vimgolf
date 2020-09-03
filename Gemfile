@@ -37,6 +37,6 @@ group :test, :development do
   gem 'pry-stack_explorer'
   gem 'poltergeist'
   gem 'phantomjs', :require => 'phantomjs/poltergeist'
-  gem 'factory_girl', '~> 4.0'
+  gem 'factory_bot', '~> 4.0'
   gem 'faker'
 end

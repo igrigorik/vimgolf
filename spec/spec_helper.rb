@@ -32,10 +32,10 @@ RSpec.configure do |config|
     OmniAuth.config.mock_auth[:twitter] = nil
   end
 
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
 
   config.before(:suite) do
     DatabaseHelper.create_collections
-    FactoryGirl.find_definitions
+    FactoryBot.find_definitions
   end
 end

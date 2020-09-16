@@ -420,7 +420,7 @@ describe RepositoryChallenge do
       end
 
       it 'return expected user information about the user' do
-        result = RepositoryChallenge.player_best_scores(user.id).to_a
+        result = RepositoryChallenge.player_best_scores(user.id, true).to_a
         expect(result.length).to eq(1)
         challenge = result.first
         expect(challenge['_id']).to eq(challenge1.id)
@@ -430,6 +430,7 @@ describe RepositoryChallenge do
         expect(challenge['best_score']).to eq(10)
         expect(challenge['best_player_score']).to eq(12)
         expect(challenge['attempts']).to eq(2)
+        expect(challenge['position']).to eq(2)
       end
     end
 
@@ -447,7 +448,7 @@ describe RepositoryChallenge do
       end
 
       it 'return expected user information about the user' do
-        result = RepositoryChallenge.player_best_scores(user.id).to_a
+        result = RepositoryChallenge.player_best_scores(user.id, true).to_a
         expect(result.length).to eq(2)
 
         # Ensure challenges are in chronological order, challenge2 is first.
@@ -459,6 +460,8 @@ describe RepositoryChallenge do
         expect(challenge['best_score']).to eq(14)
         expect(challenge['best_player_score']).to eq(14)
         expect(challenge['attempts']).to eq(1)
+        expect(challenge['position']).to eq(1)
+        expect(challenge['count_golfers']).to eq(1)
 
         # And challenge1 is next.
         challenge = result[1]
@@ -469,6 +472,8 @@ describe RepositoryChallenge do
         expect(challenge['best_score']).to eq(10)
         expect(challenge['best_player_score']).to eq(12)
         expect(challenge['attempts']).to eq(2)
+        expect(challenge['position']).to eq(2)
+        expect(challenge['count_golfers']).to eq(2)
       end
     end
 

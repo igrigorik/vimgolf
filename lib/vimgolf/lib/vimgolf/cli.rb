@@ -32,6 +32,15 @@ module VimGolf
       super
     end
 
+    desc "version", "print version of Vimgolf client"
+    long_desc <<-DESC
+    Print version of the Vimgolf client.
+    DESC
+
+    def version
+      VimGolf.ui.info "Client #{Vimgolf::CLI_VERSION} (protocol #{Vimgolf::PROTOCOL_VERSION})"
+    end
+
     desc "setup", "configure your VimGolf credentials"
     long_desc <<-DESC
     To participate in the challenge please go to vimgolf.com and register an

@@ -2,9 +2,9 @@ PATH
   remote: lib/vimgolf
   specs:
     vimgolf (0.4.9)
-      highline (~> 1.7, >= 1.7.10)
-      json_pure (~> 2.1, >= 2.1.0)
-      thor (~> 0.14, >= 0.14.6)
+      highline (~> 2.0, >= 2.0.3)
+      json_pure (~> 2.3, >= 2.3.1)
+      thor (~> 1.0, >= 1.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -81,11 +81,11 @@ GEM
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     hashie (3.5.7)
-    highline (1.7.10)
+    highline (2.0.3)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     json (2.1.0)
-    json_pure (2.1.0)
+    json_pure (2.5.1)
     kaminari (1.1.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.1.1)
@@ -226,7 +226,7 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
-    thor (0.20.0)
+    thor (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
     tweet-button (0.1.0)

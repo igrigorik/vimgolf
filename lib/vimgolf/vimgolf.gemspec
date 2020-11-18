@@ -15,9 +15,9 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "vimgolf"
 
-  s.add_runtime_dependency "thor", "~> 0.14", ">= 0.14.6"
-  s.add_runtime_dependency "json_pure", "~> 2.1", ">= 2.1.0"
-  s.add_runtime_dependency "highline", "~> 1.7", ">= 1.7.10"
+  s.add_runtime_dependency "thor", "~> 1.0", ">= 1.0.1"
+  s.add_runtime_dependency "json_pure", "~> 2.3", ">= 2.3.1"
+  s.add_runtime_dependency "highline", "~> 2.0", ">= 2.0.3"
 
   s.add_development_dependency "rspec", "~> 3.7", ">= 3.7.0"
   s.add_development_dependency "rake", "~> 12.3", ">= 12.3.1"

@@ -102,7 +102,7 @@ class ChallengesController < ApplicationController
         'data' => challenge.output,
         'type' => challenge.output_type
       },
-      'client' => Vimgolf::VERSION
+      'client' => Vimgolf::PROTOCOL_VERSION
     }
   end
 

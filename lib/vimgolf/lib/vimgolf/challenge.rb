@@ -50,8 +50,8 @@ module VimGolf
         if !@data.is_a? Hash
           raise
 
-        elsif @data['client'] != Vimgolf::VERSION
-          VimGolf.ui.error "Client version mismatch. Installed: #{Vimgolf::VERSION}, Required: #{@data['client']}."
+        elsif @data['client'] != Vimgolf::PROTOCOL_VERSION
+          VimGolf.ui.error "Client version mismatch. Installed: protocol #{Vimgolf::PROTOCOL_VERSION} (client #{Vimgolf::CLI_VERSION}), Required: #{@data['client']}."
           VimGolf.ui.error "\t gem install vimgolf"
           raise "Bad Version"
         end

@@ -38,7 +38,7 @@ describe ChallengesController do
         expect(json).to eq({
           "in"=>{"data"=>"baz", "type"=>"baz_type"},
           "out"=>{"data"=>"qux", "type"=>"qux_type"},
-          "client"=> Vimgolf::VERSION
+          "client"=> Vimgolf::PROTOCOL_VERSION
         })
       end
     end

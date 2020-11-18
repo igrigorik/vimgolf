@@ -4,7 +4,7 @@ require "vimgolf/version"
 
 Gem::Specification.new do |s|
   s.name        = "vimgolf"
-  s.version     = Vimgolf::VERSION
+  s.version     = Vimgolf::CLI_VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Ilya Grigorik"]
   s.email       = ["ilya@igvita.com"]
@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
 
    s.post_install_message = %{
 ------------------------------------------------------------------------------
-Thank you for installing vimgolf-#{Vimgolf::VERSION}.
+Thank you for installing vimgolf-#{Vimgolf::CLI_VERSION}.
 
 0.1.3: custom vimgolf .vimrc file to help level the playing field
 0.2.0: proxy support, custom diffs + proper vimscript parser/scoring

@@ -84,7 +84,7 @@ GEM
     ffi (1.11.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    hashie (3.5.7)
+    hashie (4.1.0)
     highline (2.0.3)
     i18n (1.8.9)
       concurrent-ruby (~> 1.0)
@@ -132,8 +132,8 @@ GEM
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     oauth (0.5.4)
-    omniauth (1.8.1)
-      hashie (>= 3.4.6, < 3.6.0)
+    omniauth (1.9.1)
+      hashie (>= 3.4.6)
       rack (>= 1.6.2, < 3)
     omniauth-oauth (1.1.0)
       oauth
@@ -272,7 +272,7 @@ DEPENDENCIES
   mongo
   mongoid (~> 6.0)
   newrelic_rpm
-  omniauth
+  omniauth (~> 1.0)
   omniauth-twitter
   phantomjs
   poltergeist

@@ -39,4 +39,7 @@ group :test, :development do
   gem 'phantomjs', :require => 'phantomjs/poltergeist'
   gem 'factory_bot', '~> 4.0'
   gem 'faker'
+  gem 'rubocop', '~> 1.9.1'
+  gem 'rubocop-rails'
+  gem 'rubocop-rspec'
 end

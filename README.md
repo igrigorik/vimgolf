@@ -153,7 +153,7 @@ docker run -p 27017:27017 -v /opt/mongodb/db:/data/db --name my-mongo-dev -d mon
 # if you see:
 # docker: Error response from daemon: Conflict. The container name "/my-mongo-dev" is already in use by container "a9
 # then you have to remove the container
-docker rm my-mongo-dev
+docker restart my-mongo-dev
 ```
 
 Start the server

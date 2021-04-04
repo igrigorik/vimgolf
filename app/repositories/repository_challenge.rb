@@ -24,7 +24,7 @@ module RepositoryChallenge
   # RepositoryChallenge.collection_aggregate({"$count": 'challenge_count'}).to_a
   # => [{"challenge_count"=>102}]
   def self.collection_aggregate(*args)
-    Challenge.collection.aggregate(args.flatten).allow_disk_use(true)
+    Challenge.collection.aggregate(args.flatten)
   end
 
   # Sum every entries of every Challenge
@@ -156,10 +156,10 @@ module RepositoryChallenge
   def self.best_score_per_user(challenge_id)
     [
       { "$match": { "_id": challenge_id } },
+      { "$sort": { "entries.score": 1, "entries.created_at": 1 } },
       { "$unwind": "$entries" },
       # sort needed so all { "$first": key }
       # can return the right value associated to the min score
-      { "$sort": { "entries.score": 1, "entries.created_at": 1 } },
       {
         '$group': {
           "_id": '$entries.user_id',

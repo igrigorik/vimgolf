@@ -15,6 +15,8 @@ class Challenge
   embeds_many :entries
   index "entries.user_id" => 1
 
+  index({ "entries.score": 1, "entries.created_at": 1 })
+
   validates_presence_of :title
   validates_presence_of :description
 

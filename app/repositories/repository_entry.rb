@@ -4,7 +4,7 @@
 #
 # rubocop:disable Metris/ModuleLength
 
-module RepositoryChallenge
+module RepositoryEntry
 
   # Challenge.collection return a Mongo::Collection
   # see http://api.mongodb.com/ruby/current/Mongo/Collection.html
@@ -21,10 +21,10 @@ module RepositoryChallenge
   # see http://api.mongodb.com/ruby/current/Mongo/Collection/View/Aggregation.html
   #
   # Example :
-  # RepositoryChallenge.collection_aggregate({"$count": 'challenge_count'}).to_a
+  # RepositoryEntry.collection_aggregate({"$count": 'challenge_count'}).to_a
   # => [{"challenge_count"=>102}]
   def self.collection_aggregate(*args)
-    Challenge.collection.aggregate(args.flatten)
+    EntryOther.collection.aggregate(args.flatten)
   end
 
   # Sum every entries of every Challenge
@@ -44,7 +44,7 @@ module RepositoryChallenge
   # Returns a Mongo::Collection::View::Aggregation
   #
   # Example :
-  # RepositoryChallenge.count_entries_query.to_a
+  # RepositoryEntry.count_entries_query.to_a
   # => [{"_id"=>nil, "count_entries"=>45000}]
   def self.count_entries_query
     collection_aggregate({
@@ -86,7 +86,7 @@ module RepositoryChallenge
   # https://docs.mongodb.com/manual/reference/operator/aggregation/
   #
   # Example:
-  # RepositoryChallenge.collection_aggregate(RepositoryChallenge.score_query).to_a
+  # RepositoryEntry.collection_aggregate(RepositoryEntry.score_query).to_a
   # => [
   #      {
   #        "_id"=>BSON::ObjectId('5af76222cfa4a41a195c774b'),
@@ -130,9 +130,9 @@ module RepositoryChallenge
   # see https://docs.mongodb.com/manual/reference/operator/aggregation/project/
   #
   # Example:
-  # RepositoryChallenge.collection_aggregate(
+  # RepositoryEntry.collection_aggregate(
   #   [{ '$project': {title: 1}}],
-  #   RepositoryChallenge.paginate(per_page: 2, page: 1)
+  #   RepositoryEntry.paginate(per_page: 2, page: 1)
   # ).to_a
   # => [
   #   {"_id"=>BSON::ObjectId('5af761d2cfa4a41a1957b464'), "title"=>"Foo"},
@@ -155,20 +155,17 @@ module RepositoryChallenge
   # Reference query
   def self.best_score_per_user(challenge_id)
     [
-      { "$match": { "_id": challenge_id } },
-      { "$unwind": "$entries" },
-      # sort needed so all { "$first": key }
-      # can return the right value associated to the min score
-      { "$sort": { "entries.score": 1, "entries.created_at": 1 } },
+      { "$match": { "challenge_id": challenge_id } },
+      { "$sort": { "score": 1, "created_at": 1 } },
       {
         '$group': {
-          "_id": '$entries.user_id',
-          "entry_id": { "$first": '$entries._id' },
-          "user_id": { "$first": '$entries.user_id' },
-          "created_at": { "$first": '$entries.created_at' },
-          "script": { "$first": '$entries.script' },
-          "comments": { "$first": '$entries.comments' },
-          "min_score": { "$first": '$entries.score'}
+          "_id": '$user_id',
+          "entry_id": { "$first": '$_id' },
+          "user_id": { "$first": '$user_id' },
+          "created_at": { "$first": '$created_at' },
+          "script": { "$first": '$script' },
+          "comments": { "$first": '$comments' },
+          "min_score": { "$first": '$score'}
         }
       },
       { "$sort": { "min_score": 1, "created_at": 1 } },
@@ -217,6 +214,13 @@ module RepositoryChallenge
     result && result['min_score']
   end
 
+  def self.aaa(challenge_id)
+    result = collection_aggregate(
+      best_score_per_user(challenge_id),
+    )
+    result
+  end
+
   # Return the next lowest score bellow a given score
   # Still need to group by user in case a user has a bellow
   # score, but not visible solution.
@@ -226,7 +230,7 @@ module RepositoryChallenge
   # Example :
   # Given list of scores per users(A, B, C)
   # that looks likes A-1, A-2, B-2, B-9, C-10
-  # RepositoryChallenge.bellow_score(challenge_id, 10)
+  # RepositoryEntry.bellow_score(challenge_id, 10)
   # => 2 # not 9, because the visible solution for B is 2
   def self.bellow_score(challenge_id, score)
     result = collection_aggregate(
@@ -242,7 +246,7 @@ module RepositoryChallenge
   # nil when player has never played
   #
   # Example:
-  # RepositoryChallenge.best_player_score(challenge_id, user_id).to_a
+  # RepositoryEntry.best_player_score(challenge_id, user_id).to_a
   # => 123
   def self.best_player_score(challenge_id, player_id)
     result = collection_aggregate(
@@ -265,7 +269,7 @@ module RepositoryChallenge
   # Count number of uniq user per challenge
   #
   # Example:
-  # RepositoryChallenge.count_uniq_users(challenge_id)
+  # RepositoryEntry.count_uniq_users(challenge_id)
   # => 1266
   def self.count_uniq_users(challenge_id)
     sum_lines(best_score_per_user(challenge_id)) || 0
@@ -274,7 +278,7 @@ module RepositoryChallenge
   # Load specific fields for page 'show' without loading ALL entries
   #
   # Example:
-  # RepositoryChallenge.show_challenge(challenge_id).to_a
+  # RepositoryEntry.show_challenge(challenge_id).to_a
   # => [{"_id"=>BSON::ObjectId('5b1c53666e9552257783d43f'),
   # "title"=>"a title",
   # "description"=>"a description",

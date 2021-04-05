@@ -15,6 +15,13 @@ FactoryBot.define do
     score { Faker::Number.between(from: 1, to: 20) }
   end
 
+  factory :entry_other do
+    script { 'abc' }
+    created_at { Time.now.utc }
+    user
+    score { Faker::Number.between(from: 1, to: 20) }
+  end
+
   factory :user, aliases: [:owner] do
     name { Faker::Name.name }
     nickname { Faker::Internet.user_name }

@@ -33,6 +33,7 @@ user_ids = User.pluck(:_id)
 
 params[:challenges].times do |i|
   entries = []
+
   params[:entries].times do |j|
     entries.push(Entry.new(
       script: "a\ra\na\r\nentries: #{j}\n\r\n",
@@ -56,4 +57,18 @@ params[:challenges].times do |i|
     updated_at: Time.now,
     entries: entries,
   ).as_document)
+
+  challenge = Challenge.last
+
+  params[:entries].times do |j|
+    EntryOther.collection.insert_one(EntryOther.new(
+      script: "a\ra\na\r\nentries: #{j}\n\r\n",
+      created_at: Time.now,
+      updated_at: Time.now,
+      user_id: user_ids.sample,
+      challenge_id: challenge.id,
+      score: Faker::Number.between(from: 2, to: 200)
+    ).as_document)
+  end
+
 end

@@ -14,8 +14,13 @@ class Entry
   field :score, type: Integer
 
   embeds_many :comments
-  embedded_in :challenge, inverse_of: :entries
+
+  belongs_to :challenge
   belongs_to :user
+
+  index "user_id" => 1
+  index "challenge_id" => 1
+  index({ "score": 1, "created_at": 1 })
 
   validates_with EntryValidator, fields: [:script]
 

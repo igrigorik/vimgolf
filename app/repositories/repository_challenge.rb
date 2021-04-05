@@ -21,83 +21,16 @@ module RepositoryChallenge
   # see http://api.mongodb.com/ruby/current/Mongo/Collection/View/Aggregation.html
   #
   # Example :
-  # RepositoryChallenge.collection_aggregate({"$count": 'challenge_count'}).to_a
+  # RepositoryChallenge.entry_aggregate({"$count": 'challenge_count'}).to_a
   # => [{"challenge_count"=>102}]
-  def self.collection_aggregate(*args)
+  def self.entry_aggregate(*args)
+    Entry.collection.aggregate(args.flatten)
+  end
+
+  def self.challenge_aggregate(*args)
     Challenge.collection.aggregate(args.flatten)
   end
 
-  # Sum every entries of every Challenge
-  #
-  # Use of $group with id => nil
-  # to calculate accumulated values for all the input documents as a whole.
-  #
-  # $group is an Aggregation Pipeline Stages
-  # see https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/
-  #
-  # $sum, $size, $ifNull are Aggregation Pipeline Operators
-  # https://docs.mongodb.com/manual/reference/operator/aggregation/
-  #
-  # count_entries is a new field returned by mongodb query
-  # $entries is the embeded "Challenge.entries", can be null
-  #
-  # Returns a Mongo::Collection::View::Aggregation
-  #
-  # Example :
-  # RepositoryChallenge.count_entries_query.to_a
-  # => [{"_id"=>nil, "count_entries"=>45000}]
-  def self.count_entries_query
-    collection_aggregate({
-      "$group": {
-        "_id": nil,
-        "count_entries": {
-          "$sum": {
-            "$size":  { "$ifNull": [ "$entries", [] ] }
-          },
-        },
-      },
-    })
-  end
-
-  def self.count_entries
-    result = count_entries_query.first
-
-    result ? result['count_entries'] : 0
-  end
-
-  # It sort challenge by 'score' and return only the sum of entries.
-  # It limit the fields returned by mongodb to get a quick response.
-  # .score_query is a list of pipeline operators for .collection_aggregate
-  #
-  # $project:
-  # - limit the returned fields
-  # - add a new field 'count_entries'
-  #
-  # $addFields: add a new computed field 'score',
-  # the equivalent ruby code of is:
-  # challenge.entries.count.to_f / (Time.now.to_i - challenge.created_at.to_i)
-  #
-  # $sort: sort 'score' in descending order to allow pagination.
-  #
-  # $project, $addFields, $sort are Aggregation Pipeline Stages
-  # see https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/
-  #
-  # $size, $ifNull, $divide, $subtract are Aggregation Pipeline Operators
-  # https://docs.mongodb.com/manual/reference/operator/aggregation/
-  #
-  # Example:
-  # RepositoryChallenge.collection_aggregate(RepositoryChallenge.score_query).to_a
-  # => [
-  #      {
-  #        "_id"=>BSON::ObjectId('5af76222cfa4a41a195c774b'),
-  #        "title"=>"Stranger in a Strange Land",
-  #        "description"=>"description 39",
-  #        "created_at"=>2018-05-12 21:52:33 UTC,
-  #        "count_entries"=>4000,
-  #        "score"=>0.044298750775228136
-  #      },
-  #   ....
-  # ]
   def self.score_query
     [
       {
@@ -106,31 +39,18 @@ module RepositoryChallenge
           "title": 1,
           "description": 1,
           "created_at": 1,
-          "count_entries": {
-            "$size":  { "$ifNull": [ "$entries", [] ] }
-          }
         },
       },
-      {
-        "$addFields": {
-          "score": {
-            "$divide": [
-              "$count_entries",
-              { "$subtract": [Time.now, "$created_at"] }
-            ]
-          }
-        }
-      },
-      { "$sort": { "score": -1 } },
+      { "$sort": { "created_at": -1 } },
     ]
   end
 
-  # List of pipeline operators for .collection_aggregate
+  # List of pipeline operators for .entry_aggregate
   # to paginate every query
   # see https://docs.mongodb.com/manual/reference/operator/aggregation/project/
   #
   # Example:
-  # RepositoryChallenge.collection_aggregate(
+  # RepositoryChallenge.entry_aggregate(
   #   [{ '$project': {title: 1}}],
   #   RepositoryChallenge.paginate(per_page: 2, page: 1)
   # ).to_a
@@ -146,7 +66,7 @@ module RepositoryChallenge
   end
 
   def self.paginate_home_page(per_page:, page:)
-    collection_aggregate(
+    challenge_aggregate(
       score_query,
       paginate(per_page: per_page, page: page)
     )
@@ -155,20 +75,17 @@ module RepositoryChallenge
   # Reference query
   def self.best_score_per_user(challenge_id)
     [
-      { "$match": { "_id": challenge_id } },
-      { "$unwind": "$entries" },
-      # sort needed so all { "$first": key }
-      # can return the right value associated to the min score
-      { "$sort": { "entries.score": 1, "entries.created_at": 1 } },
+      { "$match": { "challenge_id": challenge_id } },
+      { "$sort": { "score": 1, "created_at": 1 } },
       {
         '$group': {
-          "_id": '$entries.user_id',
-          "entry_id": { "$first": '$entries._id' },
-          "user_id": { "$first": '$entries.user_id' },
-          "created_at": { "$first": '$entries.created_at' },
-          "script": { "$first": '$entries.script' },
-          "comments": { "$first": '$entries.comments' },
-          "min_score": { "$first": '$entries.score'}
+          "_id": '$user_id',
+          "entry_id": { "$first": '$_id' },
+          "user_id": { "$first": '$user_id' },
+          "created_at": { "$first": '$created_at' },
+          "script": { "$first": '$script' },
+          "comments": { "$first": '$comments' },
+          "min_score": { "$first": '$score'}
         }
       },
       { "$sort": { "min_score": 1, "created_at": 1 } },
@@ -183,7 +100,7 @@ module RepositoryChallenge
   # Example to avoid :
   # Challenge.collection.distinct('entries.user_id').length
   def self.sum_lines(*args)
-    result = collection_aggregate(
+    result = entry_aggregate(
       args.concat([
         {
           '$group': {
@@ -197,7 +114,7 @@ module RepositoryChallenge
   end
 
   def self.paginate_leaderboard(challenge_id:, per_page:, page:)
-    collection_aggregate(
+    entry_aggregate(
       best_score_per_user(challenge_id),
       paginate(per_page: per_page, page: page)
     )
@@ -209,7 +126,7 @@ module RepositoryChallenge
   #
   # Return nil when no entries
   def self.worst_score(challenge_id)
-    result = collection_aggregate(
+    result = entry_aggregate(
       best_score_per_user(challenge_id),
       { "$sort": { "min_score": -1 } },
       { "$limit": 1 },
@@ -229,7 +146,7 @@ module RepositoryChallenge
   # RepositoryChallenge.bellow_score(challenge_id, 10)
   # => 2 # not 9, because the visible solution for B is 2
   def self.bellow_score(challenge_id, score)
-    result = collection_aggregate(
+    result = entry_aggregate(
       best_score_per_user(challenge_id),
       { "$match": { "min_score": { "$lt": score } } },
       { "$sort": { "min_score": -1 } },
@@ -245,7 +162,7 @@ module RepositoryChallenge
   # RepositoryChallenge.best_player_score(challenge_id, user_id).to_a
   # => 123
   def self.best_player_score(challenge_id, player_id)
-    result = collection_aggregate(
+    result = entry_aggregate(
       best_score_per_user(challenge_id),
       { "$match": { "user_id": player_id } },
       { "$limit": 1 },
@@ -254,7 +171,7 @@ module RepositoryChallenge
   end
 
   def self.submissions(challenge_id:, min_score:, per_page:, page:)
-    collection_aggregate(
+    entry_aggregate(
       best_score_per_user(challenge_id),
       { "$match": { "min_score": { "$gte": min_score } } },
       { "$sort": { "min_score": 1, "created_at": 1 } },
@@ -268,39 +185,12 @@ module RepositoryChallenge
   # RepositoryChallenge.count_uniq_users(challenge_id)
   # => 1266
   def self.count_uniq_users(challenge_id)
-    sum_lines(best_score_per_user(challenge_id)) || 0
-  end
-
-  # Load specific fields for page 'show' without loading ALL entries
-  #
-  # Example:
-  # RepositoryChallenge.show_challenge(challenge_id).to_a
-  # => [{"_id"=>BSON::ObjectId('5b1c53666e9552257783d43f'),
-  # "title"=>"a title",
-  # "description"=>"a description",
-  # "diff"=>"diff",
-  # "input"=>"input",
-  # "output"=>"output",
-  # "user_id"=>BSON::ObjectId('5b1c53656e9552257783c146'),
-  # "count_entries"=>2000}]
-  def self.show_challenge(challenge_id)
-    collection_aggregate(
-      { "$match": { "_id": challenge_id } },
-      {
-        '$project': {
-          "_id": 1,
-          "user_id": 1,
-          "title": 1,
-          "description": 1,
-          "input": 1,
-          "output": 1,
-          "diff": 1,
-          "count_entries": {
-            "$size":  { "$ifNull": [ "$entries", [] ] }
-          },
-        }
-      }
-    ).first
+    r = entry_aggregate(
+      { "$match": { "challenge_id": challenge_id } },
+      { "$group": { "_id": '$user_id' } },
+      { "$count": "count_users" }
+    ).first || {"count_users" => 0}
+    r["count_users"]
   end
 
   # Return number of solution that are less than visible_score
@@ -320,39 +210,16 @@ module RepositoryChallenge
   end
 
   def self.created_by(player_id)
-    collection_aggregate(
+    challenge_aggregate(
       { "$match": { "user_id": player_id } },
       {
         "$project": {
           "_id": 1,
           "title": 1,
           "description": 1,
-          "count_entries": {
-            "$size":  { "$ifNull": [ "$entries", [] ] }
-          }
         },
       }
     )
-  end
-
-  def self.group_by_challenge(player_id)
-    [
-      { "$match": { "entries.user_id": player_id } },
-      { "$sort": { "entries.score": 1 } },
-      {
-        "$group": {
-          "_id": '$_id',
-          "title": { "$first": '$title'},
-          "description": { "$first": '$description'},
-          "created_at": { "$first": '$created_at'},
-          "count_entries": { "$first": '$count_entries'},
-          "best_score": { "$first": '$best_score'},
-          "best_player_score": { "$first": '$entries.score'},
-          "attempts": { "$sum":  1 }
-        },
-      },
-      { "$sort": { "created_at": -1 } },
-    ]
   end
 
   def self.group_by_challenge_with_ranking(player_id)
@@ -402,30 +269,17 @@ module RepositoryChallenge
     ]
   end
 
-  def self.player_best_scores(player_id, with_ranking = false)
-    collection_aggregate(
-      { "$match": { "entries.user_id": player_id } },
-      {
-        "$project": {
-          "_id": 1,
-          "title": 1,
-          "description": 1,
-          "created_at": 1,
-          "entries": 1,
-          "count_entries": {
-            "$size":  { "$ifNull": [ "$entries", [] ] }
-          },
-          "best_score": {
-            "$min": "$entries.score"
-          },
-        }
-      },
-      { "$unwind": "$entries" },
-      if with_ranking
-        group_by_challenge_with_ranking(player_id)
-      else
-        group_by_challenge(player_id)
-      end,
+  def self.player_best_scores(player_id)
+    entry_aggregate(
+      { "$match": { "user_id": player_id } },
+      { "$group": {
+          "_id": '$challenge_id',
+          "challenge_id": {"$first": '$challenge_id'},
+          "best_player_score": {"$min": "$score"},
+          "last_created_at": {"$max": "$created_at"},
+          "attempts": { "$sum": 1 }
+        } },
+      { "$sort": { "last_created_at": 1 } },
     )
   end
 
@@ -451,7 +305,7 @@ module RepositoryChallenge
     # In the UI, we will represent those entries using #>n, rather than
     # just #n, to indicate that this is not an actual ranking position, but
     # simply a "what-if" ranking position.
-    collection_aggregate(
+    entry_aggregate(
       { "$match": { "_id": challenge_id } },
       { "$unwind": "$entries" },
       {
@@ -507,4 +361,11 @@ module RepositoryChallenge
     )
   end
 
+  def self.count_entries(challenge_id)
+    r = entry_aggregate(
+      { "$match": { "challenge_id": challenge_id } },
+      { "$count": "count_entries" }
+    ).first || {"count_entries" => 0}
+    r["count_entries"]
+  end
 end

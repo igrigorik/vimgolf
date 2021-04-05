@@ -8,7 +8,7 @@ module ApplicationHelper
   end
 
   def twitter_avatar(user)
-    "<img src='https://avatars.io/twitter/#{user}/small' class='user'>".html_safe
+    "https://avatars.io/twitter/#{user}".html_safe
   end
 
   def current_url

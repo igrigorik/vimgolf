@@ -9,7 +9,7 @@ class MainController < ApplicationController
     @stats = {
       users: User.count,
       challenges: challenge_count,
-      entries: RepositoryChallenge.count_entries,
+      entries: Entry.count,
     }
 
     @challenges = RepositoryChallenge.paginate_home_page(per_page: per_page, page: param_page)
@@ -18,9 +18,6 @@ class MainController < ApplicationController
       .paginate_array([], total_count: challenge_count)
       .page(param_page)
       .per(per_page)
-    # if users = Rails.cache.read(:top_users)
-    #   @top_users = User.find(users).sort_by {|u| users.index(u._id) }
-    # end
   end
 
   def feed

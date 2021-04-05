@@ -32,19 +32,7 @@ User.collection.insert_many(users)
 user_ids = User.pluck(:_id)
 
 params[:challenges].times do |i|
-  entries = []
-
-  params[:entries].times do |j|
-    entries.push(Entry.new(
-      script: "a\ra\na\r\nentries: #{j}\n\r\n",
-      created_at: Time.now,
-      updated_at: Time.now,
-      user_id: user_ids.sample,
-      score: Faker::Number.between(from: 2, to: 200)
-    ).as_document)
-  end
-
-  Challenge.collection.insert_one(Challenge.new(
+  challenge = Challenge.new(
     title: Faker::Book.title,
     description: "description #{i}",
     diff: 'diff',
@@ -55,13 +43,12 @@ params[:challenges].times do |i|
     user_id: user_ids.sample,
     created_at: Time.now,
     updated_at: Time.now,
-    entries: entries,
-  ).as_document)
+  )
+  Challenge.collection.insert_one(challenge.as_document)
 
-  challenge = Challenge.last
-
+  entries = []
   params[:entries].times do |j|
-    EntryOther.collection.insert_one(EntryOther.new(
+    entries.push(Entry.new(
       script: "a\ra\na\r\nentries: #{j}\n\r\n",
       created_at: Time.now,
       updated_at: Time.now,
@@ -70,5 +57,7 @@ params[:challenges].times do |i|
       score: Faker::Number.between(from: 2, to: 200)
     ).as_document)
   end
+
+  Entry.collection.insert_many(entries)
 
 end

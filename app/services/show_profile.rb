@@ -23,7 +23,7 @@ class ShowProfile
   end
 
   def tried_challenges
-    @tried_challenges ||= RepositoryChallenge.player_best_scores(player.id, show_ranking).to_a
+    @tried_challenges ||= RepositoryChallenge.player_best_scores(player.id).to_a
   end
 
 end

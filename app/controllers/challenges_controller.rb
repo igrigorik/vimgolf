@@ -55,14 +55,14 @@ class ChallengesController < ApplicationController
   def show
     # Limit to id to avoid downloading uneccessary entries
     challenge_id = params['id']
-    challenge = Challenge.only(:id).find(challenge_id) rescue nil
+    challenge = Challenge.find(challenge_id) rescue nil
     return redirect_to root_path if challenge.nil?
 
     respond_to do |format|
-      format.json { render :json => json_show(challenge_id) }
+      format.json { render :json => json_show(challenge) }
 
       format.html {
-        @show_challenge = ShowChallenge.new(challenge.id)
+        @show_challenge = ShowChallenge.new(challenge)
         @submissions = Submissions.new(current_user, challenge.id, params['submissions_page'])
         @leaderboard = Leaderboard.new(challenge, params['leaderboard_page'])
       }
@@ -72,13 +72,13 @@ class ChallengesController < ApplicationController
   def user
     # Limit to id to avoid downloading uneccessary entries
     challenge_id = params['id']
-    challenge = Challenge.only(:id).find(challenge_id) rescue nil
+    challenge = Challenge.find(challenge_id) rescue nil
     return redirect_to root_path if challenge.nil?
 
     player = User.where(nickname: params[:username]).first rescue nil
     return redirect_to root_path if player.nil?
 
-    @show_challenge = ShowChallenge.new(challenge.id)
+    @show_challenge = ShowChallenge.new(challenge)
     @submissions = SubmissionsPerUser.new(current_user, challenge.id, player)
   end
 
@@ -88,11 +88,7 @@ class ChallengesController < ApplicationController
     params.require(:challenge).permit!
   end
 
-  def json_show(challenge_id)
-    challenge = Challenge
-      .only(:input, :input_type, :output, :output_type)
-      .find(challenge_id)
-
+  def json_show(challenge)
     {
       'in' => {
         'data' => challenge.input,

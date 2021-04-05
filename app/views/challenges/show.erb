@@ -49,6 +49,6 @@
             </div>
         <% end %>
 
-        <%= paginate @leaderboard.paginated, inner_window: 20, param_name: :leaderboard_page %>
+        <%= paginate @leaderboard.paginated, inner_window: 10, param_name: :leaderboard_page %>
     <% end %>
 </div>

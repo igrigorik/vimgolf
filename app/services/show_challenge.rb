@@ -6,17 +6,10 @@ require 'forwardable'
 class ShowChallenge
   extend Forwardable
 
-  def initialize(challenge_id)
-    @challenge_id = challenge_id
+  def initialize(challenge)
+    @challenge = challenge
   end
-
-  def raw_challenge
-    @raw_challenge ||= RepositoryChallenge.show_challenge(@challenge_id)
-  end
-
-  def challenge
-    @challenge ||= Challenge.new(raw_challenge.reject { |k, _v| k == 'count_entries' })
-  end
+  attr_reader :challenge
 
   def_delegators :challenge, :id
   def_delegators :challenge, :user
@@ -28,11 +21,11 @@ class ShowChallenge
   def_delegators :challenge, :owner?
 
   def count_entries
-    raw_challenge[:count_entries]
+    RepositoryChallenge.count_entries(challenge.id)
   end
 
   def count_uniq_users
-    RepositoryChallenge.count_uniq_users(@challenge_id)
+    RepositoryChallenge.count_uniq_users(challenge.id)
   end
 
 end

@@ -5,9 +5,9 @@ challenge = Challenge.last
 user = User.first
 puts "-----------"
 puts "-----------"
-# pp RepositoryChallenge.worst_score(challenge.id)
-# s = Submissions.new(user, challenge.id, 5)
-# pp s.submissions
+pp RepositoryChallenge.worst_score(challenge.id)
+s = Submissions.new(user, challenge.id, 5)
+pp s.submissions
 
 pp RepositoryEntry.worst_score(challenge.id)
 s = SubmissionsOthers.new(user, challenge.id, 5)

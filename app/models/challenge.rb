@@ -23,7 +23,7 @@ class Challenge
   validates_length_of :diff, minimum: 1, maximum: MAX_FILESIZE
 
   def top_entries
-    entries.top_by_user
+    @top_entries ||= entries.top_by_user
   end
 
   def participator?(current_user)

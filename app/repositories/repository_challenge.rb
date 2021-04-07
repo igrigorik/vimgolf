@@ -197,10 +197,11 @@ module RepositoryChallenge
   end
 
   def self.paginate_leaderboard(challenge_id:, per_page:, page:)
-    collection_aggregate(
-      best_score_per_user(challenge_id),
-      paginate(per_page: per_page, page: page)
-    )
+    Challenge
+      .find(challenge_id)
+      .top_entries
+      .drop(per_page * (page - 1))
+      .take(per_page)
   end
 
   # Return the worst score for a given challenge
@@ -209,12 +210,13 @@ module RepositoryChallenge
   #
   # Return nil when no entries
   def self.worst_score(challenge_id)
-    result = collection_aggregate(
-      best_score_per_user(challenge_id),
-      { "$sort": { "min_score": -1 } },
-      { "$limit": 1 },
-    ).first
-    result && result['min_score']
+    Challenge
+      .find(challenge_id)
+      .top_entries
+      .last
+      .score
+  rescue StandardError
+    nil
   end
 
   # Return the next lowest score bellow a given score
@@ -254,12 +256,12 @@ module RepositoryChallenge
   end
 
   def self.submissions(challenge_id:, min_score:, per_page:, page:)
-    collection_aggregate(
-      best_score_per_user(challenge_id),
-      { "$match": { "min_score": { "$gte": min_score } } },
-      { "$sort": { "min_score": 1, "created_at": 1 } },
-      paginate(per_page: per_page, page: page)
-    )
+    Challenge
+      .find(challenge_id)
+      .top_entries
+      .select { |e| e.score >= min_score }
+      .drop(per_page * (page - 1))
+      .take(per_page)
   end
 
   # Count number of uniq user per challenge
@@ -268,7 +270,12 @@ module RepositoryChallenge
   # RepositoryChallenge.count_uniq_users(challenge_id)
   # => 1266
   def self.count_uniq_users(challenge_id)
-    sum_lines(best_score_per_user(challenge_id)) || 0
+    Challenge
+      .find(challenge_id)
+      .top_entries
+      .size
+  rescue StandardError
+    0
   end
 
   # Load specific fields for page 'show' without loading ALL entries
@@ -305,18 +312,24 @@ module RepositoryChallenge
 
   # Return number of solution that are less than visible_score
   def self.count_remaining_solutions(challenge_id, visible_score)
-    sum_lines(
-      best_score_per_user(challenge_id),
-      { "$match": { "min_score": { "$lt": visible_score } } },
-    ) || 0
+    Challenge
+      .find(challenge_id)
+      .top_entries
+      .select { |e| e.score < visible_score }
+      .size
+  rescue StandardError
+    0
   end
 
   # Return number of solution that are greater or equal than visible_score
   def self.count_displayed_solutions(challenge_id, visible_score)
-    sum_lines(
-      best_score_per_user(challenge_id),
-      { "$match": { "min_score": { "$gte": visible_score } } },
-    ) || 0
+    Challenge
+      .find(challenge_id)
+      .top_entries
+      .select { |e| e.score >= visible_score }
+      .size
+  rescue StandardError
+    0
   end
 
   def self.created_by(player_id)
@@ -500,7 +513,7 @@ module RepositoryChallenge
           "created_at": "$items.created_at",
           "script": "$items.script",
           "comments": "$items.comments",
-          "min_score": "$items.score",
+          "score": "$items.score",
           "position": { "$add": ["$items.position", 1] },
         }
       }

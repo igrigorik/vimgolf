@@ -8,11 +8,11 @@ class Solution
   attr_reader :solution, :position
 
   def id
-    solution[:entry_id]
+    solution[:id]
   end
 
   def score
-    solution[:min_score]
+    solution[:score]
   end
 
   def script

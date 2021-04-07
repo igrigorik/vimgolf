@@ -96,7 +96,7 @@ describe RepositoryChallenge do
 
         expect(result.length).to eq(1)
 
-        expect(result.first['min_score']).to eq(7)
+        expect(result.first['score']).to eq(7)
         expect(result.first['created_at']).to eq(Time.new(2018,04,28))
       end
     end
@@ -120,7 +120,7 @@ describe RepositoryChallenge do
         ).to_a
         expect(result.length).to eq(1)
 
-        expect(result.first['min_score']).to eq(7)
+        expect(result.first['score']).to eq(7)
         expect(result.first['created_at']).to eq(Time.new(2017))
       end
     end
@@ -156,15 +156,15 @@ describe RepositoryChallenge do
 
         expect(result.length).to eq(3)
 
-        expect(result.first['min_score']).to eq(6)
+        expect(result.first['score']).to eq(6)
         expect(result.first['user_id']).to eq(best_user.id)
         expect(result.first['created_at']).to eq(Time.new(2019))
 
-        expect(result.second['min_score']).to eq(7)
+        expect(result.second['score']).to eq(7)
         expect(result.second['user_id']).to eq(user2.id)
         expect(result.second['created_at']).to eq(Time.new(2016))
 
-        expect(result.last['min_score']).to eq(7)
+        expect(result.last['score']).to eq(7)
         expect(result.last['user_id']).to eq(user1.id)
         expect(result.last['created_at']).to eq(Time.new(2017))
       end
@@ -509,19 +509,19 @@ describe RepositoryChallenge do
 
         entry = result[0]
         expect(entry['user_id']).to eq(user1.id)
-        expect(entry['min_score']).to eq(29)
+        expect(entry['score']).to eq(29)
         expect(entry['position']).to eq(3)
         expect(entry['created_at']).to eq(Time.new(2018,04,06))
 
         entry = result[1]
         expect(entry['user_id']).to eq(user1.id)
-        expect(entry['min_score']).to eq(44)
+        expect(entry['score']).to eq(44)
         expect(entry['position']).to eq(5) # >4
         expect(entry['created_at']).to eq(Time.new(2018,04,01))
 
         entry = result[2]
         expect(entry['user_id']).to eq(user1.id)
-        expect(entry['min_score']).to eq(52)
+        expect(entry['score']).to eq(52)
         expect(entry['position']).to eq(7) # >5
         expect(entry['created_at']).to eq(Time.new(2018,03,27))
       end

@@ -247,12 +247,14 @@ module RepositoryChallenge
   # RepositoryChallenge.best_player_score(challenge_id, user_id).to_a
   # => 123
   def self.best_player_score(challenge_id, player_id)
-    result = collection_aggregate(
-      best_score_per_user(challenge_id),
-      { "$match": { "user_id": player_id } },
-      { "$limit": 1 },
-    ).first
-    result && result['min_score']
+    Challenge
+      .find(challenge_id)
+      .top_entries
+      .select { |e| e.user_id == player_id }
+      .first
+      .score
+  rescue StandardError
+    nil
   end
 
   def self.submissions(challenge_id:, min_score:, per_page:, page:)

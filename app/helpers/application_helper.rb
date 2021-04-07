@@ -8,7 +8,7 @@ module ApplicationHelper
   end
 
   def twitter_avatar(user)
-    "<img src='https://avatars.io/twitter/#{user}/small' class='user'>".html_safe
+    "<img src='http://identicon-1132.appspot.com/#{Digest::MD5.hexdigest(user)}' class='user'>".html_safe
   end
 
   def current_url

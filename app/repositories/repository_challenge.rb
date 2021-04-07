@@ -231,13 +231,14 @@ module RepositoryChallenge
   # RepositoryChallenge.bellow_score(challenge_id, 10)
   # => 2 # not 9, because the visible solution for B is 2
   def self.bellow_score(challenge_id, score)
-    result = collection_aggregate(
-      best_score_per_user(challenge_id),
-      { "$match": { "min_score": { "$lt": score } } },
-      { "$sort": { "min_score": -1 } },
-      { "$limit": 1 },
-    ).first
-    result && result['min_score'] || 0
+    Challenge
+      .find(challenge_id)
+      .top_entries
+      .select { |e| e.score < score }
+      .last
+      .score
+  rescue StandardError
+    0
   end
 
   # Return the best score for a given user_id

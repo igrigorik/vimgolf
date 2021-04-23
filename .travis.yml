@@ -1,7 +1,7 @@
 language: ruby
 matrix:
   include:
-    - rvm: 2.6.6 # Test web AND cli with specific version
+    - rvm: 2.6.7 # Test web AND cli with specific version
       gemfile: Gemfile
     # Otherwise test only the cli
     - rvm: 2.3

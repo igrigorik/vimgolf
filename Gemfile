@@ -3,9 +3,9 @@ ruby '2.6.7'
 
 gem 'rails', '~> 5.2.0'
 
-gem 'mongo'
-gem 'bson'
-gem 'mongoid', '~> 6.0'
+gem 'mongo', '~> 2.5.0'
+gem 'bson', '~> 4.3.0'
+gem 'mongoid', '~> 6.1.0'
 
 gem 'json'
 gem 'memcachier'

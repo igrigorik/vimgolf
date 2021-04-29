@@ -7,6 +7,8 @@ gem 'mongo', '~> 2.5.0'
 gem 'bson', '~> 4.3.0'
 gem 'mongoid', '~> 6.1.0'
 
+gem 'pg'
+
 gem 'json'
 gem 'memcachier'
 gem 'dalli'
@@ -25,6 +27,7 @@ gem 'kaminari'
 gem 'vimgolf', path: 'lib/vimgolf'
 
 group :test, :development do
+  gem 'sqlite3', '~> 1.3.6'
   gem 'rspec-rails', '3.6.0'
   gem 'rails-controller-testing'
   gem 'shoulda-matchers'

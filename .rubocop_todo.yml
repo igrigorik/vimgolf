@@ -290,7 +290,6 @@ Layout/SpaceAroundOperators:
 # SupportedStylesForEmptyBraces: space, no_space
 Layout/SpaceBeforeBlockBraces:
   Exclude:
-    - 'db/seeds.rb'
     - 'lib/vimgolf/lib/vimgolf/ui.rb'
     - 'spec/features/entry_feature_spec.rb'
 
@@ -319,7 +318,6 @@ Layout/SpaceInsideBlockBraces:
   Exclude:
     - 'app/controllers/users_controller.rb'
     - 'app/services/submissions.rb'
-    - 'db/seeds.rb'
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
     - 'lib/vimgolf/lib/vimgolf/keylog.rb'
     - 'lib/vimgolf/lib/vimgolf/ui.rb'
@@ -808,12 +806,6 @@ Style/Semicolon:
     - 'app/controllers/users_controller.rb'
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/SlicingWithRange:
-  Exclude:
-    - 'db/seeds.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -870,7 +862,6 @@ Style/TrailingCommaInArguments:
   Exclude:
     - 'app/repositories/repository_challenge.rb'
     - 'config/initializers/omniauth.rb'
-    - 'db/seeds.rb'
     - 'spec/features/profile_spec.rb'
 
 # Offense count: 6
@@ -889,7 +880,6 @@ Style/TrailingCommaInHashLiteral:
   Exclude:
     - 'app/controllers/main_controller.rb'
     - 'app/repositories/repository_challenge.rb'
-    - 'db/seeds.rb'
     - 'lib/vimgolf/lib/vimgolf/keylog.rb'
     - 'spec/controllers/sessions_controller_spec.rb'
 

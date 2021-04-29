@@ -16,6 +16,6 @@ module ApplicationHelper
   end
 
   def challenge_id(challenge)
-    content_for(:challenge_id, challenge.id) || "Your storage is empty"
+    content_for(:challenge_id, challenge.urlkey) || "Your storage is empty"
   end
 end

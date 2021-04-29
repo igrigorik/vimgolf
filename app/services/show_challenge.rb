@@ -6,19 +6,16 @@ require 'forwardable'
 class ShowChallenge
   extend Forwardable
 
-  def initialize(challenge_id)
-    @challenge_id = challenge_id
-  end
-
-  def raw_challenge
-    @raw_challenge ||= RepositoryChallenge.show_challenge(@challenge_id)
+  def initialize(challenge_urlkey)
+    @challenge_id = challenge_urlkey
   end
 
   def challenge
-    @challenge ||= Challenge.new(raw_challenge.reject { |k, _v| k == 'count_entries' })
+    @challenge ||= Challenge.find_by_urlkey(@challenge_id)
   end
 
   def_delegators :challenge, :id
+  def_delegators :challenge, :urlkey
   def_delegators :challenge, :user
   def_delegators :challenge, :title
   def_delegators :challenge, :description
@@ -28,7 +25,7 @@ class ShowChallenge
   def_delegators :challenge, :owner?
 
   def count_entries
-    raw_challenge[:count_entries]
+    challenge.entries.count
   end
 
   def count_uniq_users

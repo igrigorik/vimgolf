@@ -29,7 +29,7 @@ class Leaderboard
 
   def paginated
     Kaminari
-      .paginate_array([], total_count: RepositoryChallenge.count_uniq_users(challenge.id))
+      .paginate_array([], total_count: RepositoryChallenge.count_uniq_users(challenge.urlkey))
       .page(page)
       .per(PER_PAGE)
   end

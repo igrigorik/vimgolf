@@ -1,17 +1,17 @@
 <div class="grid_7">
 
   <h3><b>Played Challenges</b></h3>
-    <% @show_profile.tried_challenges.each do |player_challenge| %>
+    <% @show_profile.tried_challenges.each do |entry| %>
         <div>
-            <%= render partial: "shared/challenge", locals: { challenge: player_challenge } %>
+            <%= render partial: "shared/challenge", locals: { challenge: entry.challenge } %>
             <ul>
-              <li>Best score: <b><%= player_challenge['best_score'] %></b></li>
-              <li>Best player score: <b><%= player_challenge['best_player_score'] %></b></li>
+              <li>Best score: <b><%= entry.challenge.best_score %></b></li>
+              <li>Best player score: <b><%= entry.score %></b></li>
             <% if @show_profile.show_ranking %>
               <li>Position: <b>#<%= player_challenge['position'] %> / <%= player_challenge['count_golfers'] %></b></li>
             <% end %>
-              <li>Number of attempts: <b><%= link_to player_challenge['attempts'],
-                user_challenge_path(player_challenge['_id'], @show_profile.nickname) %></b></li>
+              <li>Number of attempts: <b><%= link_to entry.challenge.count_entries_by(@show_profile.player.id),
+                user_challenge_path(entry.challenge.urlkey, @show_profile.nickname) %></b></li>
             </ul>
         </div>
     <% end %>

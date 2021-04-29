@@ -21,5 +21,4 @@ describe VimGolf do
     expect(out).to include("setup")
     expect(out).to include("launch")
   end
-
 end

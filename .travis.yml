@@ -1,20 +1,24 @@
 language: ruby
-matrix:
+os: linux
+dist: focal
+jobs:
   include:
     - rvm: 2.6.7 # Test web AND cli with specific version
       gemfile: Gemfile
-    # Otherwise test only the cli
-    - rvm: 2.3
+    - rvm: 2.4 # Test only the cli.
       gemfile: lib/vimgolf/Gemfile
-
+    - rvm: 2.3 # Test only the cli, on older Ruby.
+      dist: xenial
+      gemfile: lib/vimgolf/Gemfile
 services:
   - mongodb
 before_install:
-    - ls -l /home/travis/.rvm/gems # Future reference, targets for quick build
-    - cd `dirname $BUNDLE_GEMFILE`
-    - pwd # For debug info
-    - gem install -v 1.16.2 bundler # Travis's Bundler 1.7.6 is causing problems
-script: bundle exec rake
+  - ls -l /home/travis/.rvm/gems # Future reference, targets for quick build
+  - cd `dirname $BUNDLE_GEMFILE`
+  - pwd # For debug info
+  - gem install -v 1.16.2 bundler # Travis's Bundler 1.7.6 is causing problems
+script:
+  - bundle exec rake
 addons:
   apt:
     sources:
@@ -22,4 +26,4 @@ addons:
   code_climate:
     repo_token: 87b58d792ac24c87c9eb7957aa3fe7e05f72f800619452853270ed6a8f5b3853
 after_success:
-    - bundle exec codeclimate-test-reporter
+  - bundle exec codeclimate-test-reporter

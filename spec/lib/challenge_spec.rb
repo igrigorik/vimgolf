@@ -3,7 +3,6 @@ require "tmpdir"
 require "fileutils"
 
 describe VimGolf::Challenge do
-
   before :each do
     @dir = Dir.mktmpdir("vimgolf_test_")
     VimGolf::Challenge.path(@dir)
@@ -27,5 +26,3 @@ describe VimGolf::Challenge do
     expect { VimGolf::Challenge.new('invalidID').upload }.to raise_error(RuntimeError)
   end
 end
-
-

@@ -17,7 +17,7 @@ describe "POST /entry" do
       provider: "github",
       nickname: "the science guy"
     )
-    body = { entry: "aa", challenge_id: challenge.id.to_s, apikey: user.key }.to_json
+    body = { entry: "aa", challenge_id: challenge.urlkey, apikey: user.key }.to_json
 
     post("/entry", params: body, headers: headers)
 
@@ -25,7 +25,7 @@ describe "POST /entry" do
     expect(response).to have_http_status(200)
     expect(json_response[:status]).to eq("ok")
     expect(entries.count).to eq(1)
-    expect(entries.first.script.data).to eq("aa")
+    expect(entries.first.script).to eq("aa")
     expect(entries.first.score).to eq(2)
     expect(entries.first.created_at).not_to be nil
     expect(entries.first.user).to eq(user)
@@ -40,7 +40,7 @@ describe "POST /entry" do
       output: "bb",
       diff: "aabb"
     )
-    invalid_challenge_id = BSON::ObjectId.from_string(challenge.id.to_s.reverse).to_s
+    invalid_challenge_id = challenge.urlkey.reverse
     body = { entry: "foo", challenge_id: invalid_challenge_id, apikey: "a" }.to_json
 
     post("/entry", params: body, headers: headers)

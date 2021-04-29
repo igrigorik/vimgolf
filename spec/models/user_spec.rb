@@ -2,21 +2,6 @@ require 'spec_helper'
 
 describe User do
   describe 'Validations' do
-    it do
-      fields = [
-        :provider,
-        :uid,
-        :nickname,
-        :name,
-        :location,
-        :image,
-        :description,
-        :key
-      ]
-
-      should have_fields(*fields)
-    end
-
     it { should validate_numericality_of(:uid) }
 
     it { should validate_presence_of(:provider) }

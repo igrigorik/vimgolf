@@ -5,3 +5,5 @@ require File.expand_path('../config/application', __FILE__)
 require 'rake'
 
 Vimgolf::Application.load_tasks
+
+Rake::Task['test:prepare'].enhance(['db:test:prepare'])

@@ -16,7 +16,9 @@ feature "Entries for Challenges" do
       :title => :test,
       :description => :test,
       :input => :a,
+      :input_type => :txt,
       :output => :b,
+      :output_type => :txt,
       :diff => :c,
       :user => owner
     )
@@ -46,7 +48,7 @@ feature "Entries for Challenges" do
         click_link 'test'
         click_link 'Comment'
         fill_in 'comment_text', with: 'test comment'
-        expect{ click_button 'Comment' }.to change{ Challenge.first.entries.first.comments.count }.from(0).to(1)
+        expect { click_button 'Comment' }.to change { Challenge.first.entries.first.comments.count }.from(0).to(1)
         expect(page).to have_css '.comment', text: 'the science guy: test comment'
         expect(page).to have_text '1 comment'
       end
@@ -58,7 +60,7 @@ feature "Entries for Challenges" do
         click_link "Sign in with Twitter"
         click_link 'test'
         click_link 'Comment / Edit'
-        expect{ click_link 'Delete Entry' }.to change{ Challenge.first.entries.count }.from(1).to(0)
+        expect { click_link 'Delete Entry' }.to change { Challenge.first.entries.count }.from(1).to(0)
         expect(page).to have_text '0 entries'
       end
     end
@@ -80,7 +82,7 @@ feature "Entries for Challenges" do
       click_link "Sign in with Twitter"
       click_link 'test'
       click_link 'Comment / Edit'
-      expect{ click_link 'Delete Entry' }.to change{ Challenge.first.entries.count }.from(1).to(0)
+      expect { click_link 'Delete Entry' }.to change { Challenge.first.entries.count }.from(1).to(0)
       expect(page).to have_text '0 entries'
     end
   end
@@ -118,7 +120,7 @@ feature "Entries for Challenges" do
         click_link 'test'
         click_link 'Comment'
         fill_in 'comment_text', with: 'test comment participator'
-        expect{ click_button 'Comment' }.to change{ Challenge.first.entries.first.comments.count }.from(0).to(1)
+        expect { click_button 'Comment' }.to change { Challenge.first.entries.first.comments.count }.from(0).to(1)
         expect(page).to have_css '.comment', text: 'Z: test comment participator'
         expect(page).to have_text '1 comment'
       end
@@ -130,7 +132,7 @@ feature "Entries for Challenges" do
         click_link "Sign in with Twitter"
         click_link 'test'
         click_link 'Comment / Edit'
-        expect{ click_link 'Delete Entry' }.to change{ Challenge.first.entries.count }.from(1).to(0)
+        expect { click_link 'Delete Entry' }.to change { Challenge.first.entries.count }.from(1).to(0)
         expect(page).to have_text '0 entries'
       end
     end

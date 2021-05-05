@@ -37,7 +37,7 @@ feature "Submitting a challenge" do
     attach_file("challenge_diff", path_for_data_file("diff.txt"))
     click_button "Create challenge"
 
-    expect(current_path).to eq(challenge_path(Challenge.first))
+    expect(current_path).to eq(challenge_path(Challenge.first.urlkey))
     expect(Challenge.count).to eq(1)
   end
 

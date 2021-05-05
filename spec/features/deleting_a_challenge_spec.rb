@@ -15,11 +15,13 @@ feature "Deleting a challenge" do
       image: "bar",
       provider: "twitter"
     )
-    challenge = Challenge.create!(
+    Challenge.create!(
       title: "challenge1",
       description: "a sample challenge",
       input: "aa",
+      input_type: "txt",
       output: "bb",
+      output_type: "txt",
       diff: "aabb",
       user_id: user.id
     )
@@ -41,11 +43,13 @@ feature "Deleting a challenge" do
       image: "baz",
       provider: "twitter"
     )
-    challenge = Challenge.create!(
+    Challenge.create!(
       title: "challenge1",
       description: "a sample challenge",
       input: "aa",
+      input_type: "txt",
       output: "bb",
+      output_type: "txt",
       diff: "aabb",
       user_id: user.id
     )

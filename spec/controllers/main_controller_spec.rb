@@ -67,14 +67,18 @@ describe MainController do
         )
 
         20.times do
-          Challenge.create!({
-            :title => :test,
-            :description => :test,
-            :input => :a,
-            :output => :b,
-            :diff => :c,
-            :user => user
-          })
+          Challenge.create!(
+            {
+              :title => :test,
+              :description => :test,
+              :input => :a,
+              :input_type => :txt,
+              :output => :b,
+              :output_type => :txt,
+              :diff => :c,
+              :user => user
+            }
+          )
         end
       end
 
@@ -87,5 +91,4 @@ describe MainController do
       end
     end
   end
-
 end

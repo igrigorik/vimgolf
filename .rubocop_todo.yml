@@ -84,7 +84,6 @@ Layout/EmptyLineAfterMagicComment:
   Exclude:
     - 'lib/vimgolf/lib/vimgolf/keylog.rb'
     - 'lib/vimgolf/vimgolf.gemspec'
-    - 'spec/lib/keylog_spec.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -103,18 +102,6 @@ Layout/EmptyLinesAroundBlockBody:
   Exclude:
     - 'config/routes.rb'
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
-    - 'spec/controllers/challenges_controller_spec.rb'
-    - 'spec/controllers/entry_controller_spec.rb'
-    - 'spec/controllers/main_controller_spec.rb'
-    - 'spec/controllers/users_controller_spec.rb'
-    - 'spec/features/profile_spec.rb'
-    - 'spec/lib/challenge_spec.rb'
-    - 'spec/lib/cli_spec.rb'
-    - 'spec/lib/keylog_spec.rb'
-    - 'spec/models/challenge_spec.rb'
-    - 'spec/repositories/repository_challenge_spec.rb'
-    - 'spec/services/submissions_per_user_spec.rb'
-    - 'spec/services/submissions_spec.rb'
 
 # Offense count: 19
 # Cop supports --auto-correct.
@@ -186,10 +173,6 @@ Layout/FirstHashElementIndentation:
     - 'app/controllers/sessions_controller.rb'
     - 'app/repositories/repository_challenge.rb'
     - 'lib/vimgolf/lib/vimgolf/keylog.rb'
-    - 'spec/controllers/challenges_controller_spec.rb'
-    - 'spec/controllers/entry_controller_spec.rb'
-    - 'spec/controllers/main_controller_spec.rb'
-    - 'spec/support/omni_auth_helper.rb'
 
 # Offense count: 11
 # Cop supports --auto-correct.
@@ -201,7 +184,6 @@ Layout/HashAlignment:
   Exclude:
     - 'app/repositories/repository_challenge.rb'
     - 'lib/vimgolf/lib/vimgolf/cli.rb'
-    - 'spec/controllers/challenges_controller_spec.rb'
 
 # Offense count: 5
 # Cop supports --auto-correct.
@@ -254,8 +236,6 @@ Layout/SpaceAfterComma:
     - 'app/services/submissions.rb'
     - 'config/routes.rb'
     - 'lib/vimgolf/lib/vimgolf/keylog.rb'
-    - 'spec/repositories/repository_challenge_spec.rb'
-    - 'spec/services/submissions_per_user_spec.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -280,8 +260,6 @@ Layout/SpaceAroundOperators:
     - 'config/environments/test.rb'
     - 'lib/vimgolf/lib/vimgolf/keylog.rb'
     - 'lib/vimgolf/lib/vimgolf/ui.rb'
-    - 'spec/controllers/challenges_controller_spec.rb'
-    - 'spec/controllers/entry_controller_spec.rb'
 
 # Offense count: 15
 # Cop supports --auto-correct.
@@ -290,9 +268,7 @@ Layout/SpaceAroundOperators:
 # SupportedStylesForEmptyBraces: space, no_space
 Layout/SpaceBeforeBlockBraces:
   Exclude:
-    - 'db/seeds.rb'
     - 'lib/vimgolf/lib/vimgolf/ui.rb'
-    - 'spec/features/entry_feature_spec.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -319,12 +295,9 @@ Layout/SpaceInsideBlockBraces:
   Exclude:
     - 'app/controllers/users_controller.rb'
     - 'app/services/submissions.rb'
-    - 'db/seeds.rb'
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
     - 'lib/vimgolf/lib/vimgolf/keylog.rb'
     - 'lib/vimgolf/lib/vimgolf/ui.rb'
-    - 'spec/services/submissions_per_user_spec.rb'
-    - 'spec/spec_helper.rb'
 
 # Offense count: 37
 # Cop supports --auto-correct.
@@ -339,8 +312,6 @@ Layout/SpaceInsideHashLiteralBraces:
     - 'config/routes.rb'
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
     - 'lib/vimgolf/lib/vimgolf/cli.rb'
-    - 'spec/controllers/challenges_controller_spec.rb'
-    - 'spec/services/submissions_per_user_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -358,15 +329,6 @@ Layout/TrailingEmptyLines:
     - 'config/environments/development.rb'
     - 'lib/vimgolf/Gemfile'
     - 'lib/vimgolf/bin/vimgolf'
-    - 'spec/lib/challenge_spec.rb'
-    - 'spec/routing/challenge_spec.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: AllowInHeredoc.
-Layout/TrailingWhitespace:
-  Exclude:
-    - 'spec/lib/keylog_spec.rb'
 
 # Offense count: 2
 # Configuration parameters: AllowSafeAssignment.
@@ -399,18 +361,6 @@ Lint/MissingCopEnableDirective:
   Exclude:
     - 'app/repositories/repository_challenge.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Lint/NonDeterministicRequireOrder:
-  Exclude:
-    - 'spec/spec_helper.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Lint/ParenthesesAsGroupedExpression:
-  Exclude:
-    - 'spec/models/comment_spec.rb'
-
 # Offense count: 4
 Lint/RescueException:
   Exclude:
@@ -429,20 +379,12 @@ Lint/UnusedBlockArgument:
   Exclude:
     - 'config/unicorn.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods, IgnoreNotImplementedMethods.
-Lint/UnusedMethodArgument:
-  Exclude:
-    - 'spec/cli_helper.rb'
-
 # Offense count: 8
 Lint/UselessAssignment:
   Exclude:
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
     - 'lib/vimgolf/lib/vimgolf/cli.rb'
     - 'lib/vimgolf/lib/vimgolf/ui.rb'
-    - 'spec/features/deleting_a_challenge_spec.rb'
 
 # Offense count: 15
 # Configuration parameters: IgnoredMethods, CountRepeatedAttributes.
@@ -534,7 +476,6 @@ Style/BlockDelimiters:
   Exclude:
     - 'app/controllers/challenges_controller.rb'
     - 'app/controllers/entry_controller.rb'
-    - 'spec/controllers/challenges_controller_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -587,7 +528,6 @@ Style/EmptyLiteral:
 Style/Encoding:
   Exclude:
     - 'lib/vimgolf/vimgolf.gemspec'
-    - 'spec/lib/keylog_spec.rb'
 
 # Offense count: 10
 # Cop supports --auto-correct.
@@ -601,7 +541,6 @@ Style/ExpandPathArguments:
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
     - 'lib/vimgolf/vimgolf.gemspec'
     - 'script/rails'
-    - 'spec/spec_helper.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -655,7 +594,6 @@ Style/IfUnlessModifier:
     - 'config/application.rb'
     - 'config/initializers/mongoid.rb'
     - 'lib/vimgolf/lib/vimgolf/cli.rb'
-    - 'spec/support/mongoid.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -695,16 +633,6 @@ Style/NegatedIf:
     - 'app/services/submissions_per_user.rb'
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
     - 'lib/vimgolf/lib/vimgolf/cli.rb'
-    - 'spec/support/mongoid.rb'
-
-# Offense count: 73
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedOctalStyle.
-# SupportedOctalStyles: zero_with_o, zero_only
-Style/NumericLiteralPrefix:
-  Exclude:
-    - 'spec/repositories/repository_challenge_spec.rb'
-    - 'spec/services/submissions_per_user_spec.rb'
 
 # Offense count: 10
 # Cop supports --auto-correct.
@@ -718,7 +646,6 @@ Style/NumericLiterals:
 # SupportedStyles: predicate, comparison
 Style/NumericPredicate:
   Exclude:
-    - 'spec/**/*'
     - 'app/models/entry.rb'
     - 'app/services/submissions_per_user.rb'
 
@@ -737,7 +664,6 @@ Style/ParallelAssignment:
   Exclude:
     - 'lib/vimgolf/lib/vimgolf/keylog.rb'
     - 'lib/vimgolf/lib/vimgolf/ui.rb'
-    - 'spec/cli_helper.rb'
 
 # Offense count: 4
 # Cop supports --auto-correct.
@@ -773,7 +699,6 @@ Style/RedundantReturn:
   Exclude:
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
     - 'lib/vimgolf/lib/vimgolf/ui.rb'
-    - 'spec/cli_helper.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -807,12 +732,6 @@ Style/Semicolon:
   Exclude:
     - 'app/controllers/users_controller.rb'
     - 'lib/vimgolf/lib/vimgolf/challenge.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/SlicingWithRange:
-  Exclude:
-    - 'db/seeds.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -870,8 +789,6 @@ Style/TrailingCommaInArguments:
   Exclude:
     - 'app/repositories/repository_challenge.rb'
     - 'config/initializers/omniauth.rb'
-    - 'db/seeds.rb'
-    - 'spec/features/profile_spec.rb'
 
 # Offense count: 6
 # Cop supports --auto-correct.
@@ -889,9 +806,7 @@ Style/TrailingCommaInHashLiteral:
   Exclude:
     - 'app/controllers/main_controller.rb'
     - 'app/repositories/repository_challenge.rb'
-    - 'db/seeds.rb'
     - 'lib/vimgolf/lib/vimgolf/keylog.rb'
-    - 'spec/controllers/sessions_controller_spec.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.

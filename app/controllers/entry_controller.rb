@@ -5,7 +5,10 @@ class EntryController < ApplicationController
 
   def comment
     if @challenge.participator?(current_user) && @entry && params.fetch(:comment, {})[:text].present?
-      @entry.comments.push Comment.new(:comment => params[:comment][:text], :nickname => current_user.nickname)
+      @entry.comments.create(
+        comment: params[:comment][:text],
+        user: current_user
+      )
     end
 
     redirect_to challenge_path(params[:challenge])
@@ -16,13 +19,13 @@ class EntryController < ApplicationController
       @cheat = true
 
     elsif params['challenge_id'] && !params['apikey'].empty? && !params['apikey'].nil?
-      @challenge = Challenge.find(params['challenge_id']) rescue nil
+      @challenge = Challenge.find_by_urlkey(params['challenge_id']) rescue nil
       @user = User.where(key: params['apikey']).first
 
       if @challenge && @user
         @entry = Entry.new(
-                  :script => BSON::Binary.new(params[:entry]),
-                  :score => VimGolf::Keylog.parse(params[:entry]).score
+                  script: params[:entry],
+                  score: VimGolf::Keylog.parse(params[:entry]).score
                  )
         @entry.created_at = Time.now.utc
         @entry.user = @user
@@ -51,7 +54,7 @@ class EntryController < ApplicationController
   private
 
   def load_entry
-    @challenge = Challenge.find(params[:challenge])
+    @challenge = Challenge.find_by_urlkey(params[:challenge])
     @entry = @challenge.entries.find(params[:entry])
   rescue
     respond_to do |format|

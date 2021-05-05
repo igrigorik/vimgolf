@@ -1,9 +1,7 @@
-# encoding: UTF-8
 # Ruby 1.9 doesn't like our fancy string literals without this.
 require "cli_helper"
 
 describe VimGolf::Keylog do
-
   Dir[File.join(File.dirname(__FILE__), 'fixtures', '*')].each do |f|
     it "should parse #{File.basename(f)} logfile" do
       expect { VimGolf::Keylog.new(IO.read(f)).convert }.not_to raise_error
@@ -26,7 +24,7 @@ describe VimGolf::Keylog do
     text = "Здравствуйте ¡Olé! おはよう \x80\xfdQ\x80\xfeX".force_encoding("UTF-8")
     # .force_encoding CHANGES THE ORIGINAL STRING!
     bytes = text.dup.force_encoding(Encoding::ASCII_8BIT)
-     
+
     # Sanity check. Different rubies conspiring to mess up the test encodings.
     expect(bytes.encoding).not_to eql(text.encoding)
     # Not testing the actual output, just checking whether encoding matters
@@ -58,7 +56,7 @@ describe VimGolf::Keylog do
     log = VimGolf::Keylog.new(input)
     expect(log.convert).to eql(output)
   end
-  
+
   it "should parse some keycodes differently depending on date submitted" do
     early  = "\x80\xfd\x55\x80\xfd\x56\x80\xfd\x57\x80\xfd\x58\x80\xfd\x2c"
     late   = "\x80\xfd\x54\x80\xfd\x55\x80\xfd\x56\x80\xfd\x57\x80\xfd\x2c"

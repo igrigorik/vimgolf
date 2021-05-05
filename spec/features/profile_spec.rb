@@ -1,7 +1,6 @@
 require "spec_helper"
 
 feature "Display created challenge in profile" do
-
   before do
     @created_zero_challenge = User.create!(
       name: "bill nye",
@@ -23,7 +22,9 @@ feature "Display created challenge in profile" do
       :title => 'title of challenge',
       :description => :test,
       :input => :a,
+      :input_type => :txt,
       :output => :b,
+      :output_type => :txt,
       :diff => :c,
       :user_id => @created_one_challenge.id
     )
@@ -44,11 +45,9 @@ feature "Display created challenge in profile" do
       expect(page).to have_text 'title of challenge - 0 entries'
     end
   end
-
 end
 
 feature "Display played challenge in profile" do
-
   before do
     @played_zero_challenge = User.create!(
       name: "euclid",
@@ -78,9 +77,11 @@ feature "Display played challenge in profile" do
       :title => 'simple practical',
       :description => :test,
       :input => :a,
+      :input_type => :txt,
       :output => :b,
+      :output_type => :txt,
       :diff => :c,
-      user_id: creator.id,
+      user_id: creator.id
     )
     challenge.save!
     challenge.entries << Entry.new(
@@ -112,9 +113,11 @@ feature "Display played challenge in profile" do
       :title => 'clean number',
       :description => :test,
       :input => :a,
+      :input_type => :txt,
       :output => :b,
+      :output_type => :txt,
       :diff => :c,
-      user_id: creator.id,
+      user_id: creator.id
     )
     challenge_other.save!
     challenge_other.entries << Entry.new(
@@ -124,7 +127,6 @@ feature "Display played challenge in profile" do
       user_id: @played_two_challenges.id,
       score: 1
     )
-
   end
 
   context 'User did not played any challenge' do
@@ -150,5 +152,4 @@ feature "Display played challenge in profile" do
       expect(page).to have_text 'Number of attempts: 1'
     end
   end
-
 end

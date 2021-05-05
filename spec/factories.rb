@@ -3,7 +3,9 @@ FactoryBot.define do
     title { :test }
     description { :test }
     input { :a }
+    input_type { :txt }
     output { :b }
+    output_type { :txt }
     diff { :c }
     user
   end

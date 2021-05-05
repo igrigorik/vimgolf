@@ -24,9 +24,9 @@ class MainController < ApplicationController
   end
 
   def feed
-    @challenges = Challenge.only(:title, :description, :created_at)
+    @challenges = Challenge
       .limit(15)
-      .order_by(:created_at.desc)
+      .order('created_at DESC')
 
     respond_to do |format|
       format.rss { render :layout => false }

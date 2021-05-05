@@ -13,13 +13,13 @@ describe Entry do
     it 'is has many comments' do
       association = described_class.reflect_on_association(:comments)
 
-      expect(association.macro).to eq :embeds_many
+      expect(association.macro).to eq :has_many
     end
 
-    it 'is embedded in challenge' do
+    it 'belongs to challenge' do
       association = described_class.reflect_on_association(:challenge)
 
-      expect(association.macro).to eq :embedded_in
+      expect(association.macro).to eq :belongs_to
     end
   end
 
@@ -42,8 +42,6 @@ describe Entry do
   end
 
   describe 'Validations' do
-    it { should have_fields(:script) }
-
     it 'is not valid without script' do
       entry = build(:entry, script: nil)
 

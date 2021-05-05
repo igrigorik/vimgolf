@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe EntryController do
-
   it "should create an entry for an existing challenge without login" do
     User.create!(
       name: "Bill Nye",
@@ -14,9 +13,11 @@ describe EntryController do
                         :title => :test,
                         :description => :test,
                         :input => :a,
+                        :input_type => :txt,
                         :output => :b,
+                        :output_type => :txt,
                         :diff => :c
-    })
+                      })
 
     c.user = User.first
     c.save
@@ -24,8 +25,8 @@ describe EntryController do
     request.accept = 'application/json'
     post "create", params: {
       :format => :json,
-      :challenge_id => c.id.to_s,
-      :entry => 'a'*50,
+      :challenge_id => c.urlkey,
+      :entry => 'a' * 50,
       :apikey => User.first.key
     }
 
@@ -40,5 +41,4 @@ describe EntryController do
     expect(response.status).to eq(400)
     expect(ActiveSupport::JSON.decode(response.body)).to include 'status'
   end
-
 end

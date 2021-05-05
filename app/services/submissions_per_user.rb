@@ -60,8 +60,7 @@ class SubmissionsPerUser
   end
 
   def submissions
-    @submissions ||= RepositoryChallenge.submissions_per_player(
-      challenge_id, player.id)
+    @submissions ||= Challenge.find_by_urlkey(@challenge_id).player_entries(player.id)
   end
 
   def visible_score
@@ -74,12 +73,12 @@ class SubmissionsPerUser
     else
       # Player's score for this challenge, or nil if player hasn't
       # made any submissions for this one.
-      @visible_score = RepositoryChallenge.best_player_score(challenge_id, @current_user.id)
+      @visible_score = RepositoryChallenge.best_player_score(@challenge_id, @current_user.id)
     end
   end
 
   def user_id
-    @user_id ||= Challenge.only(:user_id).find(challenge_id).user_id
+    @user_id ||= Challenge.find_by_urlkey(@challenge_id).user_id
   end
 
   def highlight_owner?
@@ -96,7 +95,7 @@ class SubmissionsPerUser
   alias :player_can_delete? :player_can_edit?
 
   def count_uniq_users
-    RepositoryChallenge.count_uniq_users(challenge_id)
+    RepositoryChallenge.count_uniq_users(@challenge_id)
   end
 
   def count_remaining

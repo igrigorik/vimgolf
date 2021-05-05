@@ -18,7 +18,7 @@ class ChallengesController < ApplicationController
   end
 
   def destroy
-    @challenge = Challenge.find(params['id'])
+    @challenge = Challenge.find_by_urlkey(params['id'])
     @challenge.destroy if @challenge.owner?(current_user)
     redirect_to root_path
   end
@@ -55,15 +55,15 @@ class ChallengesController < ApplicationController
   def show
     # Limit to id to avoid downloading uneccessary entries
     challenge_id = params['id']
-    challenge = Challenge.only(:id).find(challenge_id) rescue nil
+    challenge = Challenge.find_by_urlkey(challenge_id) rescue nil
     return redirect_to root_path if challenge.nil?
 
     respond_to do |format|
       format.json { render :json => json_show(challenge_id) }
 
       format.html {
-        @show_challenge = ShowChallenge.new(challenge.id)
-        @submissions = Submissions.new(current_user, challenge.id, params['submissions_page'])
+        @show_challenge = challenge
+        @submissions = Submissions.new(current_user, challenge.urlkey, params['submissions_page'])
         @leaderboard = Leaderboard.new(challenge, params['leaderboard_page'])
       }
     end
@@ -72,14 +72,14 @@ class ChallengesController < ApplicationController
   def user
     # Limit to id to avoid downloading uneccessary entries
     challenge_id = params['id']
-    challenge = Challenge.only(:id).find(challenge_id) rescue nil
+    challenge = Challenge.find_by_urlkey(challenge_id) rescue nil
     return redirect_to root_path if challenge.nil?
 
     player = User.where(nickname: params[:username]).first rescue nil
     return redirect_to root_path if player.nil?
 
-    @show_challenge = ShowChallenge.new(challenge.id)
-    @submissions = SubmissionsPerUser.new(current_user, challenge.id, player)
+    @show_challenge = ShowChallenge.new(challenge.urlkey)
+    @submissions = SubmissionsPerUser.new(current_user, challenge.urlkey, player)
   end
 
   private
@@ -90,8 +90,7 @@ class ChallengesController < ApplicationController
 
   def json_show(challenge_id)
     challenge = Challenge
-      .only(:input, :input_type, :output, :output_type)
-      .find(challenge_id)
+      .find_by_urlkey(challenge_id)
 
     {
       'in' => {

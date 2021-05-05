@@ -1,10 +1,7 @@
 require 'spec_helper'
 
 describe Challenge do
-
   describe 'Validations' do
-    it { is_expected.to have_fields(:title, :description, :input, :output, :diff) }
-
     it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to validate_presence_of(:description) }
 

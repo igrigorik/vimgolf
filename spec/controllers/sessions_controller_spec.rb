@@ -10,7 +10,7 @@ describe SessionsController do
         email: "bill@nye.com",
         name: "Bill Nye",
         nickname: "the science guy",
-        image: "me.png",
+        image: "me.png"
       }
 
       expect do
@@ -21,7 +21,7 @@ describe SessionsController do
       expect(user.nickname).to eq("the science guy")
       expect(user.image).to eq("me.png")
       expect(user.provider).to eq("twitter")
-      expect(user.uid).to eq("12345")
+      expect(user.uid).to eq(12345)
     end
   end
 end

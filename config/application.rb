@@ -2,6 +2,7 @@ require File.expand_path('../boot', __FILE__)
 
 require "action_controller/railtie"
 require "active_model/railtie"
+require "active_record/railtie"
 require "action_mailer/railtie"
 require "rails/test_unit/railtie"
 
@@ -58,5 +59,9 @@ module Vimgolf
 
     config.assets.enabled = true
     config.assets.version = "1.0"
+
+    config.generators do |g|
+      g.orm :active_record
+    end
   end
 end

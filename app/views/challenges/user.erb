@@ -1,7 +1,7 @@
 <% challenge_id(@show_challenge) %>
 
 <div class="grid_7">
-    <h3><b><%= link_to(@show_challenge.title, challenge_path(@show_challenge.id)) %></b></h3>
+    <h3><b><%= link_to(@show_challenge.title, challenge_path(@show_challenge.urlkey)) %></b></h3>
 
   <%= render :partial => "shared/challenge_description", :locals => { show_challenge: @show_challenge } %>
 

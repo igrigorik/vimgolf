@@ -1,19 +1,6 @@
-class Challenge
-  include Mongoid::Document
-  include Mongoid::Timestamps
-
-  field :title, type: String
-  field :description, type: String
-
-  field :diff, type: String
-  field :input, type: String
-  field :input_type, type: String
-  field :output, type: String
-  field :output_type, type: String
-
-  belongs_to :user, index: true
-  embeds_many :entries
-  index "entries.user_id" => 1
+class Challenge < ActiveRecord::Base
+  belongs_to :user
+  has_many :entries, dependent: :destroy
 
   validates_presence_of :title
   validates_presence_of :description
@@ -22,8 +9,116 @@ class Challenge
   validates_length_of :output, minimum: 1, maximum: MAX_FILESIZE
   validates_length_of :diff, minimum: 1, maximum: MAX_FILESIZE
 
+  # Define a 'urlkey' that mimics MongoDB ids, for compatibility with challenge
+  # URLs before the conversion from MongoDB.
+  #
+  # For existing challenges, use the legacy MongoDB id (imported into the
+  # 'legacy_urlkey' column.)
+  #
+  # For new challenges, create a similar format, using the '9v0' prefix (so
+  # they all sort later than the MongoDB ones), followed by hex encoding of
+  # the timestamp of creation of the challenge (36-bit), then the ActiveRecord
+  # id of the challenge (48-bit).
+  #
+  # This is in a sense similar to how MongoDB ids are generated, with the most
+  # significant bits encoding the timestamp of creation of the entry.
+  def urlkey
+    legacy_urlkey || format('9v0%09<timestamp>x%012<id>x', timestamp: created_at.to_i, id: id)
+  end
+
+  def self.find_by_newstyle_urlkey(key)
+    c = find(key[12..23].to_i(16))
+    return nil if c.legacy_urlkey || c.created_at.to_i != key[3..11].to_i(16)
+
+    c
+  end
+  private_class_method :find_by_newstyle_urlkey
+
+  def self.find_by_urlkey(key)
+    return nil unless key.length == 24
+
+    if key.start_with? '9v0'
+      find_by_newstyle_urlkey(key)
+    else
+      find_by(legacy_urlkey: key)
+    end
+  end
+
+  def to_param
+    urlkey
+  end
+
   def top_entries
-    entries.top_by_user
+    Entry.from(
+      entries.select(
+        '*',
+        'row_number() OVER (PARTITION BY user_id ORDER BY score, created_at) as user_ranked_entry'
+      ),
+      :entries
+    )
+         .where(user_ranked_entry: 1)
+         .order([:score, :created_at])
+  end
+
+  def best_score
+    result = top_entries.first
+    result&.score
+  end
+
+  def worst_score
+    result = top_entries.last
+    result&.score
+  end
+
+  def best_player_score(player_id)
+    result = top_entries
+             .where(user_id: player_id)
+             .first
+    result&.score
+  end
+
+  def player_entries(player_id)
+    Entry.from(
+      Entry.from(
+        Entry.from(
+          entries.select(
+            '*',
+            'row_number() OVER (PARTITION BY user_id ORDER BY score, created_at) as user_ranked_entry'
+          ),
+          :entries
+        )
+          .where('user_ranked_entry = 1 OR user_id = ?', player_id),
+        :entries
+      )
+        .select(
+          '*',
+          'row_number() OVER (ORDER BY score, created_at) as position'
+        ),
+      :entries
+    )
+         .select('*', 'position')
+         .where(user_id: player_id)
+         .order([:score, :created_at])
+  end
+
+  def displayed_solutions(visible_score)
+    top_entries.where('score >= ?', visible_score)
+  end
+
+  def remaining_solutions(visible_score)
+    top_entries.where('score < ?', visible_score)
+  end
+
+  def count_uniq_users
+    top_entries.size
+  end
+
+  def count_entries
+    entries.size
+  end
+
+  def count_entries_by(player_id)
+    entries.where(user_id: player_id).size
   end
 
   def participator?(current_user)

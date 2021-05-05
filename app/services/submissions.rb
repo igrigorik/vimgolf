@@ -5,9 +5,9 @@ class Submissions
 
   PER_PAGE = 100
 
-  def initialize(player, challenge_id, page)
+  def initialize(player, challenge_urlkey, page)
     @player = player
-    @challenge_id = challenge_id
+    @challenge_id = challenge_urlkey
     @page = (page || 1).to_i
   end
   attr_reader :player
@@ -23,7 +23,7 @@ class Submissions
   end
 
   def users
-    @users ||= User.where(:_id.in => user_ids).inject({}) {|h,u| h.merge(u.id => u)}
+    @users ||= User.where(:id.in => user_ids).inject({}) {|h,u| h.merge(u.id => u)}
   end
 
   def user_ids
@@ -32,7 +32,7 @@ class Submissions
 
   def submissions
     @submissions ||= RepositoryChallenge.submissions(
-      challenge_id: challenge_id,
+      challenge_urlkey: challenge_id,
       min_score: visible_score,
       per_page: PER_PAGE,
       page: page
@@ -66,7 +66,7 @@ class Submissions
   end
 
   def user_id
-    @user_id ||= Challenge.only(:user_id).find(challenge_id).user_id
+    @user_id ||= Challenge.find_by_urlkey(challenge_id).user_id
   end
 
   def highlight_owner?

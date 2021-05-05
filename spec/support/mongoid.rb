@@ -10,9 +10,7 @@ module Mongoid
         @errors = []
 
         @errors = @fields.each_with_object([]) do |field, errors|
-          if !@klass.fields.keys.include?(field.to_s)
-            errors << "no field named #{field}"
-          end
+          errors << "no field named #{field}" unless @klass.fields.keys.include?(field.to_s)
         end
 
         @errors.empty?

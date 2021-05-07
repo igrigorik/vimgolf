@@ -1,10 +1,9 @@
 module VimGolf
 
   GOLFDEBUG    = ENV['GOLFDEBUG'].to_sym rescue false
-  GOLFHOST     = ENV['GOLFHOST']     || "http://www.vimgolf.com"
+  GOLFHOST     = ENV['GOLFHOST']     || "https://www.vimgolf.com"
   GOLFSHOWDIFF = ENV['GOLFSHOWDIFF'] || 'vim -d -n'
   GOLFVIM      = ENV['GOLFVIM']      || 'vim'
-  PROXY        = ENV['http_proxy']   || ''
 
   class Error
   end

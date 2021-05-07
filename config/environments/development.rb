@@ -26,5 +26,9 @@ Vimgolf::Application.configure do
   config.assets.debug = true
 
   config.eager_load = false
-end
 
+  # Do not dump db/schema.rb when using Postgres.
+  # The format is different from the one used by SQLite3,
+  # so let's ignore the schema while running a migration on it.
+  config.active_record.dump_schema_after_migration = false if ENV['DATABASE_ADAPTER'] == 'pg'
+end

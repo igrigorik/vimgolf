@@ -1,5 +1,6 @@
 require 'vimgolf'
 require 'stringio'
+require 'climate_control'
 
 module Kernel
   def capture_stdio(input = nil)

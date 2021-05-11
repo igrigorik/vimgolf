@@ -23,15 +23,20 @@ describe VimGolf do
   end
 
   it "runs 'vimgolf setup'" do
-    VimGolf::CLI.initialize_ui
-    expect(VimGolf.ui).to receive(:ask).with("\nPaste your VimGolf key:").and_return('abcdefghijklmnopqrstuvwxyz012345')
-    expect(FileUtils).to receive(:mkdir_p).with("#{ENV['HOME']}/.vimgolf")
-    expect(FileUtils).to receive(:mkdir_p).with("#{ENV['HOME']}/.vimgolf/put")
-    expect(VimGolf::Config).to receive(:save).with({ 'key' => 'abcdefghijklmnopqrstuvwxyz012345' })
+    ClimateControl.modify HOME: '/home/myuser' do
+      VimGolf::CLI.initialize_ui
+      expect(VimGolf.ui).to receive(:ask)
+        .with("\nPaste your VimGolf key:")
+        .and_return('abcdefghijklmnopqrstuvwxyz012345')
+      expect(FileUtils).to receive(:mkdir_p).with('/home/myuser/.vimgolf')
+      expect(FileUtils).to receive(:mkdir_p).with('/home/myuser/.vimgolf/put')
+      expect(VimGolf::Config).to receive(:save)
+        .with({ 'key' => 'abcdefghijklmnopqrstuvwxyz012345' })
 
-    out = capture_stdout do
-      VimGolf::CLI.start(['setup'])
+      out = capture_stdout do
+        VimGolf::CLI.start(['setup'])
+      end
+      expect(out).to include('Saved. Happy golfing!')
     end
-    expect(out).to include('Saved. Happy golfing!')
   end
 end

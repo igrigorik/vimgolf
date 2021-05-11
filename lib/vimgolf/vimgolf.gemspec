@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec", "~> 3.7", ">= 3.7.0"
   s.add_development_dependency "rake", "~> 12.3", ">= 12.3.1"
+  s.add_development_dependency "climate_control", "~> 0.2"
 
   s.files         = Dir.glob("{bin,lib}/**/*") + %w(README.md)
   s.executables   = ["vimgolf"]

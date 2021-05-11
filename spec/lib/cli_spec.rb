@@ -39,4 +39,12 @@ describe VimGolf do
       expect(out).to include('Saved. Happy golfing!')
     end
   end
+
+  it "runs 'vimgolf version'" do
+    out = capture_stdout do
+      VimGolf::CLI.start(['version'])
+    end
+
+    expect(out).to match(/^Client \d+(\.\d+)+$/)
+  end
 end

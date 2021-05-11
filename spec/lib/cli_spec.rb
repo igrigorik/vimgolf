@@ -13,6 +13,12 @@ describe VimGolf do
     expect(VimGolf.ui).to be_an(VimGolf::CLI::UI)
   end
 
+  it "sets up VimGolf.ui when initialize_ui explicitly called" do
+    expect(VimGolf.ui).to be_an(VimGolf::UI)
+    VimGolf::CLI.initialize_ui
+    expect(VimGolf.ui).to be_an(VimGolf::CLI::UI)
+  end
+
   it "provides a help prompt" do
     out = capture_stdout do
       VimGolf::CLI.start(["help"])
@@ -37,6 +43,20 @@ describe VimGolf do
         VimGolf::CLI.start(['setup'])
       end
       expect(out).to include('Saved. Happy golfing!')
+    end
+  end
+
+  it "runs 'vimgolf setup' with incorrect key" do
+    ClimateControl.modify HOME: '/home/myuser' do
+      VimGolf::CLI.initialize_ui
+      expect(VimGolf.ui).to receive(:ask)
+        .with("\nPaste your VimGolf key:")
+        .and_return('bogus-key')
+
+      out = capture_stdout and_stderr: true do
+        VimGolf::CLI.start(['setup'])
+      end
+      expect(out).to include('Invalid key, please double check your key on vimgolf.com')
     end
   end
 

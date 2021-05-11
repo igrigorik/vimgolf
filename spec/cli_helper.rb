@@ -21,6 +21,6 @@ end
 RSpec.configure do |config|
   config.after(:each) do
     # To imitate the initial class load before calling `VimGolf::CLI.start`
-    VimGolf.ui = VimGolf::UI.new
+    VimGolf::CLI.reset_ui
   end
 end

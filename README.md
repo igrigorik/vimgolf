@@ -22,6 +22,12 @@ $> vimgolf setup
 $> vimgolf put [challenge ID]
 ```
 
+## Golfing without ruby installation: [use docker](https://hub.docker.com/r/hettomei/vimgolf/)
+
+```
+$> docker run --rm -it -e "key=YOUR_VIMGOLF_KEY" hettomei/vimgolf challenge_ID
+```
+
 # Playing from other editors
 
 ## Emacs
@@ -31,14 +37,12 @@ over at [vimgolf.el](https://github.com/timvisher/vimgolf.el)
 
 # VimGolf.com web app
 
-
-
 ```bash
 # start local server
 $> bundle exec unicorn -c config/unicorn.rb -E development
 
 # deploy to Heroku
-$> git push heroku web:master
+$> git push heroku master
 ```
 
 ## Run tests
@@ -51,11 +55,11 @@ This part is for people not familliar with ruby ecosystem
 
 ## Installation
 
-You need :
+You need:
 - ruby
 - gem bundler
-- mongodb
-- Seed database
+- sqlite3 (library version 3.25 or newer, on your local system); or
+- postgresql
 
 ### ruby
 
@@ -73,7 +77,7 @@ rbenv install
 Bundler is a gem that aim to manage gem per project.
 
 ```
-gem install bundler
+gem install bundler:1.17.2
 ```
 
 Then you need all gems for the apps
@@ -82,147 +86,92 @@ Then you need all gems for the apps
 bundle install
 ```
 
-### mongo-db
+## Using sqlite3 for development (and testing)
 
-It is possible to get a fully functionnal mongodb instance through docker.
+It is possible to get a fully functionnal app running locally using SQLite3 only. This is the default adapter for development and testing (it makes for easier ramp up, since you don't need to set up an instance of Postgres and create the appropriate users.)
+
+Note that due to the use of SQL window functions, you need an SQLite3 library version 3.25 or newer installed on your system. The Ruby gem will use the locally installed library, so that is a pre-requisite to using SQLite3. The SQLite3 library shipped on Ubuntu 18.04 is too old, the one on Ubuntu 20.04 is new enough.
+
+## Using Postgres for development
+
+You can also use a Postgres database for development (and testing.)
+
+Install and start a Postgres instance running locally on your development host.
+
+The app will run under your user, so create a Postgres user with the same name as your local user and give that user the ability to create databases. This is usually accomplished with the following command:
 
 ```
-docker pull mongo
-
-# Database will stay here. So we can stop/delete docker instance
-sudo mkdir -p /opt/mongodb/db
-
-# Start container
-docker run -p 27017:27017 -v /opt/mongodb/db:/data/db --name my-mongo-dev -d mongo mongod --auth
-
-# connect to database
-docker exec -it my-mongo-dev mongo
-
-# create admin user
-use admin
-db.createUser({
-  user: "userAdmin",
-  pwd: "password",
-  roles: [{role: "userAdminAnyDatabase", db: "admin"}]
-})
-# exit
-
-# connect to database
-docker exec -it my-mongo-dev mongo 127.0.0.1/vimgolf_development -u userAdmin -p password --authenticationDatabase admin
-
-# create vimgolf_development user
-use vimgolf_development
-db.createUser({
-  user: "vimgolf_development",
-  pwd: "vimgolf_development",
-  roles: ["dbOwner"]
-})
-
-# create vimgolf_test user
-use vimgolf_test
-db.createUser({
-  user: "vimgolf_test",
-  pwd: "vimgolf_test",
-  roles: ["dbOwner"]
-})
-# exit
-
-# test connection
-docker exec -it my-mongo-dev mongo 127.0.0.1/vimgolf_development -u vimgolf_development -p vimgolf_development --authenticationDatabase vimgolf_development
-# we are connected, we can exit
+sudo -u postgres createuser -d $(whoami)
 ```
 
-### Seed database
+When running any of the Ruby and Rails code, in order to use the Postgres adapter in the development and test environments, export environment variable `DATABASE_ADAPTER=pg`.
 
-Read db/seeds.rb to understand params
+The database names configured will be `vimgolf_development` and `vimgolf_test` for the respective environments.
+
+## Seed database
+
+Read db/seeds.rb to understand parameters to define how many users, challenges and entries to create.
+
+When creating a local development database on SQLite3 (the default adapter), use the following procedure:
 
 ```
 # make the index page works - create collection "challenges"
-bundle exec rake db:drop db:setup
+bundle exec rails db:drop db:setup
 
 # or add many challenges users and entries
-bundle exec rake db:drop db:setup challenges=40 users=30 entries=20
+bundle exec rails db:drop db:setup challenges=40 users=30 entries=20
+```
+
+When creating a local development database on Postgres, **do not use** the `db:setup` and `db:reset` targets, as those targets rely on loading the `db/schema.rb` file, but that file contains a schema dump compatible with the SQLite3 database and would possibly produce a broken setup under Postgres. Instead, use `db:migrate` and `db:migrate:reset` to create the database running through the Rails migrations as appropriate.
+
+```
+# under postgres
+DATABASE_ADAPTER=pg bundle exec rails db:migrate:reset
+DATABASE_ADAPTER=pg bundle exec rails db:seed challenges=40 users=30 entries=20
 ```
 
 ## Run the app
 
-Start mongo-db this way if you are using the docker installation :
-
-```
-docker run -p 27017:27017 -v /opt/mongodb/db:/data/db --name my-mongo-dev -d mongo mongod --auth
-# if you see:
-# docker: Error response from daemon: Conflict. The container name "/my-mongo-dev" is already in use by container "a9
-# then you have to remove the container
-docker rm my-mongo-dev
-```
-
-Start the server
+Start the server:
 
 ```
 bundle exec unicorn -c config/unicorn.rb -E development
 ```
 
-open your browser to http://localhost:8080/
+(If using Postgres, make sure you're passing it `DATABASE_ADAPTER=pg` through the environment.)
 
-If you need more logs, you can
+Open your browser to [localhost:8080](http://localhost:8080/).
+
+You can check the Rails logs under:
 
 ```
-docker logs -f my-mongo-dev
 tail -f log/development.log
 ```
 
-To see mongodb query :
-```
-# log to database
-docker exec -it mongo-3.6 mongo 127.0.0.1/vimgolf_development -u vimgolf_development -p vimgolf_development --authenticationDatabase vimgolf_development
+## Logged in user under Development
 
-# Change profile level
-db.setProfilingLevel(2)
-
-# Call this after any query to get the last query
-db.system.profile.find().pretty()
-```
-
-## Troubleshooting
-
-### Cannot sign in with twitter
-
-When click on 'sign in with twitter' and you get
+When click on 'Sign In with Twitter' under development, you will almost certainly get:
 
 ```
 OAuth::Unauthorized
 401 Authorization Required
 ```
 
-As a workaround, you can edit
+As a workaround, you can edit file `app/controllers/application_controller.rb` and replace:
 
-```
-# in app/controllers/application_controller.rb
-# replace
+```ruby
     @current_user ||= User.where(uid: session[:user]).first if session[:user]
-# with
+```
+
+With:
+
+```ruby
     @current_user ||= User.first
 ```
 
-### Cannot run tests
+Or, if you have a particular user in mind:
 
-If you installed mongodb through this tutorial, you created a database 'vimgolf_test' with user and password
-set to 'vimgolf_test'.
-You need to update config/mongoid.yml with the credentials :
-
-```yaml
-test:
-  clients:
-    default:
-      options:
-        user: 'vimgolf_test'
-        password: 'vimgolf_test'
+```ruby
+    @current_user ||= User.find_by_nickname('myuser')
 ```
 
-## Find documentation
-
-It use gem mongoid which is a wrapper for the mongo driver
-
-Mongodb ruby driver : http://api.mongodb.com/ruby/current/Mongo.html
-
-Mongoid: https://docs.mongodb.com/mongoid/master

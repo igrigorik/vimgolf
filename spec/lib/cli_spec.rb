@@ -1,4 +1,8 @@
 require "cli_helper"
+require "tmpdir"
+
+TESTDATA = File.join(File.dirname(__FILE__), 'testdata')
+MOCK_VIM = File.join(File.dirname(__FILE__), 'mock_bin', 'mock_vim.rb')
 
 describe VimGolf do
   it "provides VimGolf errors" do
@@ -66,5 +70,35 @@ describe VimGolf do
     end
 
     expect(out).to match(/^Client \d+(\.\d+)+$/)
+  end
+
+  it "runs 'vimgolf local'" do
+    Dir.mktmpdir('vimgolf_test_') do |tmpdir|
+      ClimateControl.modify HOME: tmpdir do
+        VimGolf::CLI.initialize_ui
+        stub_const('VimGolf::CLI::GOLFVIM', "#{RbConfig.ruby} #{MOCK_VIM}")
+
+        expect(VimGolf.ui).to receive(:ask_question)
+          .with('Choice> ', type: :warn, choices: [:retry, :quit])
+          .and_return(:quit)
+
+        out = capture_stdout do
+          VimGolf::CLI.start(
+            [
+              'local',
+              File.join(TESTDATA, 'input.txt'),
+              File.join(TESTDATA, 'output.txt')
+            ]
+          )
+        end
+
+        expect(out).to include <<~EDQ
+          Here are your keystrokes:
+          7<C-A>atest<Home>Bill <Esc>ZZ
+
+          Success! Your output matches. Your score: 16
+        EDQ
+      end
+    end
   end
 end

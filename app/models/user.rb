@@ -18,13 +18,24 @@ class User < ActiveRecord::Base
 
   def player_best_scores
     Entry.from(
-      Entry.where(user_id: id).select(
-        '*',
-        'row_number() OVER (PARTITION BY challenge_id ORDER BY score, created_at) as challenge_ranked_entry'
-      ),
+      Entry.from(
+        Entry
+        .where(challenge_id: User.find(id).entries.select(:challenge_id))
+        .select(
+          '*',
+          'row_number() OVER (PARTITION BY challenge_id, user_id ORDER BY score, created_at) AS user_ranked_entry'
+        ),
+        :entries
+      )
+        .where(user_ranked_entry: 1)
+        .select(
+          '*',
+          'row_number() OVER (PARTITION BY challenge_id ORDER BY score, created_at) AS position'
+        ),
       :entries
     )
-         .where(challenge_ranked_entry: 1)
+         .where(user_id: id)
+         .select('*', 'position')
          .order('challenge_id DESC')
   end
 end

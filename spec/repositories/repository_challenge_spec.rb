@@ -338,8 +338,7 @@ describe RepositoryChallenge do
       end
     end
 
-    # Disable, player_best_score(..., true) not implemented.
-    xcontext 'when player has submitted two entries to a challenge' do
+    context 'when player has submitted two entries to a challenge' do
       let(:user) { create(:user) }
       let(:user2) { create(:user) }
       let(:challenge1) { create(:challenge) }
@@ -351,22 +350,22 @@ describe RepositoryChallenge do
       end
 
       it 'return expected user information about the user' do
-        result = RepositoryChallenge.player_best_scores(user.id, true).to_a
-        expect(result.length).to eq(1)
-        challenge = result.first
+        result = RepositoryChallenge.player_best_scores(user.id, true)
+        expect(result.size).to eq(1)
+        entry = result.first
+        challenge = entry.challenge
         expect(challenge['id']).to eq(challenge1.id)
         expect(challenge['title']).to eq(challenge1.title)
         expect(challenge['description']).to eq(challenge1.description)
-        expect(challenge['count_entries']).to eq(3)
-        expect(challenge['best_score']).to eq(10)
-        expect(challenge['best_player_score']).to eq(12)
-        expect(challenge['attempts']).to eq(2)
-        expect(challenge['position']).to eq(2)
+        expect(challenge.count_entries).to eq(3)
+        expect(challenge.best_score).to eq(10)
+        expect(entry.score).to eq(12)
+        expect(challenge.count_entries_by(entry.user_id)).to eq(2)
+        expect(entry['position']).to eq(2)
       end
     end
 
-    # Disable, player_best_score(..., true) not implemented.
-    xcontext 'when player has submitted entries to multiple challenges' do
+    context 'when player has submitted entries to multiple challenges' do
       let(:user) { create(:user) }
       let(:user2) { create(:user) }
       let(:challenge1) { create(:challenge, user: user, created_at: Time.new(2017)) }
@@ -380,37 +379,39 @@ describe RepositoryChallenge do
       end
 
       it 'return expected user information about the user' do
-        result = RepositoryChallenge.player_best_scores(user.id, true).to_a
-        expect(result.length).to eq(2)
+        result = RepositoryChallenge.player_best_scores(user.id, true)
+        expect(result.size).to eq(2)
 
         # Ensure challenges are in chronological order, challenge2 is first.
-        challenge = result[0]
+        entry = result[0]
+        challenge = entry.challenge
         expect(challenge['id']).to eq(challenge2.id)
         expect(challenge['title']).to eq(challenge2.title)
         expect(challenge['description']).to eq(challenge2.description)
-        expect(challenge['count_entries']).to eq(1)
-        expect(challenge['best_score']).to eq(14)
-        expect(challenge['best_player_score']).to eq(14)
-        expect(challenge['attempts']).to eq(1)
-        expect(challenge['position']).to eq(1)
-        expect(challenge['count_golfers']).to eq(1)
+        expect(challenge.count_entries).to eq(1)
+        expect(challenge.best_score).to eq(14)
+        expect(entry.score).to eq(14)
+        expect(challenge.count_entries_by(entry.user_id)).to eq(1)
+        expect(entry['position']).to eq(1)
+        expect(challenge.count_uniq_users).to eq(1)
 
         # And challenge1 is next.
-        challenge = result[1]
+        entry = result[1]
+        challenge = entry.challenge
         expect(challenge['id']).to eq(challenge1.id)
         expect(challenge['title']).to eq(challenge1.title)
         expect(challenge['description']).to eq(challenge1.description)
-        expect(challenge['count_entries']).to eq(3)
-        expect(challenge['best_score']).to eq(10)
-        expect(challenge['best_player_score']).to eq(12)
-        expect(challenge['attempts']).to eq(2)
-        expect(challenge['position']).to eq(2)
-        expect(challenge['count_golfers']).to eq(2)
+        expect(challenge.count_entries).to eq(3)
+        expect(challenge.best_score).to eq(10)
+        expect(entry.score).to eq(12)
+        expect(challenge.count_entries_by(entry.user_id)).to eq(2)
+        expect(entry['position']).to eq(2)
+        expect(challenge.count_uniq_users).to eq(2)
       end
     end
   end
 
-  xdescribe '.submissions_per_player(challenge_id, player_id)' do
+  describe '.submissions_per_player(challenge_id, player_id)' do
     context 'when there are entries in challenge' do
       let(:user1) { create(:user) }
       let(:user2) { create(:user) }
@@ -435,8 +436,8 @@ describe RepositoryChallenge do
       end
 
       it 'returns the three entries by the test user, with appropriate rankings' do
-        result = RepositoryChallenge.submissions_per_player(challenge.id, user1.id).to_a
-        expect(result.length).to eq(3)
+        result = Challenge.find(challenge.id).player_entries(user1.id)
+        expect(result.size).to eq(3)
 
         entry = result[0]
         expect(entry['user_id']).to eq(user1.id)

@@ -8,7 +8,7 @@
               <li>Best score: <b><%= entry.challenge.best_score %></b></li>
               <li>Best player score: <b><%= entry.score %></b></li>
             <% if @show_profile.show_ranking %>
-              <li>Position: <b>#<%= player_challenge['position'] %> / <%= player_challenge['count_golfers'] %></b></li>
+              <li>Position: <b>#<%= entry.position %> / <%= entry.challenge.count_uniq_users %></b></li>
             <% end %>
               <li>Number of attempts: <b><%= link_to entry.challenge.count_entries_by(@show_profile.player.id),
                 user_challenge_path(entry.challenge.urlkey, @show_profile.nickname) %></b></li>

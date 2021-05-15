@@ -3,6 +3,7 @@ require "tmpdir"
 
 TESTDATA = File.join(File.dirname(__FILE__), 'testdata')
 MOCK_VIM = File.join(File.dirname(__FILE__), 'mock_bin', 'mock_vim.rb')
+MOCK_DIFF = File.join(File.dirname(__FILE__), 'mock_bin', 'mock_diff.sh')
 
 describe VimGolf do
   it "provides VimGolf errors" do
@@ -97,6 +98,53 @@ describe VimGolf do
           7<C-A>atest<Home>Bill <Esc>ZZ
 
           Success! Your output matches. Your score: 16
+        EDQ
+      end
+    end
+  end
+
+  it "runs 'vimgolf local' with incorrect output and shows diff" do
+    Dir.mktmpdir('vimgolf_test_') do |tmpdir|
+      ClimateControl.modify HOME: tmpdir do
+        VimGolf::CLI.initialize_ui
+        stub_const('VimGolf::CLI::GOLFVIM', "#{RbConfig.ruby} #{MOCK_VIM}")
+        stub_const('VimGolf::CLI::GOLFSHOWDIFF', "/bin/sh #{MOCK_DIFF}")
+
+        expect(VimGolf.ui).to receive(:ask_question)
+          .with('Choice> ', type: :warn, choices: [:diff, :retry, :quit])
+          .and_return(:diff, :quit)
+
+        out = capture_stdout and_stderr: true do
+          VimGolf::CLI.start(
+            [
+              'local',
+              File.join(TESTDATA, 'input.txt'),
+              File.join(TESTDATA, 'mismatch.txt')
+            ]
+          )
+        end
+
+        expect(out).to include <<~EDQ
+          Here are your keystrokes:
+          7<C-A>atest<Home>Bill <Esc>ZZ
+
+          Uh oh, looks like your entry does not match the desired output.
+          Your score for this failed attempt was: 16
+          [d] Show diff
+          [r] Retry the current challenge
+          [q] Quit vimgolf
+          Showing vimdiff of your attempt (left) and correct output (right)
+          [d] Show diff
+          [r] Retry the current challenge
+          [q] Quit vimgolf
+
+          Thanks for playing!
+        EDQ
+
+        expect(File.read(File.join(tmpdir, 'diff-output.txt'))).to include <<~EDQ
+          @@ -1 +1 @@
+          -Bill nye  says 010test
+          +Naomi nye  says 008testing
         EDQ
       end
     end

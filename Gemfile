@@ -46,4 +46,5 @@ group :test, :development do
   gem 'rubocop', '~> 1.9.1'
   gem 'rubocop-rails'
   gem 'rubocop-rspec'
+  gem 'webmock'
 end

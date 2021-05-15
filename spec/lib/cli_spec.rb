@@ -1,5 +1,8 @@
 require "cli_helper"
 require "tmpdir"
+require "webmock/rspec"
+
+WebMock.disable_net_connect!
 
 TESTDATA = File.join(File.dirname(__FILE__), 'testdata')
 MOCK_VIM = File.join(File.dirname(__FILE__), 'mock_bin', 'mock_vim.rb')
@@ -149,4 +152,82 @@ describe VimGolf do
       end
     end
   end
+
+  it "runs 'vimgolf put'" do
+    Dir.mktmpdir('vimgolf_test_') do |tmpdir|
+      ClimateControl.modify HOME: tmpdir do
+        FileUtils.mkdir_p(File.join(tmpdir, '.vimgolf'))
+        File.write(
+          File.join(tmpdir, '.vimgolf', 'config.yaml'),
+          "---\nkey: abcdefghijklmnopqrstuvwxyz012345\n"
+        )
+        VimGolf::CLI.initialize_ui
+        stub_const('VimGolf::CLI::GOLFVIM', "#{RbConfig.ruby} #{MOCK_VIM}")
+
+        get_req = stub_request(:get, "#{VimGolf::GOLFHOST}/challenges/8v90deadbeef000012345678.json")
+                  .to_return(
+                    status: 200,
+                    headers: { content_type: 'application/json' },
+                    body: {
+                      in: {
+                        'data' => "nye  says 001\n",
+                        'type' => 'txt'
+                      },
+                      out: {
+                        'data' => "Bill nye  says 010test\n",
+                        'type' => 'txt'
+                      },
+                      client: Vimgolf::VERSION
+                    }.to_json
+                  )
+        post_req = stub_request(:post, "#{VimGolf::GOLFHOST}/entry.json")
+                   .with(
+                     body: URI.encode_www_form(
+                       {
+                         challenge_id: '8v90deadbeef000012345678',
+                         apikey: 'abcdefghijklmnopqrstuvwxyz012345',
+                         entry: "7\x01atest\x80khBill \x1b\x80\xfdaZZ"
+                       }
+                     ),
+                     headers: { accept: 'application/json' }
+                   ).to_return(
+                     status: 200,
+                     headers: { content_type: 'application/json' },
+                     body: { status: 'ok' }.to_json
+                   )
+
+        expect(VimGolf.ui).to receive(:ask_question)
+          .with('Choice> ', type: :warn, choices: [:w, :x, :retry, :quit])
+          .and_return(:x)
+
+        out = capture_stdout do
+          VimGolf::CLI.start(['put', '8v90deadbeef000012345678'])
+        end
+
+        expect(get_req).to have_been_requested
+        expect(post_req).to have_been_requested
+
+        expect(out).to include <<~EDQ
+          Downloading Vimgolf challenge: 8v90deadbeef000012345678
+          Launching VimGolf session for challenge: 8v90deadbeef000012345678
+
+          Here are your keystrokes:
+          7<C-A>atest<Home>Bill <Esc>ZZ
+
+          Success! Your output matches. Your score: 16
+          [w] Upload result and retry the challenge
+          [x] Upload result and quit
+          [r] Do not upload result and retry the challenge
+          [q] Do not upload result and quit
+          Uploading to VimGolf...
+          Uploaded entry.
+          View the leaderboard: #{VimGolf::GOLFHOST}/challenges/8v90deadbeef000012345678
+
+          Thanks for playing!
+        EDQ
+      end
+    end
+  end
 end
+
+WebMock.allow_net_connect!

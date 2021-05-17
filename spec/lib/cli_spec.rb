@@ -228,6 +228,49 @@ describe VimGolf do
       end
     end
   end
+
+  it "runs 'vimgolf put' with client version mismatch" do
+    Dir.mktmpdir('vimgolf_test_') do |tmpdir|
+      ClimateControl.modify HOME: tmpdir do
+        VimGolf::CLI.initialize_ui
+        get_req = stub_request(:get, "#{VimGolf::GOLFHOST}/challenges/8v90deadbeef000012345678.json")
+                  .to_return(
+                    status: 200,
+                    headers: { content_type: 'application/json' },
+                    body: {
+                      in: {
+                        'data' => "nye  says 001\n",
+                        'type' => 'txt'
+                      },
+                      out: {
+                        'data' => "Bill nye  says 010test\n",
+                        'type' => 'txt'
+                      },
+                      client: '0.1'
+                    }.to_json
+                  )
+
+        out = capture_stdout and_stderr: true do
+          begin
+            VimGolf::CLI.start(['put', '8v90deadbeef000012345678'])
+          rescue StandardError => e
+            expect(e.message).to match(
+              "Uh oh, couldn't download or parse challenge, " \
+              "please verify your challenge id & client version."
+            )
+          end
+        end
+
+        expect(get_req).to have_been_requested
+
+        expect(out).to include <<~EDQ
+          Downloading Vimgolf challenge: 8v90deadbeef000012345678
+          Client version mismatch. Installed: #{Vimgolf::VERSION}, Required: 0.1.
+          \t gem install vimgolf
+        EDQ
+      end
+    end
+  end
 end
 
 WebMock.allow_net_connect!

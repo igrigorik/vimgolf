@@ -14,3 +14,12 @@ Style/NumericLiterals:
 Layout/EmptyLinesAroundBlockBody:
   Exclude:
     - 'db/schema.rb'
+
+# We want to stay compatible with older versions of Ruby for the
+# client code, so don't complain about "begin"/"rescue" or
+# "begin"/"ensure" blocks. Using "rescue"/"ensure" in blocks that
+# don't use "begin" is only available on Ruby 2.5+.
+Style/RedundantBegin:
+  Exclude:
+    - 'lib/vimgolf/lib/**/*.rb'
+    - 'spec/lib/**/*.rb'

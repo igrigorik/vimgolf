@@ -31,7 +31,7 @@ gem 'vimgolf', path: 'lib/vimgolf'
 
 group :test, :development do
   gem 'sqlite3', '~> 1.3.6'
-  gem 'rspec-rails', '3.6.0'
+  gem 'rspec-rails', '~> 4.0'
   gem 'rails-controller-testing'
   gem 'shoulda-matchers'
   gem 'simplecov', :require => false

@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
 
   has_many :challenges, dependent: :destroy
   has_many :entries, dependent: :destroy
+  has_many :comments, dependent: :destroy
 
   attribute :key, :string, default: -> { SecureRandom.hex }
 

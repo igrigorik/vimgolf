@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe Comment do
-  let(:comment) { described_class.new }
+  let(:user) { build(:user) }
+  let(:entry) { build(:entry) }
+  let(:comment) { described_class.new(user: user, entry: entry) }
 
   describe 'Validations' do
     context 'comment without a comment' do

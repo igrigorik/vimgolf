@@ -3,6 +3,9 @@ ruby '2.6.7'
 
 gem 'rails', '~> 5.2.0'
 
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '>= 1.4.2', require: false
+
 gem 'mongo', '~> 2.5.0'
 gem 'bson', '~> 4.3.0'
 gem 'mongoid', '~> 6.1.0'
@@ -28,7 +31,7 @@ gem 'vimgolf', path: 'lib/vimgolf'
 
 group :test, :development do
   gem 'sqlite3', '~> 1.3.6'
-  gem 'rspec-rails', '3.6.0'
+  gem 'rspec-rails', '~> 4.0'
   gem 'rails-controller-testing'
   gem 'shoulda-matchers'
   gem 'simplecov', :require => false
@@ -39,6 +42,7 @@ group :test, :development do
   gem 'execjs'
   gem 'mini_racer'
   gem 'launchy'
+  gem 'listen', '~> 3.2'
   gem 'pry-byebug'
   gem 'pry-stack_explorer'
   gem 'factory_bot', '~> 4.0'

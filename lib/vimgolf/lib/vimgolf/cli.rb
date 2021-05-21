@@ -26,9 +26,22 @@ module VimGolf
   class CLI < Thor
     include Thor::Actions
 
-    def self.start(*)
+    def self.initialize_ui
+      return if @ui_initialized
       Thor::Base.shell = VimGolf::CLI::UI
       VimGolf.ui = VimGolf::CLI::UI.new
+      @ui_initialized = true
+    end
+
+    def self.reset_ui
+      return unless @ui_initialized
+      Thor::Base.shell = Thor::Shell::Color
+      VimGolf.ui = nil
+      @ui_initialized = false
+    end
+
+    def self.start(*)
+      initialize_ui
       super
     end
 

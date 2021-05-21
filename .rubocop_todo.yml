@@ -679,13 +679,6 @@ Style/Proc:
   Exclude:
     - 'lib/vimgolf/lib/vimgolf/ui.rb'
 
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/RedundantBegin:
-  Exclude:
-    - 'lib/vimgolf/lib/vimgolf/challenge.rb'
-    - 'lib/vimgolf/lib/vimgolf/ui.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/RedundantCapitalW:

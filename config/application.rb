@@ -58,6 +58,13 @@ module Vimgolf
                                # :sender_address => %{"vimgolf" <exception@vimgolf.com>},
                                # :exception_recipients => %w{ilya@igvita.com}
 
+    # Have the SQLite3 adapter represent booleans as integers. The default
+    # setting of false uses 't' and 'f' to represent them, but that is
+    # discouraged and deprecated. Since we currently don't have boolean fields
+    # in the database, it's safe to proceed with this change without requiring
+    # a migration.
+    config.active_record.sqlite3.represent_boolean_as_integer = true
+
     config.cache_store = :dalli_store,
                     (ENV["MEMCACHIER_SERVERS"] || "").split(","),
                     {

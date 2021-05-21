@@ -1,9 +1,20 @@
 module VimGolf
+  def self.which(cmd)
+    exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+    ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+      exts.each { |ext|
+        exe = File.join(path, "#{cmd}#{ext}")
+        return exe if File.executable?(exe) && !File.directory?(exe)
+      }
+    end
+    return nil
+  end
 
+  EXECUTABLE = (if not self.which('nvim').nil? then 'nvim' else 'vim' end)
   GOLFDEBUG    = ENV['GOLFDEBUG'].to_sym rescue false
   GOLFHOST     = ENV['GOLFHOST']     || "http://www.vimgolf.com"
-  GOLFSHOWDIFF = ENV['GOLFSHOWDIFF'] || 'vim -d -n'
-  GOLFVIM      = ENV['GOLFVIM']      || 'vim'
+  GOLFSHOWDIFF = ENV['GOLFSHOWDIFF'] || "#{EXECUTABLE} -d -n"
+  GOLFVIM      = ENV['GOLFVIM']      || "#{EXECUTABLE}"
   PROXY        = ENV['http_proxy']   || ''
 
   class Error

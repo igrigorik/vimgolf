@@ -38,7 +38,14 @@ module VimGolf
     def download
       @remote = true
       begin
-        res = Net::HTTP.get_response(URI("#{GOLFHOST}/challenges/#{@id}.json"))
+        url = URI("#{GOLFHOST}/challenges/#{@id}.json")
+        res = Net::HTTP.start(
+          url.hostname,
+          url.port,
+          use_ssl: url.scheme == 'https'
+        ) do |http|
+          http.request_get(url)
+        end
 
         @data = JSON.parse(res.body)
 
@@ -79,15 +86,22 @@ module VimGolf
 
     def upload
       begin
-        res = Net::HTTP.post(
-          URI("#{GOLFHOST}/entry.json"),
-          URI.encode_www_form(
-            "challenge_id" => @id,
-            "apikey" => Config.load['key'],
-            "entry" => IO.binread(log_path)
-          ),
-          "Accept" => "application/json"
-        )
+        url = URI("#{GOLFHOST}/entry.json")
+        res = Net::HTTP.start(
+          url.hostname,
+          url.port,
+          use_ssl: url.scheme == 'https'
+        ) do |http|
+          http.request_post(
+            url,
+            URI.encode_www_form(
+              "challenge_id" => @id,
+              "apikey" => Config.load['key'],
+              "entry" => IO.binread(log_path)
+            ),
+            "Accept" => "application/json"
+          )
+        end
 
         res = JSON.parse(res.body)
 

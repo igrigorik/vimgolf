@@ -8,6 +8,12 @@ TESTDATA = File.join(File.dirname(__FILE__), 'testdata')
 MOCK_VIM = File.join(File.dirname(__FILE__), 'mock_bin', 'mock_vim.rb')
 MOCK_DIFF = File.join(File.dirname(__FILE__), 'mock_bin', 'mock_diff.sh')
 
+class String
+  def strip_heredoc
+    gsub(/^#{scan(/^[ \t]*(?=\S)/).min}/, "".freeze)
+  end
+end
+
 describe VimGolf do
   it "provides VimGolf errors" do
     expect(VimGolf::Error).to be
@@ -96,7 +102,7 @@ describe VimGolf do
           )
         end
 
-        expect(out).to include <<~EDQ
+        expect(out).to include <<-EDQ.strip_heredoc
           Here are your keystrokes:
           7<C-A>atest<Home>Bill <Esc>ZZ
 
@@ -127,7 +133,7 @@ describe VimGolf do
           )
         end
 
-        expect(out).to include <<~EDQ
+        expect(out).to include <<-EDQ.strip_heredoc
           Here are your keystrokes:
           7<C-A>atest<Home>Bill <Esc>ZZ
 
@@ -144,7 +150,7 @@ describe VimGolf do
           Thanks for playing!
         EDQ
 
-        expect(File.read(File.join(tmpdir, 'diff-output.txt'))).to include <<~EDQ
+        expect(File.read(File.join(tmpdir, 'diff-output.txt'))).to include <<-EDQ.strip_heredoc
           @@ -1 +1 @@
           -Bill nye  says 010test
           +Naomi nye  says 008testing
@@ -207,7 +213,7 @@ describe VimGolf do
         expect(get_req).to have_been_requested
         expect(post_req).to have_been_requested
 
-        expect(out).to include <<~EDQ
+        expect(out).to include <<-EDQ.strip_heredoc
           Downloading Vimgolf challenge: 8v90deadbeef000012345678
           Launching VimGolf session for challenge: 8v90deadbeef000012345678
 
@@ -263,7 +269,7 @@ describe VimGolf do
 
         expect(get_req).to have_been_requested
 
-        expect(out).to include <<~EDQ
+        expect(out).to include <<-EDQ.strip_heredoc
           Downloading Vimgolf challenge: 8v90deadbeef000012345678
           Client version mismatch. Installed: #{Vimgolf::VERSION}, Required: 0.1.
           \t gem install vimgolf

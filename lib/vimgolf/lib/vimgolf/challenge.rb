@@ -38,12 +38,14 @@ module VimGolf
     def download
       @remote = true
       begin
-        url = URI.parse("#{GOLFHOST}/challenges/#{@id}.json")
-        req = Net::HTTP::Get.new(url.path)
-
-        proxy_url, proxy_user, proxy_pass = get_proxy
-        proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
-        res = proxy.start(url.host, url.port) { |http| http.request(req) }
+        url = URI("#{GOLFHOST}/challenges/#{@id}.json")
+        res = Net::HTTP.start(
+          url.hostname,
+          url.port,
+          use_ssl: url.scheme == 'https'
+        ) do |http|
+          http.request_get(url)
+        end
 
         @data = JSON.parse(res.body)
 
@@ -84,23 +86,27 @@ module VimGolf
 
     def upload
       begin
-        url = URI.parse("#{GOLFHOST}/entry.json")
-
-        proxy_url, proxy_user, proxy_pass = get_proxy
-        proxy = Net::HTTP::Proxy(proxy_url.host, proxy_url.port, proxy_user, proxy_pass)
-
-        proxy.start(url.host, url.port) do |http|
-          request = Net::HTTP::Post.new(url.request_uri)
-          request.set_form_data({"challenge_id" => @id, "apikey" => Config.load['key'], "entry" => IO.binread(log_path)})
-          request["Accept"] = "application/json"
-
-          res = http.request(request)
-          res = JSON.parse(res.body)
-
-          raise if !res.is_a? Hash
-          res['status'].to_sym
-
+        url = URI("#{GOLFHOST}/entry.json")
+        res = Net::HTTP.start(
+          url.hostname,
+          url.port,
+          use_ssl: url.scheme == 'https'
+        ) do |http|
+          http.request_post(
+            url,
+            URI.encode_www_form(
+              "challenge_id" => @id,
+              "apikey" => Config.load['key'],
+              "entry" => IO.binread(log_path)
+            ),
+            "Accept" => "application/json"
+          )
         end
+
+        res = JSON.parse(res.body)
+
+        raise if !res.is_a? Hash
+        res['status'].to_sym
       rescue Exception => e
         debug(e)
         raise "Uh oh, entry upload has failed, please check your key."
@@ -122,20 +128,6 @@ module VimGolf
     end
 
     private
-      def get_proxy
-        begin
-          proxy_url = URI.parse(PROXY)
-        rescue Exception => e
-          VimGolf.ui.error "Invalid proxy uri in http_proxy environment variable - will try to run with out proxy"
-          proxy_url = URI.parse("");
-        end
-
-        proxy_url.port ||= 80
-        proxy_user, proxy_pass = proxy_url.userinfo.split(/:/) if proxy_url.userinfo
-
-        return proxy_url, proxy_user, proxy_pass
-      end
-
       def debug(msg)
         p [caller.first, msg] if GOLFDEBUG
       end

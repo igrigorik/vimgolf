@@ -10,6 +10,9 @@ jobs:
     - rvm: 2.3 # Test only the cli, on older Ruby.
       dist: xenial
       gemfile: lib/vimgolf/Gemfile
+    - rvm: 2.0 # Test only the cli, on older Ruby.
+      dist: trusty
+      gemfile: lib/vimgolf/Gemfile
 services:
   - mongodb
 before_install:

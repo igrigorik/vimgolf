@@ -34,7 +34,8 @@ group :test, :development do
   gem 'rspec-rails', '~> 4.0'
   gem 'rails-controller-testing'
   gem 'shoulda-matchers'
-  gem 'simplecov', :require => false
+  gem 'simplecov', require: false
+  gem 'simplecov-cobertura', require: false
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem 'capybara'
   gem 'climate_control'

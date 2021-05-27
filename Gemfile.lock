@@ -315,6 +315,7 @@ DEPENDENCIES
   codeclimate-test-reporter (~> 1.0.0)
   cuprite
   dalli
+  diff-lcs
   execjs
   factory_bot (~> 4.0)
   faker

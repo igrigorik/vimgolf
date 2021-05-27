@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec", "~> 3.7", ">= 3.7.0"
   s.add_development_dependency "rake", "~> 12.3", ">= 12.3.1"
   s.add_development_dependency "climate_control", "~> 0.2"
+  s.add_development_dependency "diff-lcs", "~> 1.4"
   s.add_development_dependency "rexml", "~> 3.1.9"
   s.add_development_dependency "webmock", "~> 3.13"
 

@@ -39,6 +39,7 @@ group :test, :development do
   gem 'capybara'
   gem 'climate_control'
   gem 'cuprite'
+  gem 'diff-lcs', require: false
   gem 'execjs'
   gem 'mini_racer'
   gem 'launchy'

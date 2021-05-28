@@ -1,0 +1,102 @@
+name: Vimgolf CI
+on:
+  - push
+  - pull_request
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out git tree
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Run rubocop
+        run: bundle exec rubocop
+
+  rspec-rails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out git tree
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Run RSpec tests
+        run: bundle exec rake
+      - name: Upload coverage information
+        uses: codecov/codecov-action@v1
+        with:
+          files: ./coverage/coverage.xml
+
+  rspec-rails-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Check out git tree
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Run RSpec tests
+        run: bundle exec rake
+
+  rspec-rails-pg:
+    runs-on: ubuntu-18.04
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: vimgolfgh
+          POSTGRES_PASSWORD: vimgolfpw
+        ports:
+          - 5432:5432
+    env:
+      DATABASE_ADAPTER: pg
+      DATABASE_URL: postgresql://vimgolfgh:vimgolfpw@localhost/
+    steps:
+      - name: Check out git tree
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Create database
+        run: bundle exec rails db:create db:migrate RAILS_ENV=test
+      - name: Run RSpec tests
+        run: bundle exec rake
+
+  rspec-client-gem:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        ruby-version:
+          - '2.3.8'
+          - '2.4.10'
+          - '2.7.3'
+          - '3.0.1'
+        include:
+          - os: ubuntu-latest
+            ruby-version: '2.1.9'
+          - os: windows-latest
+            ruby-version: '2.7.3'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out git tree
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+        env:
+          BUNDLE_GEMFILE: lib/vimgolf/Gemfile
+      - name: Run RSpec tests
+        working-directory: lib/vimgolf
+        run: bundle exec rake

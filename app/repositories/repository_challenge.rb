@@ -91,7 +91,7 @@ module RepositoryChallenge
     User.find(player_id).challenges
   end
 
-  def self.player_best_scores(player_id, _with_ranking = false)
+  def self.player_best_scores(player_id)
     User.find(player_id).player_best_scores
   end
 

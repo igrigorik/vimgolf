@@ -350,7 +350,7 @@ describe RepositoryChallenge do
       end
 
       it 'return expected user information about the user' do
-        result = RepositoryChallenge.player_best_scores(user.id, true)
+        result = RepositoryChallenge.player_best_scores(user.id)
         expect(result.size).to eq(1)
         entry = result.first
         challenge = entry.challenge
@@ -379,7 +379,7 @@ describe RepositoryChallenge do
       end
 
       it 'return expected user information about the user' do
-        result = RepositoryChallenge.player_best_scores(user.id, true)
+        result = RepositoryChallenge.player_best_scores(user.id)
         expect(result.size).to eq(2)
 
         # Ensure challenges are in chronological order, challenge2 is first.

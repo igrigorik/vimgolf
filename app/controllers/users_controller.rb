@@ -5,7 +5,7 @@ class UsersController < ApplicationController
     user = User.where(nickname: params[:username]).first
     return redirect_to root_path unless user
 
-    @show_profile = ShowProfile.new(user, params[:ranking])
+    @show_profile = ShowProfile.new(user)
 
     respond_to do |format|
       format.html

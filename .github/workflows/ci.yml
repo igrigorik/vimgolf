@@ -77,15 +77,15 @@ jobs:
           - ubuntu-latest
           - macos-latest
         ruby-version:
-          - '2.3.8'
-          - '2.4.10'
-          - '2.7.3'
-          - '3.0.1'
+          - '2.3'
+          - '2.4'
+          - '2.7'
+          - '3.0'
         include:
           - os: ubuntu-latest
-            ruby-version: '2.1.9'
+            ruby-version: '2.1'
           - os: windows-latest
-            ruby-version: '2.7.3'
+            ruby-version: '2.7'
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out git tree

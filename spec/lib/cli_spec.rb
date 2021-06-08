@@ -6,7 +6,7 @@ WebMock.disable_net_connect!
 
 TESTDATA = File.join(File.dirname(__FILE__), 'testdata')
 MOCK_VIM = File.join(File.dirname(__FILE__), 'mock_bin', 'mock_vim.rb')
-MOCK_DIFF = File.join(File.dirname(__FILE__), 'mock_bin', 'mock_diff.sh')
+MOCK_DIFF = File.join(File.dirname(__FILE__), 'mock_bin', 'mock_diff.rb')
 
 class String
   def strip_heredoc
@@ -117,7 +117,7 @@ describe VimGolf do
       ClimateControl.modify HOME: tmpdir do
         VimGolf::CLI.initialize_ui
         stub_const('VimGolf::CLI::GOLFVIM', "#{RbConfig.ruby} #{MOCK_VIM}")
-        stub_const('VimGolf::CLI::GOLFSHOWDIFF', "/bin/sh #{MOCK_DIFF}")
+        stub_const('VimGolf::CLI::GOLFSHOWDIFF', "#{RbConfig.ruby} #{MOCK_DIFF} -u")
 
         expect(VimGolf.ui).to receive(:ask_question)
           .with('Choice> ', type: :warn, choices: [:diff, :retry, :quit])

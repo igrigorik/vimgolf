@@ -28,7 +28,7 @@ jobs:
       - name: Run RSpec tests
         run: bundle exec rake
       - name: Upload coverage information
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v1.5.0
         with:
           files: ./coverage/coverage.xml
 

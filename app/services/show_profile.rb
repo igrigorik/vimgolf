@@ -6,12 +6,10 @@ require 'forwardable'
 class ShowProfile
   extend Forwardable
 
-  def initialize(player, show_ranking = false)
+  def initialize(player)
     @player = player
-    @show_ranking = show_ranking
   end
   attr_reader :player
-  attr_reader :show_ranking
 
   def_delegators :player, :nickname
   def_delegators :player, :name
@@ -23,7 +21,7 @@ class ShowProfile
   end
 
   def tried_challenges
-    @tried_challenges ||= RepositoryChallenge.player_best_scores(player.id, show_ranking).to_a
+    @tried_challenges ||= RepositoryChallenge.player_best_scores(player.id).to_a
   end
 
 end

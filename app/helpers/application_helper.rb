@@ -8,7 +8,7 @@ module ApplicationHelper
   end
 
   def twitter_avatar(user)
-    "<img src='http://identicon-1132.appspot.com/#{Digest::MD5.hexdigest(user)}' class='user'>".html_safe
+    "<img src='data:image/png;base64,#{RubyIdenticon.create_base64(user, square_size: 6, grid_size: 8, border_size: 0)}' class='user'>".html_safe
   end
 
   def current_url

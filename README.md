@@ -22,10 +22,10 @@ $> vimgolf setup
 $> vimgolf put [challenge ID]
 ```
 
-## Golfing without ruby installation: [use docker](https://hub.docker.com/r/hettomei/vimgolf/)
+## Golfing without ruby installation: [use docker](https://github.com/filbranden/vimgolf/pkgs/container/vimgolf)
 
 ```
-$> docker run --rm -it -e "key=YOUR_VIMGOLF_KEY" hettomei/vimgolf challenge_ID
+$> docker run --rm -it -e "key=YOUR_VIMGOLF_KEY" ghcr.io/filbranden/vimgolf challenge_ID
 ```
 
 # Playing from other editors

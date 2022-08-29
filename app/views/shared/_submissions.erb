@@ -9,7 +9,7 @@
     </h6>
 
 <pre style="margin-bottom:0">
-<% VimGolf::Keylog.parse(solution.script, solution.created_at).each do |key| %><% if key.size > 1 %><span class="entry-script"><%= key %></span><% else %><%= key %><% end %><% end %>
+<% VimGolf::Keylog.new(solution.script, solution.created_at).each do |key| %><% if key.size > 1 %><span class="entry-script"><%= key %></span><% else %><%= key %><% end %><% end %>
 </pre>
 
   <% solution.comments.each do |c| %>

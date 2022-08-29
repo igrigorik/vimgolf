@@ -6,10 +6,6 @@ gem 'rails', '~> 5.2.0'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem 'mongo', '~> 2.5.0'
-gem 'bson', '~> 4.3.0'
-gem 'mongoid', '~> 6.1.0'
-
 gem 'pg'
 
 gem 'json'

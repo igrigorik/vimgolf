@@ -25,7 +25,7 @@ class EntryController < ApplicationController
       if @challenge && @user
         @entry = Entry.new(
                   script: params[:entry],
-                  score: VimGolf::Keylog.parse(params[:entry]).score
+                  score: VimGolf::Keylog.new(params[:entry]).score
                  )
         @entry.created_at = Time.now.utc
         @entry.user = @user

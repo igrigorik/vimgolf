@@ -23,7 +23,7 @@ class Submissions
   end
 
   def users
-    @users ||= User.where(:id.in => user_ids).inject({}) {|h,u| h.merge(u.id => u)}
+    @users ||= User.where(id: user_ids).inject({}) {|h,u| h.merge(u.id => u)}
   end
 
   def user_ids

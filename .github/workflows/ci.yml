@@ -18,6 +18,8 @@ jobs:
 
   rspec-rails:
     runs-on: ubuntu-latest
+    env:
+      FERRUM_PROCESS_TIMEOUT: 30
     steps:
       - name: Check out git tree
         uses: actions/checkout@v2
@@ -34,6 +36,8 @@ jobs:
 
   rspec-rails-macos:
     runs-on: macos-latest
+    env:
+      FERRUM_PROCESS_TIMEOUT: 30
     steps:
       - name: Check out git tree
         uses: actions/checkout@v2
@@ -57,6 +61,7 @@ jobs:
     env:
       DATABASE_ADAPTER: pg
       DATABASE_URL: postgresql://vimgolfgh:vimgolfpw@localhost/
+      FERRUM_PROCESS_TIMEOUT: 30
     steps:
       - name: Check out git tree
         uses: actions/checkout@v2

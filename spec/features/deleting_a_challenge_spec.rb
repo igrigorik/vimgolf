@@ -28,7 +28,7 @@ feature "Deleting a challenge" do
 
     visit root_path
 
-    click_link "Sign in with Twitter"
+    click_button "Sign in with Twitter"
     click_link "challenge1"
     click_button "Delete Challenge"
 

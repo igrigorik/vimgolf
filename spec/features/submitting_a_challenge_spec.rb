@@ -10,7 +10,7 @@ feature "Submitting a challenge" do
   scenario "with missing fields" do
     visit root_path
 
-    click_link "Sign in with Twitter"
+    click_button "Sign in with Twitter"
 
     click_link "Submit challenge"
 
@@ -26,7 +26,7 @@ feature "Submitting a challenge" do
   scenario "with properly filled out fields" do
     visit root_path
 
-    click_link "Sign in with Twitter"
+    click_button "Sign in with Twitter"
 
     click_link "Submit challenge"
 

@@ -10,7 +10,7 @@ feature "Sign In" do
   scenario "as a first-time user" do
     visit root_path
 
-    click_link "Sign in with Twitter"
+    click_button "Sign in with Twitter"
 
     expect(current_path).to eq(root_path)
     expect(page).to have_text "Welcome @the science guy"
@@ -27,7 +27,7 @@ feature "Sign In" do
 
     visit root_path
 
-    click_link "Sign in with Twitter"
+    click_button "Sign in with Twitter"
 
     expect(page).to have_text "Welcome @the science guy"
     expect(user.reload.name).to eq("bill nye")

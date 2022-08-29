@@ -30,9 +30,15 @@
         <% if current_user %>
             <li>Welcome <b><%= profile_link(current_user.nickname) %></b></li>
             <li><%= link_to "Submit challenge", new_challenge_path %></li>
-            <li><%= link_to "Sign out", signout_path %></li>
+            <li><%= form_for :signout, url: signout_path do |f| %>
+                  <%= f.button "Sign out", class: "btn-link" %>
+                <% end %></li>
         <% else %>
-            <li><%= link_to "Sign in with Twitter", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></li>
+            <li><%= form_for :signin, url: "/auth/twitter", html: { id: 'signin' } do |f| %>
+                  <%= f.hidden_field "x_auth_access_type", value: "read" %>
+                  <%= f.hidden_field "use_authorize", value: "true" %>
+                  <%= f.button "Sign in with Twitter", class: "btn-link" %>
+                <% end %></li>
         <% end %>
       </ul>
     </div>
@@ -46,7 +52,7 @@
       </div>
       <div id="instructions" class="grid_5">
 <pre class="terminal">
-<span class="shell">Your VimGolf key: <%= current_user.nil? ? link_to("please sign in", "/auth/twitter?x_auth_access_type=read&use_authorize=true") : current_user['key'] %></span>
+<span class="shell">Your VimGolf key: <%= current_user.nil? ? link_to("please sign in", "#", onclick: "document.getElementById('signin').submit();") : current_user['key'] %></span>
 
 <span class="shell">$</span> gem install vimgolf
 <span class="shell">$</span> vimgolf setup

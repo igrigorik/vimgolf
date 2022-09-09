@@ -43,7 +43,7 @@ describe Entry do
 
   describe 'Validations' do
     it 'is not valid without script' do
-      entry = build(:entry, script: nil)
+      entry = build(:entry, script: '')
 
       expect(entry).to_not be_valid
     end

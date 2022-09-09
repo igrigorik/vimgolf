@@ -65,7 +65,7 @@ module Vimgolf
     # a migration.
     config.active_record.sqlite3.represent_boolean_as_integer = true
 
-    config.cache_store = :dalli_store,
+    config.cache_store = :mem_cache_store,
                     (ENV["MEMCACHIER_SERVERS"] || "").split(","),
                     {
                       :username => ENV["MEMCACHIER_USERNAME"],

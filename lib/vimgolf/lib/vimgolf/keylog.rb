@@ -8,10 +8,9 @@ module VimGolf
     def initialize(input, time=Time.now.utc)
       # Force encoding of solution text. Must match string literals.
       # .force_encoding CHANGES THE ORIGINAL STRING!
-      @input = input.force_encoding(Encoding::ASCII_8BIT)
-      # Vim intentionally replaces <C-C> with <C-C><C-C> (Vim #11541).
-      # Convert <C-C><C-C> back to <C-C> (VimGolf #224).
-      @input = @input.gsub("\x03\x03", "\x03")
+      # Vim intentionally replaces "<C-C>" (\x03) with "<C-C><C-C>" (Vim #11541).
+      # Convert "<C-C><C-C>"" back to "<C-C>"" (VimGolf #224).
+      @input = input.force_encoding(Encoding::ASCII_8BIT).gsub("\x03\x03", "\x03")
       @time = time
     end
 

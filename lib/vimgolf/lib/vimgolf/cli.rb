@@ -138,6 +138,9 @@ module VimGolf
         system(*vimcmd) # assembled as an array, bypasses the shell
 
         if $?.exitstatus.zero?
+          # Vim intentionally replaces "<C-C>" (\x03) with "<C-C><C-C>" (Vim #11541).
+          # Update the log file so that "<C-C><C-C>" is converted back to "<C-C>" (VimGolf #224).
+          IO.binwrite(challenge.log_path, IO.binread(challenge.log_path).gsub("\x03\x03", "\x03"))
           log = Keylog.new(IO.binread(challenge.log_path))
 
           VimGolf.ui.info "\nHere are your keystrokes:"

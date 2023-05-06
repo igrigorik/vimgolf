@@ -26,7 +26,7 @@
     <%= twitter_avatar @show_profile.nickname %>
 
     <h6 style="margin-bottom:0">
-      <b><%= @show_profile.name %></b><br/>Twitter: <%= twitter_profile(@show_profile.nickname) %>
+      <b><%= @show_profile.name %></b><br/><%= @show_profile.provider.capitalize %>: <%= provider_profile(@show_profile) %>
     </h6>
     <p style="margin-bottom:0"><em><%= @show_profile.description || @show_profile.location %></em></p>
   </div>

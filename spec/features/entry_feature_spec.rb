@@ -44,6 +44,7 @@ feature "Entries for Challenges" do
     context '#comment' do
       scenario 'can comment on an entry', js: true do
         visit root_path
+        click_link "Sign in"
         click_link "Sign in with Twitter"
         click_link 'test'
         click_link 'Comment'
@@ -59,6 +60,7 @@ feature "Entries for Challenges" do
     context '#destroy' do
       scenario 'can delete an entry', js: true do
         visit root_path
+        click_link "Sign in"
         click_link "Sign in with Twitter"
         click_link 'test'
         click_link 'Comment / Edit'
@@ -83,6 +85,7 @@ feature "Entries for Challenges" do
 
     scenario 'owner can delete every entries', js: true do
       visit root_path
+      click_link "Sign in"
       click_link "Sign in with Twitter"
       click_link 'test'
       click_link 'Comment / Edit'
@@ -122,6 +125,7 @@ feature "Entries for Challenges" do
     context '#comment' do
       scenario 'can comment on an entry', js: true do
         visit root_path
+        click_link "Sign in"
         click_link "Sign in with Twitter"
         click_link 'test'
         click_link 'Comment'
@@ -137,6 +141,7 @@ feature "Entries for Challenges" do
     context '#destroy' do
       scenario 'can delete an entry', js: true do
         visit root_path
+        click_link "Sign in"
         click_link "Sign in with Twitter"
         click_link 'test'
         click_link 'Comment / Edit'

@@ -1,0 +1,64 @@
+$twitter-color: #1DA1F2;
+$github-color: #211F1F;
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 50px 20px;
+  text-align: center;
+
+  h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+  }
+}
+
+.auth-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+
+  .auth-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.2em;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &.twitter {
+      background-color: $twitter-color;
+    }
+
+    &.github {
+      background-color: $github-color;
+    }
+
+    .auth-icon {
+      display: block;
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+
+    .auth-label {
+      flex: 1;
+      text-align: center;
+      text-transform: uppercase;
+    }
+  }
+}

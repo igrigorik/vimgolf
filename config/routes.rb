@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     end
   end
 
+  get "/login", to: "main#oauth"
   get "/feed", to: "main#feed", defaults: {format: "rss"}
   get "/about", to: "main#about"
 

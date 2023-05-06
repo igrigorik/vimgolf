@@ -6,4 +6,10 @@ Rails.application.config.middleware.use OmniAuth::Builder do
     ENV.fetch('TWITTER_OAUTH_ID', 'dev') ,
     ENV.fetch('TWITTER_OAUTH_SECRET', 'dev'),
   )
+
+  provider(
+    :github,
+    ENV.fetch('GITHUB_OAUTH_ID', 'dev'),
+    ENV.fetch('GITHUB_OAUTH_SECRET', 'dev')
+  )
 end

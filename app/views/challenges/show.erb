@@ -43,7 +43,7 @@
                   user_challenge_path(@show_challenge.urlkey, user.nickname) %></b></div>
 
                 <h6 style="margin-bottom:0">
-                    <a class="anchor" href="#<%= entry[:entry_id] %>"><b>#<%= position %></b></a> - <%= user.name %> / <%= profile_link(user.nickname) %>
+                    <a class="anchor" href="#<%= entry[:entry_id] %>"><b>#<%= position %></b></a> - <%= user.name %> / <%= profile_link(user) %>
                 </h6>
                 <p style="margin-bottom:0"><em><%= entry[:created_at].strftime("%m/%d/%Y at %I:%M%p") %></em></p>
             </div>

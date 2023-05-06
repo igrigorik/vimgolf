@@ -6,10 +6,10 @@
   <%= render :partial => "shared/challenge_description", :locals => { show_challenge: @show_challenge } %>
 
   <% if @submissions.empty? %>
-    <h3>No solutions by <%= profile_link(@submissions.player.nickname) %> yet.</h3>
+    <h3>No solutions by <%= profile_link(@submissions.player) %> yet.</h3>
 
   <% else %>
-    <h3>Solutions by <%= profile_link(@submissions.player.nickname) %>:</h3>
+    <h3>Solutions by <%= profile_link(@submissions.player) %>:</h3>
   <% end %>
 
   <%= render :partial => "shared/submissions", :locals => { submissions: @submissions } %>
@@ -26,17 +26,17 @@
   <%= render :partial => "shared/challenge_credits", :locals => { show_challenge: @show_challenge } %>
 
     <% if @submissions.empty? %>
-        <h5>No solutions by <%= profile_link(@submissions.player.nickname) %> yet.</h5>
+        <h5>No solutions by <%= profile_link(@submissions.player) %> yet.</h5>
 
     <% else %>
-        <h5>Solutions by <%= profile_link(@submissions.player.nickname) %>:</h5>
+        <h5>Solutions by <%= profile_link(@submissions.player) %>:</h5>
         <% @submissions.each_unfiltered do |solution| %>
             <div class="notice clearfix">
                 <%= twitter_avatar solution.user.nickname %>
                 <div style="float:right; text-align:center;font-size:2.4em"><b><%= solution.score %></b></div>
 
                 <h6 style="margin-bottom:0">
-                    <a class="anchor" href="#<%= solution.id %>"><b>#<%= solution.position %></b></a> - <%= solution.user.name %> / <%= profile_link(solution.user.nickname) %>
+                    <a class="anchor" href="#<%= solution.id %>"><b>#<%= solution.position %></b></a> - <%= solution.user.name %> / <%= profile_link(solution.user) %>
                 </h6>
                 <p style="margin-bottom:0"><em><%= solution.created_at.strftime("%m/%d/%Y at %I:%M%p") %></em></p>
             </div>

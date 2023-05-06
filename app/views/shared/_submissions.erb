@@ -3,7 +3,7 @@
 
   <h6 style="margin-bottom:0.5em">
         <a class="anchor" href="#<%= solution.id %>" name="<%= solution.id %>"><b>#<%= solution.position %></b></a>
-        <%= solution.user.name %> / <%= profile_link(solution.user.nickname) %> -
+        <%= solution.user.name %> / <%= profile_link(solution.user) %> -
         <b>Score: <%= solution.score %></b> -
         <span style="font-size:0.9em"><%= solution.created_at.strftime("%m/%d/%y @ %H:%M") %></span>
     </h6>
@@ -13,7 +13,7 @@
 </pre>
 
   <% solution.comments.each do |c| %>
-    <p class="comment"><%= profile_link(c.nickname) %>: <%= c.comment %></p>
+    <p class="comment"><%= profile_link(c) %>: <%= c.comment %></p>
   <% end %>
 
 <p style="padding:0.5em 0 0 0; margin:0">

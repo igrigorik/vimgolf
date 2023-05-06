@@ -21,7 +21,7 @@ Rails.application.routes.draw do
 
   # match "/top" => "users#top", as: :top
   # match "*unmatched_route", to: redirect('/about', status: 302), via: [:get, :post]
-  get "/:username", to: "users#show", as: :profile, :constraints => { :username => /[^\/]+/ }
+  get "/:id/:username", to: "users#show", as: :profile, :constraints => { :username => /[^\/]+/ }
 
   root to: "main#index"
 

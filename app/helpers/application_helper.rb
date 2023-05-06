@@ -1,6 +1,6 @@
 module ApplicationHelper
   def profile_link(user)
-    link_to "@#{user}", profile_path(user)
+    link_to "@#{user.nickname}", profile_path(user.id, user.nickname)
   end
 
   def provider_profile(user_object)

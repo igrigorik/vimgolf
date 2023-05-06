@@ -18,7 +18,7 @@ describe SessionsController do
         expect do
           post :create, params: { provider: 'twitter' }
         end.to change(User, :count).by(1)
-        
+
         user = User.first
         expect(user.name).to eq("Bill Nye")
         expect(user.nickname).to eq("the science guy")
@@ -55,4 +55,3 @@ describe SessionsController do
     end
   end
 end
-

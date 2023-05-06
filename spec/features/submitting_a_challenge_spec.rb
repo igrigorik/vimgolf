@@ -13,7 +13,7 @@ feature "Submitting a challenge" do
     click_link "Sign in"
 
     click_link "Sign in with Twitter"
-    
+
     click_link "Submit challenge"
 
     click_button "Create challenge"

@@ -28,16 +28,18 @@
     <div id="navigation">
       <ul id="nav">
         <% if current_user %>
-            <li>Welcome <b><%= profile_link(current_user.nickname) %></b></li>
+            <li>Welcome <b><%= profile_link(current_user) %></b></li>
             <li><%= link_to "Submit challenge", new_challenge_path %></li>
             <li><%= link_to "Sign out", signout_path %></li>
+        <% elsif action_name == 'oauth' %>
+            <li><%= link_to "Home", root_path %></li>
         <% else %>
-            <li><%= link_to "Sign in with Twitter", "/auth/twitter?x_auth_access_type=read&use_authorize=true" %></li>
+            <li><%= link_to "Sign in", "/login" %></li>
         <% end %>
       </ul>
     </div>
   </div>
-
+<% if action_name != 'oauth' %>
   <div id="about" class="container_12 clearfix">
       <div id="about" class="grid_7">
         <h3 style="margin:0.5em 0 0.5em 0">Real Vim ninjas count <b>every</b> keystroke - do you?</h3>
@@ -46,7 +48,7 @@
       </div>
       <div id="instructions" class="grid_5">
 <pre class="terminal">
-<span class="shell">Your VimGolf key: <%= current_user.nil? ? link_to("please sign in", "/auth/twitter?x_auth_access_type=read&use_authorize=true") : current_user['key'] %></span>
+<span class="shell">Your VimGolf key: <%= current_user.nil? ? link_to("please sign in", "/login") : current_user['key'] %></span>
 
 <span class="shell">$</span> gem install vimgolf
 <span class="shell">$</span> vimgolf setup
@@ -54,6 +56,7 @@
 </pre>
       </div>
   </div>
+<% end %>
 
   <div id="content" class="container_12 clearfix">
     <%= yield %>

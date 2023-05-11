@@ -33,14 +33,14 @@ feature "Display created challenge in profile" do
 
   context 'User did not create any challenge' do
     scenario 'it display created challenges' do
-      visit profile_path(@created_zero_challenge.nickname)
+      visit profile_path(@created_zero_challenge.id, @created_zero_challenge.nickname)
       expect(page).to have_text 'contributed 0 challenges'
     end
   end
 
   context 'User created one challenge' do
     scenario 'it display created challenges' do
-      visit profile_path(@created_one_challenge.nickname)
+      visit profile_path(@created_one_challenge.id, @created_one_challenge.nickname)
       expect(page).to have_text 'contributed 1 challenges'
       expect(page).to have_text 'title of challenge - 0 entries'
     end
@@ -131,14 +131,14 @@ feature "Display played challenge in profile" do
 
   context 'User did not played any challenge' do
     scenario 'it display 0 played challenges' do
-      visit profile_path(@played_zero_challenge.nickname)
+      visit profile_path(@played_zero_challenge.id, @played_zero_challenge.nickname)
       expect(page).to have_text 'entered into 0 challenges'
     end
   end
 
   context 'User played some challenge' do
     scenario 'it display informations about challenges' do
-      visit profile_path(@played_two_challenges.nickname)
+      visit profile_path(@played_two_challenges.id, @played_two_challenges.nickname)
       expect(page).to have_text 'entered into 2 challenges'
 
       expect(page).to have_text 'simple practical - 3 entries'

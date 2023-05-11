@@ -65,8 +65,9 @@ module VimGolf
     def setup
       VimGolf.ui.info "\nLet's setup your VimGolf key..."
       VimGolf.ui.warn "1) Open vimgolf.com in your browser."
-      VimGolf.ui.warn "2) Click \"Sign in with Twitter\"."
-      VimGolf.ui.warn "3) Once signed in, copy your key (black box, top right)."
+      VimGolf.ui.warn "2) Click \"Sign in\"."
+      VimGolf.ui.warn "3) Click \"Sign in with Twitter\" or \"Sign in with Github\"."
+      VimGolf.ui.warn "4) Once signed in, copy your key (black box, top right)."
 
       key = VimGolf.ui.ask "\nPaste your VimGolf key:"
 

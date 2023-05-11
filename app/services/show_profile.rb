@@ -15,6 +15,7 @@ class ShowProfile
   def_delegators :player, :name
   def_delegators :player, :description
   def_delegators :player, :location
+  def_delegators :player, :provider
 
   def contributed
     @contributed ||= RepositoryChallenge.created_by(player.id).to_a

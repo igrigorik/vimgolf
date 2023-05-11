@@ -33,6 +33,10 @@ class MainController < ApplicationController
     end
   end
 
+  def oauth
+    redirect_to root_path if current_user
+  end
+
   private
 
   def param_page

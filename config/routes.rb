@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  match "/auth/twitter/callback",to: "sessions#create", via: [:get, :post]
+  match "/auth/:provider/callback",to: "sessions#create", via: [:get, :post]
   get "/signout", to: "sessions#destroy", as: :signout
 
   post "/entry", to: "entry#create"
@@ -15,12 +15,13 @@ Rails.application.routes.draw do
     end
   end
 
+  get "/login", to: "main#oauth"
   get "/feed", to: "main#feed", defaults: {format: "rss"}
   get "/about", to: "main#about"
 
   # match "/top" => "users#top", as: :top
   # match "*unmatched_route", to: redirect('/about', status: 302), via: [:get, :post]
-  get "/:username", to: "users#show", as: :profile, :constraints => { :username => /[^\/]+/ }
+  get "/:id/:username", to: "users#show", as: :profile, :constraints => { :username => /[^\/]+/ }
 
   root to: "main#index"
 

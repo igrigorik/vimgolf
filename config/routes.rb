@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  match "/auth/:provider/callback",to: "sessions#create", via: [:get, :post]
+  match "/auth/:provider/callback",to: "sessions#create", via: [:post]
   get "/signout", to: "sessions#destroy", as: :signout
 
   post "/entry", to: "entry#create"

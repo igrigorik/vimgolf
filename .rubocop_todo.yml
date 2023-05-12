@@ -592,7 +592,6 @@ Style/IfUnlessModifier:
     - 'app/controllers/entry_controller.rb'
     - 'app/services/submissions_per_user.rb'
     - 'config/application.rb'
-    - 'config/initializers/mongoid.rb'
     - 'lib/vimgolf/lib/vimgolf/cli.rb'
 
 # Offense count: 3

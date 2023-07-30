@@ -94,7 +94,9 @@
  <h3>Moderators</h3>
  <ul>
     <% ADMINS.each do |user| %>
-        <li><%= profile_link(user) %></li>
+      <%- if u = User.find_by_nickname(user) %>
+        <li><%= profile_link(u) %></li>
+      <%- end %>
     <% end %>
  </ul>
 

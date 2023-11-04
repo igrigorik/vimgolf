@@ -1,6 +1,6 @@
 <div class="container">
   <div class="auth-buttons">
     <%= button_to "Login via Twitter", "/auth/twitter2", method: :post, data: { turbo: false }, :class => "auth-button twitter" %>
-    <% button_to "Login via GitHub", "/auth/github", method: :post, data: { turbo: false }, class: "auth-button github" %>
+    <%= button_to "Login via GitHub", "/auth/github", method: :post, data: { turbo: false }, class: "auth-button github" %>
   </div>
 </div>

@@ -18,6 +18,8 @@ USER golfer
 
 WORKDIR /home/golfer
 
+ENV LANG=C.UTF-8
+
 ENTRYPOINT ["/usr/local/bin/run-vimgolf"]
 
 CMD []

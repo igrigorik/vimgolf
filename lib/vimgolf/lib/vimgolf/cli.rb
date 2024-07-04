@@ -2,8 +2,9 @@ module VimGolf
 
   GOLFDEBUG    = ENV['GOLFDEBUG'].to_sym rescue false
   GOLFHOST     = ENV['GOLFHOST']     || "https://www.vimgolf.com"
-  GOLFSHOWDIFF = ENV['GOLFSHOWDIFF'] || 'vim -d -n'
   GOLFVIM      = ENV['GOLFVIM']      || 'vim'
+  # Use provided vim by default
+  GOLFSHOWDIFF = ENV['GOLFSHOWDIFF'] || GOLFVIM + ' -d -n'
 
   class Error
   end
@@ -131,9 +132,15 @@ module VimGolf
         # -u vimrc   - load vimgolf .vimrc to level the playing field
         # -U NONE    - don't load .gvimrc
         # -W logfile - keylog file (overwrites if already exists)
-        vimcmd = GOLFVIM.shellsplit + %W{-Z -n --noplugin -i NONE +0 -u #{challenge.vimrc_path} -U NONE -W #{challenge.log_path} #{challenge.work_path}}
+        vimcmd = GOLFVIM.shellsplit + %W{-n --noplugin -i NONE +0 -u #{challenge.vimrc_path} -U NONE -W #{challenge.log_path} #{challenge.work_path}}
         if GOLFVIM == "gvim"
           vimcmd += %W{ --nofork}
+        end
+        # neovim does not support -Z
+        # Technically this makes cheating easier,
+        # but with custom GOLFVIM one could always make a script to filter -Z out
+        if GOLFVIM != "nvim"
+          vimcmd += %W{ -Z}
         end
         debug(vimcmd)
         system(*vimcmd) # assembled as an array, bypasses the shell

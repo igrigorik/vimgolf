@@ -266,6 +266,8 @@ module VimGolf
       "\xfd\x61" => nil, # Focus Gained (GVIM) (>7.4.1433)
       "\xfd\x62" => nil, # Focus Gained (GVIM)
       "\xfd\x63" => nil, # Focus Lost (GVIM)
+
+      "\xfd\x6d" => nil, # Ignore <OSC>
     })
   end
 end
